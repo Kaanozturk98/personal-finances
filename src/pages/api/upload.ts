@@ -27,8 +27,8 @@ export default async function handler(
 
       // console.log("cleanedText", cleanedText);
 
-      /*     res.status(200).json({ cleanedText });
-    return; */
+      /* res.status(200).json({ cleanedText });
+      return; */
 
       // Transform the parsed PDF data into rows
       const { rows, cardType } = transformPdfText(cleanedText);
@@ -36,7 +36,7 @@ export default async function handler(
       // console.log("rows", rows);
 
       /* res.status(200).json({ rows, cardType });
-    return; */
+      return; */
 
       // Extract transactions from the transformed PDF data
       const transactions: TransactionCreate[] = extractTransactions(
@@ -44,10 +44,10 @@ export default async function handler(
         cardType
       );
 
-      console.log("transactions", transactions);
+      /* console.log("transactions", transactions);
 
       res.status(200).json({ transactions });
-      return;
+      return; */
 
       // Insert the transactions into the database in batches of 100
       const batchSize = 100;

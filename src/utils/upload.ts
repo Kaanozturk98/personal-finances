@@ -108,15 +108,26 @@ export function extractCreditCardTransactions(pdfText: string): string[] {
       }
       return row;
     });
+    rows = rows.filter(
+      (row) => !row.includes("sanal kredi kartınızla yapılan işlemler")
+    );
 
     // Remove the lower redundant rows
+    const paginationRegex = /Sayfa [0-9]+ \/ [0-9]+/i;
     let divider = 0;
     if (index === tmp.length - 1) {
       divider = rows.findIndex((e) => e.match("Aylık alışveriş"));
+      rows.splice(divider);
+      // This happens when the last page actually includes no transactions thus no table header.
+      // This can done more robustly if the page splitting logic focuses on pagination lines.
+      if (rows.some((row) => row.match(paginationRegex))) {
+        divider = rows.findIndex((e) => e.match(paginationRegex));
+        rows.splice(divider);
+      }
     } else {
-      divider = rows.findIndex((e) => e.match(/Sayfa [0-9]+ \/ [0-9]+/i));
+      divider = rows.findIndex((e) => e.match(paginationRegex));
+      rows.splice(divider);
     }
-    rows.splice(divider);
 
     rows = rows.filter(
       (row) =>
