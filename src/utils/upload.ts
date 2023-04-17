@@ -199,7 +199,8 @@ export function generateFingerprint(transaction: TransactionCreate): string {
     currentTime.getMonth(),
     currentTime.getDate(),
     currentTime.getHours(),
-    currentTime.getMinutes()
+    currentTime.getMinutes(),
+    currentTime.getSeconds()
   );
 
   // Generate a key for the current minute
