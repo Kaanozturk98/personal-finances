@@ -12,12 +12,13 @@
     "@prisma/client": "^4.12.0",
     "@trpc/client": "^9.27.4",
     "@trpc/react": "^9.27.4",
-    "@trpc/server": "^10.20.0",
+    "@trpc/server": "^9.27.4",
     "@types/react-dom": "18.0.11",
     "autoprefixer": "^10.4.14",
     "eslint": "8.38.0",
     "eslint-config-next": "13.3.0",
     "next": "13.3.0",
+    "pdf-parse": "^1.1.1",
     "postcss": "^8.4.21",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.15.11",
+    "@types/pdf-parse": "^1.1.1",
     "@types/react": "^18.0.35",
     "prisma": "^4.12.0",
     "typescript": "^5.0.4"
