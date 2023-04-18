@@ -25,17 +25,17 @@ export default async function handler(
       // Replace problematic characters with the correct ones
       const cleanedText = cleanPdfText(pdfData.text);
 
-      // console.log("cleanedText", cleanedText);
+      /* console.log("cleanedText", cleanedText);
 
-      /* res.status(200).json({ cleanedText });
+      res.status(200).json({ cleanedText });
       return; */
 
       // Transform the parsed PDF data into rows
       const { rows, cardType } = transformPdfText(cleanedText);
 
-      // console.log("rows", rows);
+      /* console.log("rows", rows);
 
-      /* res.status(200).json({ rows, cardType });
+      res.status(200).json({ rows, cardType });
       return; */
 
       // Extract transactions from the transformed PDF data

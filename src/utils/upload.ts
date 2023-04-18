@@ -1,26 +1,40 @@
 import { TransactionCreate } from "@component/types";
-import { CardType } from "@prisma/client";
+import { CardType, Currency } from "@prisma/client";
 import crypto from "crypto";
 
-export function parseAmount(amountString: string) {
+const dateMatchRegex = (cardType: CardType) =>
+  cardType === CardType.DEBIT ? /^\d{2}\/\d{2}\/\d{2}/ : /^\d{2}\/\d{2}\/\d{4}/;
+
+function parseAmount(amountString: string) {
   const normalizedAmount = amountString.replace(/\./g, "").replace(/,/g, ".");
   return parseFloat(normalizedAmount);
 }
 
-export function extractTransactions(
+function parseDate(dateEl: string, cardType: CardType) {
+  const [day, month, year] = dateEl.split("/");
+  const date = new Date(
+    Date.UTC(
+      parseInt((cardType === CardType.DEBIT ? "20" : "") + year),
+      parseInt(month) - 1,
+      parseInt(day),
+      0,
+      0,
+      0
+    )
+  );
+  return date;
+}
+
+export function extractCreditCardTransactions(
   rows: string[],
   cardType: CardType
 ): TransactionCreate[] {
   const transactions = rows.map((line) => {
     // Extract date
-    const dateMatch = line.match(/^\d{2}\/\d{2}\/\d{4}/);
+    const dateMatch = line.match(dateMatchRegex(cardType));
     let date: Date = new Date(0);
     if (dateMatch) {
-      const [day, month, year] = dateMatch[0].split("/");
-      Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day), 0, 0, 0);
-      date = new Date(
-        Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day), 0, 0, 0)
-      );
+      date = parseDate(dateMatch[0], cardType);
       //
       line = line.replace(dateMatch[0], "");
     }
@@ -30,12 +44,12 @@ export function extractTransactions(
       /\s(?:[$]|)[+-]?[0-9]{1,3}(?:[0-9]*(?:[.,][0-9]{2})?|(?:.[0-9]{3})*(?:\,[0-9]{1,2})?)\s*TL$/;
     const amountAndCurrencyMatch = line.match(amountAndCurrencyRegex);
     let amount: number = -1;
-    let currency: "TL" = "TL";
+    let currency: Currency = "TL";
     if (amountAndCurrencyMatch) {
       const amountAndCurrency =
         amountAndCurrencyMatch && amountAndCurrencyMatch[0].trim();
       amount = parseAmount(amountAndCurrency.split(" ")[0]);
-      currency = amountAndCurrency.split(" ")[1] as "TL";
+      currency = amountAndCurrency.split(" ")[1] as Currency;
       //
       line = line.replace(amountAndCurrencyMatch[0], "");
     }
@@ -74,10 +88,119 @@ export function extractTransactions(
   return transactions;
 }
 
-export function extractCreditCardTransactions(pdfText: string): string[] {
-  let tmp: any = pdfText.split("İşlem tarihiAçıklamaTaksitTutar\n");
+export function extractDebitCardTransactions(
+  rows: string[][],
+  cardType: CardType
+): TransactionCreate[] {
+  const transactions = rows.map((line) => {
+    if (line.length === 1) {
+      let stringLine = line[0];
+      // Extract date
+      const dateEl = (stringLine.match(dateMatchRegex(cardType)) || [
+        "01/01/1970",
+      ])[0];
+      const date = parseDate(dateEl, cardType);
+      stringLine = stringLine.replace(dateEl, "");
 
+      // Extract currency
+      const [currency] = stringLine.split(" ").slice(-1);
+
+      // Extract amount
+      stringLine = stringLine.split(currency)[0].trim();
+      let [amountEl] = stringLine.split(" ").slice(-1);
+
+      // Workarounds for when there is an one liner incoming transaction
+      // If amountEl includes ',' more than one time
+      if (amountEl.split(",").length - 1 > 1) {
+        amountEl = amountEl.split(",").slice(-2).join(",");
+      }
+      // Remove any chars other than digit, comma and dot from the string
+      [amountEl] = amountEl.match(/\d((?=([.,]\d|\d)).)*/) || ["-1"];
+
+      const amount = parseAmount(amountEl);
+      stringLine = stringLine.replace(amountEl, "");
+      stringLine = stringLine.trim();
+
+      // Extract isRepayment
+      const isRepayment = !stringLine.endsWith("-");
+      if (!isRepayment) {
+        stringLine = stringLine.slice(0, -1);
+      }
+
+      // Extract description
+      // Only description left from the initial string
+      const description = stringLine.trim();
+
+      return {
+        date,
+        description,
+        installments: 1,
+        amount,
+        currency: currency as Currency,
+        cardType,
+        categoryId: null,
+        isRepayment,
+      };
+    } else {
+      const dateEl = line.shift() || "";
+      const date = parseDate(dateEl, cardType);
+
+      // Extract amount and currency
+      let amountsAndCurrencyEl: string = line.pop() || "";
+      const currency = amountsAndCurrencyEl.split(" ").pop() || "";
+
+      // Extract isRepayment
+      const isRepayment = !amountsAndCurrencyEl.trim().startsWith("-");
+      if (!isRepayment) {
+        amountsAndCurrencyEl = amountsAndCurrencyEl.replace("-", "");
+      }
+
+      //
+      const amount = parseAmount(
+        amountsAndCurrencyEl.split(currency)[0].trim()
+      );
+
+      // Extract description
+      const description = line.join(" ");
+
+      return {
+        date,
+        description,
+        installments: 1,
+        amount,
+        currency: currency as Currency,
+        cardType,
+        categoryId: null,
+        isRepayment,
+      };
+    }
+  });
+
+  return transactions;
+}
+
+export function extractTransactions(
+  rows: string[] | string[][],
+  cardType: CardType
+): TransactionCreate[] {
+  let transactions: TransactionCreate[] = [];
+  switch (cardType) {
+    case CardType.CREDIT:
+      transactions = extractCreditCardTransactions(rows as string[], cardType);
+      break;
+
+    case CardType.DEBIT:
+      transactions = extractDebitCardTransactions(rows as string[][], cardType);
+      break;
+  }
+
+  return transactions;
+}
+
+export function transformCreditCardPdfText(pdfText: string): string[] {
+  let tmp: any = pdfText.split("İşlem tarihiAçıklamaTaksitTutar\n");
   tmp.shift();
+
   tmp = tmp.map((page: any, index: number) => {
     let rows: string[] = page.split("\n");
     // Remove the upper redundant rows
@@ -145,6 +268,59 @@ export function extractCreditCardTransactions(pdfText: string): string[] {
   return tmp;
 }
 
+export function transformDebitCardPdfText(
+  pdfText: string,
+  cardType: CardType
+): string[] {
+  let tmp: any = pdfText.split("TarihAçıklamaTutarBakiye\n");
+  tmp.shift();
+
+  tmp = tmp.map((page: any) => {
+    const cells: string[] = page.split("\n");
+    // Create rows
+    const dateIndexes: number[] = [];
+    cells.forEach((cell, index) => {
+      if (cell.match(dateMatchRegex(cardType))) {
+        dateIndexes.push(index);
+      }
+    });
+    let rows = dateIndexes.map((dateIndex, i) =>
+      dateIndex !== dateIndexes.length - 1
+        ? cells.slice(dateIndex, dateIndexes[i + 1])
+        : []
+    );
+
+    rows = rows.map((row) => {
+      if (row.some((cell) => cell.match(/\d\dSayfa\//i))) {
+        const divider = row.findIndex((e) => e.match(/\d\dSayfa\//i));
+        row = row.slice(0, divider);
+      }
+
+      return row;
+    });
+
+    return rows;
+  });
+  tmp = tmp.flat();
+  // Workarounds
+  tmp = tmp.filter((e: string[]) => e.length);
+  tmp = tmp.filter((e: string[]) => !e.some((k) => k.includes("Alış/Satış")));
+  // Remove if any of the rows arrays don't include a date
+  tmp = tmp.filter((e: string[]) =>
+    e.some((k) => k.match(dateMatchRegex(cardType)))
+  );
+  tmp = tmp.filter(
+    (e: string[]) =>
+      !e.some((k) =>
+        k.includes(
+          "itibarıyla QNB Finansbank dışından gelen yabancı para transferi (SWIFT) ücreti"
+        )
+      )
+  );
+
+  return tmp;
+}
+
 export function transformPdfText(pdfText: string): {
   rows: string[];
   cardType: CardType;
@@ -156,10 +332,11 @@ export function transformPdfText(pdfText: string): {
   let rows: string[] = [];
   switch (cardType) {
     case CardType.CREDIT:
-      rows = extractCreditCardTransactions(pdfText);
+      rows = transformCreditCardPdfText(pdfText);
       break;
 
     case CardType.DEBIT:
+      rows = transformDebitCardPdfText(pdfText, cardType);
       break;
   }
 
