@@ -7,7 +7,7 @@ import {
   extractTransactions,
   cleanPdfText,
   generateFingerprint,
-} from "@component/utils/upload";
+} from "@component/utils";
 
 const prisma = new PrismaClient();
 
