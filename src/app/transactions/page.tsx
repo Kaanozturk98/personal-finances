@@ -1,7 +1,7 @@
 "use client";
 import Table from "@component/components/Table";
 import { IColumnObject } from "@component/components/Table/types";
-import { Transaction } from "@prisma/client";
+import { CardType, Transaction } from "@prisma/client";
 import React from "react";
 
 const columns: IColumnObject<Transaction>[] = [
@@ -9,36 +9,48 @@ const columns: IColumnObject<Transaction>[] = [
     key: "description",
     label: "Description",
     sort: false,
+    type: "string",
   },
   {
     key: "categoryId",
     label: "Category",
     sort: false,
+    type: "reference",
   },
   {
     key: "cardType",
     label: "Card Type",
     sort: true,
+    type: "enum",
+    filter: true,
+    options: Object.values(CardType),
   },
   {
     key: "date",
     label: "Date",
     sort: true,
+    type: "date",
+    filter: true,
   },
   {
     key: "installments",
     label: "Installments",
     sort: true,
+    type: "number",
+    filter: true,
   },
   {
     key: "isRepayment",
     label: "Repayment",
     sort: true,
+    type: "boolean",
+    filter: true,
   },
   {
     key: "amount",
     label: "Amount",
     sort: true,
+    type: "number",
   },
 ];
 

@@ -11,6 +11,37 @@ export async function GET(request: Request) {
   const skip = (page - 1) * limit;
   const sortBy = searchParams.get("sortBy") as string;
   const sortOrder = searchParams.get("sortOrder");
+  const filter = searchParams.get("filter");
+  const filterObj = filter ? JSON.parse(filter) : {};
+
+  const dateFilter: { gte?: Date; lte?: Date } = {};
+  if (filterObj.date && filterObj.date.from) {
+    dateFilter.gte = new Date(filterObj.date.from);
+  }
+  if (filterObj.date && filterObj.date.to) {
+    dateFilter.lte = new Date(filterObj.date.to);
+  }
+
+  // Create a where object for filtering
+  const where = Object.entries(filterObj).reduce((acc, [key, value]) => {
+    if (key === "category") {
+      return {
+        ...acc,
+        category: {
+          name: {
+            equals: value,
+          },
+        },
+      };
+    } else {
+      return {
+        ...acc,
+        [key]: {
+          equals: value,
+        },
+      };
+    }
+  }, {});
 
   const transactions = await prisma.transaction.findMany({
     include: {
@@ -19,10 +50,19 @@ export async function GET(request: Request) {
     orderBy: {
       [sortBy]: sortOrder,
     },
+    where: {
+      ...filterObj,
+      date: dateFilter,
+    },
     skip,
     take: limit,
   });
-  const totalTransactions = await prisma.transaction.count();
+  const totalTransactions = await prisma.transaction.count({
+    where: {
+      ...filterObj,
+      date: dateFilter,
+    },
+  });
 
   return NextResponse.json({
     data: transactions,

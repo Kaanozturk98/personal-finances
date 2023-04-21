@@ -5,6 +5,7 @@ import SkeletonRow from "./SkeletonRows";
 import TruncatedText from "./TruncatedText";
 import clsx from "clsx";
 import { IColumnObject } from "./types";
+import FilterButton from "./FilterButton";
 
 interface TableProps<T> {
   columns: IColumnObject<T>[];
@@ -19,7 +20,7 @@ const Table = <T,>({
   columns,
   route,
   formatData,
-  itemsPerPage = 25,
+  itemsPerPage = 20,
   defaultSortBy = columns[0].key,
   defaultSortOrder = "asc",
 }: TableProps<T>): React.ReactElement => {
@@ -29,6 +30,7 @@ const Table = <T,>({
   const [loading, setLoading] = useState<boolean>(true);
   const [sortBy, setSortBy] = useState<keyof T>(defaultSortBy as keyof T);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(defaultSortOrder);
+  const [filter, setFilter] = useState<Partial<Record<keyof T, string>>>({});
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -45,64 +47,93 @@ const Table = <T,>({
     }
   };
 
+  const handleFilterChange = (key: keyof T, value: any) => {
+    setFilter((prevFilter) => {
+      const updatedFilter = { ...prevFilter };
+      if (value || value === false) {
+        updatedFilter[key] = value;
+      } else {
+        delete updatedFilter[key];
+      }
+      // Trigger data fetching here with the updated filter
+      return updatedFilter;
+    });
+  };
+
   useEffect(() => {
     setLoading(true);
-    fetch(
-      `/api/${route}?page=${currentPage}&limit=${itemsPerPage}&sortBy=${String(
-        sortBy
-      )}&sortOrder=${sortOrder}`
-    )
+
+    const searchParams = new URLSearchParams();
+    searchParams.set("page", currentPage.toString());
+    searchParams.set("limit", itemsPerPage.toString());
+    searchParams.set("sortBy", String(sortBy));
+    searchParams.set("sortOrder", sortOrder);
+
+    if (filter) {
+      searchParams.set("filter", JSON.stringify(filter));
+    }
+
+    const urlString = `/api/${route}?${searchParams.toString()}`;
+
+    fetch(urlString)
       .then((response) => response.json())
       .then(({ data, total }) => {
         setData(data);
         setTotalPages(Math.ceil(total / itemsPerPage));
         setLoading(false);
       });
-  }, [currentPage, formatData, itemsPerPage, route, sortBy, sortOrder]);
+  }, [currentPage, filter, formatData, itemsPerPage, route, sortBy, sortOrder]);
 
   const formattedData = formatData(data);
 
   return (
     <>
-      <table className="table table-zebra w-full">
-        <thead className="relative z-0">
-          <tr>
-            {columns.map((column, index) => (
-              <th
-                key={index}
-                className={clsx(
-                  "text-left",
-                  column.sort ? "cursor-pointer" : ""
-                )}
-                onClick={
-                  column.sort ? () => handleHeaderClick(column) : undefined
-                }
-              >
-                <div className="inline-flex items-center w-full space-x-2">
-                  <span
-                    className={clsx(
-                      column.sort && sortBy === column.key ? "underline" : ""
-                    )}
-                  >
-                    {column.label}
-                  </span>
-                  {column.sort && sortBy === column.key && (
-                    <span>{sortOrder === "asc" ? "↑" : "↓"}</span>
+      <div className="flex-col space-y-4">
+        <FilterButton<T>
+          columns={columns}
+          onFilterChange={handleFilterChange}
+          filterState={filter}
+        />
+        <table className="table table-zebra w-full">
+          <thead className="relative z-0">
+            <tr>
+              {columns.map((column, index) => (
+                <th
+                  key={index}
+                  className={clsx(
+                    "text-left",
+                    column.sort ? "cursor-pointer" : ""
                   )}
-                </div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {loading || formattedData.length === 0
-            ? // Render skeleton rows when loading
+                  onClick={
+                    column.sort ? () => handleHeaderClick(column) : undefined
+                  }
+                >
+                  <div className="inline-flex items-center w-full space-x-2">
+                    <span
+                      className={clsx(
+                        column.sort && sortBy === column.key ? "underline" : ""
+                      )}
+                    >
+                      {column.label}
+                    </span>
+                    {column.sort && sortBy === column.key && (
+                      <span>{sortOrder === "asc" ? "↑" : "↓"}</span>
+                    )}
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              // Render skeleton rows here...
               Array(itemsPerPage)
                 .fill(null)
                 .map((_, index) => (
                   <SkeletonRow key={index} columns={columns.length} />
                 ))
-            : formattedData.map((row, rowIndex) => (
+            ) : data.length > 0 ? (
+              formattedData.map((row, rowIndex) => (
                 <tr key={rowIndex} className="h-12">
                   {row.map((cell, cellIndex) => (
                     <td key={cellIndex} className="p-2">
@@ -110,9 +141,21 @@ const Table = <T,>({
                     </td>
                   ))}
                 </tr>
-              ))}
-        </tbody>
-      </table>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className="text-center py-4 text-base-content text-opacity-50"
+                >
+                  🥺 No data available
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
