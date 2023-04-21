@@ -1,4 +1,5 @@
 import "../styles/globals.css";
+import "../styles/custom.css";
 
 import { ReactNode } from "react";
 import SideNavbar from "../components/SideNavBar";
@@ -11,7 +12,7 @@ export const metadata = {
 const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
     <html lang="en" data-theme="dark">
-      <body className="bg-base-100 text-gray-50">
+      <body className="bg-gray-600 text-base-content">
         <div className="flex min-h-screen">
           <div className="w-72 shadow-md">
             <SideNavbar />

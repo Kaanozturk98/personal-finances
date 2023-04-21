@@ -10,20 +10,22 @@ interface NavItem {
 const navItems: NavItem[] = [
   { name: "Home", href: "/" },
   { name: "Transactions", href: "/transactions" },
-  { name: "Budget", href: "/budget" },
-  { name: "Settings", href: "/settings" },
+  { name: "Categories", href: "/categories" },
 ];
 
 const SideNavbar: React.FC = () => {
   return (
-    <nav className="h-full bg-base-300 flex flex-col p-4">
-      <div className="mb-8">
-        <img src="/your-logo.png" alt="Logo" className="h-12 w-auto" />
+    <nav className="h-full bg-base-300 text-primary-content flex flex-col p-4">
+      <div className="mt-4 mb-8 flex items-center justify-center">
+        <img src="/line-graph.png" alt="Logo" className="h-16 w-auto" />
       </div>
       <ul className="space-y-4">
         {navItems.map((item, index) => (
           <li key={index}>
-            <Link href={item.href} className="btn btn-primary">
+            <Link
+              href={item.href}
+              className="block w-full text-left py-2 px-4 transition-colors duration-200 border-l-4 border-transparent hover:border-primary"
+            >
               {item.name}
             </Link>
           </li>
