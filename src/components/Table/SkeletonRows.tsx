@@ -8,10 +8,10 @@ const SkeletonRow: React.FC<SkeletonRowProps> = ({ columns }) => {
   const skeletons = Array(columns).fill(null);
 
   return (
-    <tr>
+    <tr className="h-12">
       {skeletons.map((_, index) => (
         <td key={index} className="p-2">
-          <div className="bg-gray-300 rounded animate-pulse w-full h-4"></div>
+          <div className="bg-gray-600 rounded animate-pulse min-w-[100px] h-4"></div>
         </td>
       ))}
     </tr>

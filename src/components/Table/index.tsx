@@ -56,8 +56,8 @@ const Table = <T,>({
       .then(({ data, total }) => {
         setData(data);
         setTotalPages(Math.ceil(total / itemsPerPage));
+        setLoading(false);
       });
-    setLoading(false);
   }, [currentPage, formatData, itemsPerPage, route, sortBy, sortOrder]);
 
   const formattedData = formatData(data);
@@ -103,9 +103,9 @@ const Table = <T,>({
                   <SkeletonRow key={index} columns={columns.length} />
                 ))
             : formattedData.map((row, rowIndex) => (
-                <tr key={rowIndex}>
+                <tr key={rowIndex} className="h-12">
                   {row.map((cell, cellIndex) => (
-                    <td key={cellIndex} className={`p-2`}>
+                    <td key={cellIndex} className="p-2">
                       <TruncatedText text={cell} />
                     </td>
                   ))}
