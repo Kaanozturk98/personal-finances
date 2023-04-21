@@ -1,16 +1,45 @@
 "use client";
 import Table from "@component/components/Table";
+import { IColumnObject } from "@component/components/Table/types";
 import { Transaction } from "@prisma/client";
 import React from "react";
 
-const headers = [
-  "Description",
-  "Category",
-  "Card Type",
-  "Date",
-  "Installments",
-  "Repayment",
-  "Amount",
+const columns: IColumnObject<Transaction>[] = [
+  {
+    key: "description",
+    label: "Description",
+    sort: false,
+  },
+  {
+    key: "categoryId",
+    label: "Category",
+    sort: false,
+  },
+  {
+    key: "cardType",
+    label: "Card Type",
+    sort: true,
+  },
+  {
+    key: "date",
+    label: "Date",
+    sort: true,
+  },
+  {
+    key: "installments",
+    label: "Installments",
+    sort: true,
+  },
+  {
+    key: "isRepayment",
+    label: "Repayment",
+    sort: true,
+  },
+  {
+    key: "amount",
+    label: "Amount",
+    sort: true,
+  },
 ];
 
 const Transactions: React.FC = () => {
@@ -35,9 +64,10 @@ const Transactions: React.FC = () => {
   return (
     <div className="p-8">
       <Table<Transaction>
-        headers={headers}
+        columns={columns}
         route="transactions"
         formatData={formatData}
+        defaultSortBy={"date"}
       />
     </div>
   );
