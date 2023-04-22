@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { IColumnObject } from "./types";
+import TextInput from "../TextInput";
 
 interface StringFilterProps<T> {
   column: IColumnObject<T>;
   onFilterChange: (key: keyof T, value: string) => void;
-  value?: string; // Add this prop
+  value?: string;
 }
 
 const StringFilter = <T,>({
@@ -18,28 +19,19 @@ const StringFilter = <T,>({
     setSelectedValue(value || "");
   }, [value]);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedValue(event.target.value);
-    onFilterChange(column.key as keyof T, event.target.value);
+  const handleInputChange = (newValue: string) => {
+    setSelectedValue(newValue);
+    onFilterChange(column.key as keyof T, newValue);
   };
 
   return (
-    <>
-      <label
-        htmlFor={`filter-${column.key as string}`}
-        className="block text-sm mb-1"
-      >
-        {column.label}
-      </label>
-      <input
-        id={`filter-${column.key as string}`}
-        type="text"
-        className="input input-bordered w-full min-w-[200px]"
-        placeholder={`Filter by ${column.label}`}
-        value={selectedValue}
-        onChange={handleInputChange}
-      />
-    </>
+    <TextInput
+      id={`filter-${column.key as string}`}
+      label={column.label} // Pass the label
+      placeholder={`Filter by ${column.label}`}
+      value={selectedValue}
+      onChange={handleInputChange}
+    />
   );
 };
 

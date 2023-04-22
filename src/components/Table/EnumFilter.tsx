@@ -1,10 +1,12 @@
+// EnumFilter.tsx
 import React, { useState, useEffect } from "react";
 import { IColumnObject } from "./types";
+import SelectInput from "../SelectInput";
 
 interface EnumFilterProps<T> {
   column: IColumnObject<T>;
   onFilterChange: (key: keyof T, value: string) => void;
-  value?: string; // Add this prop
+  value?: string;
 }
 
 const EnumFilter = <T,>({
@@ -18,33 +20,25 @@ const EnumFilter = <T,>({
     setSelectedValue(value || "");
   }, [value]);
 
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedValue(event.target.value);
-    onFilterChange(column.key as keyof T, event.target.value);
+  const handleChange = (newValue: string) => {
+    setSelectedValue(newValue);
+    onFilterChange(column.key as keyof T, newValue);
   };
 
+  const options = [
+    { label: "Select", value: "" },
+    ...(column.options?.map((option) => ({ label: option, value: option })) ||
+      []),
+  ];
+
   return (
-    <>
-      <label
-        htmlFor={`enum-filter-${column.key as string}`}
-        className="block mb-1"
-      >
-        {column.label}
-      </label>
-      <select
-        id={`enum-filter-${column.key as string}`}
-        className="select select-bordered w-full min-w-[200px]"
-        value={selectedValue}
-        onChange={handleChange}
-      >
-        <option value="">Select</option>
-        {column.options?.map((option, index) => (
-          <option key={index} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-    </>
+    <SelectInput
+      id={`enum-filter-${column.key as string}`}
+      options={options}
+      value={selectedValue}
+      onChange={handleChange}
+      label={column.label}
+    />
   );
 };
 

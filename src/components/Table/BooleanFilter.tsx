@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { IColumnObject } from "./types";
+import SelectInput from "../SelectInput";
 
 interface BooleanFilterProps<T> {
   column: IColumnObject<T>;
   onFilterChange: (key: keyof T, value: boolean | null) => void;
-  value?: boolean; // Add this prop
+  value?: boolean;
 }
 
 const BooleanFilter = <T,>({
@@ -20,37 +21,23 @@ const BooleanFilter = <T,>({
     setSelectedValue(value !== undefined ? value.toString() : "");
   }, [value]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newValue =
-      e.target.value === "true"
-        ? true
-        : e.target.value === "false"
-        ? false
-        : null;
+  const handleChange = (newValue: string) => {
+    // Update this function to receive a string value
+    const newBooleanValue =
+      newValue === "true" ? true : newValue === "false" ? false : null;
 
-    setSelectedValue(e.target.value);
-    onFilterChange(column.key as keyof T, newValue);
+    setSelectedValue(newValue);
+    onFilterChange(column.key as keyof T, newBooleanValue);
   };
 
   return (
-    <>
-      <label
-        htmlFor={`boolean-filter-${column.key as string}`}
-        className="block mb-1"
-      >
-        {column.label}
-      </label>
-      <select
-        id={`boolean-filter-${column.key as string}`}
-        className="select select-bordered w-full min-w-[200px]"
-        value={selectedValue}
-        onChange={handleChange}
-      >
-        <option value="">Select</option>
-        <option value="true">True</option>
-        <option value="false">False</option>
-      </select>
-    </>
+    <SelectInput
+      id={`boolean-filter-${column.key as string}`}
+      value={selectedValue}
+      onChange={handleChange}
+      boolean
+      label={column.label}
+    />
   );
 };
 

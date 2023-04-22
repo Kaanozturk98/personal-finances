@@ -1,10 +1,12 @@
+// DateFilter.tsx
 import React, { useState, useEffect } from "react";
 import { IColumnObject } from "./types";
+import DateInput from "../DateInput";
 
 interface DateFilterProps<T> {
   column: IColumnObject<T>;
   onFilterChange: (key: keyof T, value: { from: string; to: string }) => void;
-  value?: { from: string; to: string }; // Add this prop
+  value?: { from: string; to: string };
 }
 
 const DateFilter = <T,>({
@@ -37,24 +39,18 @@ const DateFilter = <T,>({
 
   return (
     <div className="flex space-x-2">
-      <div className="flex-1">
-        <label className="block">From</label>
-        <input
-          type="date"
-          className="input input-bordered w-full"
-          value={fromDate}
-          onChange={(e) => handleDateChange("from", e.target.value)}
-        />
-      </div>
-      <div className="flex-1">
-        <label className="block">To</label>
-        <input
-          type="date"
-          className="input input-bordered w-full"
-          value={toDate}
-          onChange={(e) => handleDateChange("to", e.target.value)}
-        />
-      </div>
+      <DateInput
+        id={`from-${column.key as string}`}
+        label="From"
+        value={fromDate}
+        onChange={(value: string) => handleDateChange("from", value)}
+      />
+      <DateInput
+        id={`to-${column.key as string}`}
+        label="To"
+        value={toDate}
+        onChange={(value: string) => handleDateChange("to", value)}
+      />
     </div>
   );
 };
