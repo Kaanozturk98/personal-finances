@@ -22,27 +22,6 @@ export async function GET(request: Request) {
     dateFilter.lte = new Date(filterObj.date.to);
   }
 
-  // Create a where object for filtering
-  const where = Object.entries(filterObj).reduce((acc, [key, value]) => {
-    if (key === "category") {
-      return {
-        ...acc,
-        category: {
-          name: {
-            equals: value,
-          },
-        },
-      };
-    } else {
-      return {
-        ...acc,
-        [key]: {
-          equals: value,
-        },
-      };
-    }
-  }, {});
-
   const transactions = await prisma.transaction.findMany({
     include: {
       category: true,

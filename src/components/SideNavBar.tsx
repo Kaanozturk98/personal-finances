@@ -9,6 +9,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { name: "Home", href: "/" },
+  { name: "Reports", href: "/reports" },
   { name: "Transactions", href: "/transactions" },
   { name: "Categories", href: "/categories" },
 ];

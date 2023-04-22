@@ -1,6 +1,7 @@
 "use client";
 import Table from "@component/components/Table";
 import { IColumnObject } from "@component/components/Table/types";
+import { numberWithCommas } from "@component/utils";
 import { CardType, Transaction } from "@prisma/client";
 import React from "react";
 
@@ -54,7 +55,7 @@ const columns: IColumnObject<Transaction>[] = [
   },
 ];
 
-const Transactions: React.FC = () => {
+const TransactionsPage: React.FC = () => {
   const formatData = (transactions: any[]) =>
     transactions.map((transaction) => {
       const formattedDate = new Intl.DateTimeFormat("en-GB", {
@@ -69,7 +70,7 @@ const Transactions: React.FC = () => {
         formattedDate,
         transaction.installments.toString(),
         transaction.isRepayment ? "Yes" : "No",
-        `${transaction.amount.toFixed(2)} ${transaction.currency}`,
+        `${numberWithCommas(transaction.amount)} ${transaction.currency}`,
       ];
     });
 
@@ -85,4 +86,4 @@ const Transactions: React.FC = () => {
   );
 };
 
-export default Transactions;
+export default TransactionsPage;

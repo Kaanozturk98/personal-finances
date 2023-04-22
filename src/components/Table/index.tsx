@@ -14,6 +14,7 @@ interface TableProps<T> {
   itemsPerPage?: number;
   defaultSortBy?: keyof T;
   defaultSortOrder?: "asc" | "desc";
+  defaultFilter?: Partial<Record<keyof T, any>>;
 }
 
 const Table = <T,>({
@@ -23,6 +24,7 @@ const Table = <T,>({
   itemsPerPage = 20,
   defaultSortBy = columns[0].key,
   defaultSortOrder = "asc",
+  defaultFilter = {},
 }: TableProps<T>): React.ReactElement => {
   const [data, setData] = useState<T[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -30,7 +32,8 @@ const Table = <T,>({
   const [loading, setLoading] = useState<boolean>(true);
   const [sortBy, setSortBy] = useState<keyof T>(defaultSortBy as keyof T);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(defaultSortOrder);
-  const [filter, setFilter] = useState<Partial<Record<keyof T, string>>>({});
+  const [filter, setFilter] =
+    useState<Partial<Record<keyof T, any>>>(defaultFilter);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -61,6 +64,10 @@ const Table = <T,>({
   };
 
   useEffect(() => {
+    setFilter(defaultFilter);
+  }, [defaultFilter]);
+
+  useEffect(() => {
     setLoading(true);
 
     const searchParams = new URLSearchParams();
@@ -68,7 +75,6 @@ const Table = <T,>({
     searchParams.set("limit", itemsPerPage.toString());
     searchParams.set("sortBy", String(sortBy));
     searchParams.set("sortOrder", sortOrder);
-
     if (filter) {
       searchParams.set("filter", JSON.stringify(filter));
     }
@@ -89,11 +95,13 @@ const Table = <T,>({
   return (
     <>
       <div className="flex-col space-y-4">
-        <FilterButton<T>
-          columns={columns}
-          onFilterChange={handleFilterChange}
-          filterState={filter}
-        />
+        {columns.some((column) => column.filter) && (
+          <FilterButton<T>
+            columns={columns}
+            onFilterChange={handleFilterChange}
+            filterState={filter}
+          />
+        )}
         <table className="table table-zebra w-full">
           <thead className="relative z-0">
             <tr>
