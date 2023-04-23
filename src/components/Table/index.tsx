@@ -6,6 +6,7 @@ import TruncatedText from "./TruncatedText";
 import clsx from "clsx";
 import { IColumnObject } from "./types";
 import FilterButton from "./FilterButton";
+import useDeepCompareEffect from "use-deep-compare-effect";
 
 interface TableProps<T> {
   columns: IColumnObject<T>[];
@@ -32,6 +33,7 @@ const Table = <T,>({
   const [loading, setLoading] = useState<boolean>(true);
   const [sortBy, setSortBy] = useState<keyof T>(defaultSortBy as keyof T);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(defaultSortOrder);
+
   const [filter, setFilter] =
     useState<Partial<Record<keyof T, any>>>(defaultFilter);
 
@@ -63,7 +65,7 @@ const Table = <T,>({
     });
   };
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     setFilter(defaultFilter);
   }, [defaultFilter]);
 
@@ -75,7 +77,7 @@ const Table = <T,>({
     searchParams.set("limit", itemsPerPage.toString());
     searchParams.set("sortBy", String(sortBy));
     searchParams.set("sortOrder", sortOrder);
-    if (filter) {
+    if (filter && Object.keys(filter).length > 0) {
       searchParams.set("filter", JSON.stringify(filter));
     }
 
