@@ -87,7 +87,7 @@ const Table = <T,>({
       .then((response) => response.json())
       .then(({ data, total }) => {
         setData(data);
-        setTotalPages(Math.ceil(total / itemsPerPage));
+        setTotalPages(total === 0 ? 1 : Math.ceil(total / itemsPerPage));
         setLoading(false);
       });
   }, [currentPage, filter, formatData, itemsPerPage, route, sortBy, sortOrder]);

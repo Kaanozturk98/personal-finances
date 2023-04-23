@@ -75,14 +75,12 @@ const TransactionsPage: React.FC = () => {
     });
 
   return (
-    <div className="p-8">
-      <Table<Transaction>
-        columns={columns}
-        route="transactions"
-        formatData={formatData}
-        defaultSortBy={"date"}
-      />
-    </div>
+    <Table<Transaction>
+      columns={columns}
+      route="transactions"
+      formatData={formatData}
+      defaultSortBy={"date"}
+    />
   );
 };
 
