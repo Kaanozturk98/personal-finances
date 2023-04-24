@@ -1,6 +1,6 @@
 "use client";
 import Table from "@component/components/Table";
-import { IColumnObject } from "@component/components/Table/types";
+import { IColumnObject } from "@component/types";
 import { numberWithCommas } from "@component/utils";
 import { CardType, Transaction } from "@prisma/client";
 import React from "react";
@@ -56,7 +56,7 @@ const columns: IColumnObject<Transaction>[] = [
 ];
 
 const TransactionsPage: React.FC = () => {
-  const formatData = (transactions: any[]) =>
+  const formatData = (transactions: Transaction[]) =>
     transactions.map((transaction) => {
       const formattedDate = new Intl.DateTimeFormat("en-GB", {
         day: "2-digit",

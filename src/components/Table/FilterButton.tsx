@@ -4,7 +4,7 @@ import StringFilter from "./StringFilter";
 import NumberFilter from "./NumberFilter";
 import BooleanFilter from "./BooleanFilter";
 import EnumFilter from "./EnumFilter";
-import { IColumnObject } from "./types";
+import { IColumnObject } from "@component/types";
 import DateFilter from "./DateFilter";
 
 interface FilterButtonProps<T> {
@@ -27,7 +27,7 @@ const FilterButton = <T,>({
   return (
     <div className="relative inline-block">
       <button
-        className="px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md"
+        className="px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md h-10"
         onClick={handleFilterButtonClick}
       >
         <FunnelIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />

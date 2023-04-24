@@ -1,56 +1,79 @@
-// SelectInput.tsx
 import clsx from "clsx";
 import React from "react";
+import { useFormContext, FieldValues, RegisterOptions } from "react-hook-form";
 import InputWrapper from "./InputWrapper";
+import { FieldError } from "react-hook-form/dist/types/errors";
+import { capitalizeFirstLetter } from "@component/utils";
 
 interface SelectInputProps {
   id: string;
+  name?: string;
+  rules?: RegisterOptions;
   additionalClassName?: string;
-  value: string | undefined;
-  onChange: (value: string) => void; // Update this prop
-  options?: { value: string; label: string }[];
+  value?: string | undefined;
+  onChange?: (value: string) => void;
+  optionValues?: string[];
   boolean?: boolean;
   label: string;
 }
 
 const SelectInput: React.FC<SelectInputProps> = ({
   id,
+  name,
+  rules,
   additionalClassName,
   value,
   onChange,
-  options,
+  optionValues,
   boolean = false,
   label,
 }) => {
-  const combinedOptions = boolean
-    ? [
-        { value: "", label: "Select" },
-        { value: "true", label: "True" },
-        { value: "false", label: "False" },
-      ]
-    : options;
+  const formContext = useFormContext<FieldValues>();
+
+  const isControlled = value !== undefined && onChange !== undefined;
+  const error =
+    name &&
+    formContext &&
+    (formContext.formState.errors[name] as FieldError | undefined);
+
+  const combinedOptionValues = boolean ? ["true", "false"] : optionValues;
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onChange(e.target.value); // Pass the value directly
+    if (onChange) {
+      onChange(e.target.value);
+    }
   };
+
+  const options = [
+    { label: "Select", value: "" },
+    ...(combinedOptionValues?.map((option) => ({
+      label: capitalizeFirstLetter(option),
+      value: option,
+    })) || []),
+  ];
 
   return (
     <InputWrapper id={id} label={label}>
       <select
+        {...(name && !isControlled && formContext
+          ? formContext.register(name, rules)
+          : {})}
         id={id}
+        name={name}
         className={clsx(
           "select select-bordered w-full min-w-[200px]",
           additionalClassName
         )}
-        value={value}
-        onChange={handleChange}
+        value={isControlled ? value : undefined}
+        onChange={isControlled ? handleChange : undefined}
       >
-        {combinedOptions?.map((option, index) => (
+        {options?.map((option, index) => (
           <option key={index} value={option.value}>
             {option.label}
           </option>
         ))}
       </select>
+      {error && <p className="text-red-600 mt-1">{error.message}</p>}
     </InputWrapper>
   );
 };

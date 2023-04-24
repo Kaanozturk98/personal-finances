@@ -410,3 +410,7 @@ export function numberWithCommas(n: number) {
     (parts[1] ? "." + parts[1].slice(0, 2) : "")
   );
 }
+
+export function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}

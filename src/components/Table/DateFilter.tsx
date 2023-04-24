@@ -1,6 +1,6 @@
 // DateFilter.tsx
 import React, { useState, useEffect } from "react";
-import { IColumnObject } from "./types";
+import { IColumnObject } from "@component/types";
 import DateInput from "../DateInput";
 
 interface DateFilterProps<T> {

@@ -1,22 +1,30 @@
 "use client";
 import Table from "@component/components/Table";
-import { IColumnObject } from "@component/components/Table/types";
+import { IColumnObject } from "@component/types";
 import { Category } from "@prisma/client";
 import React from "react";
 
 const columns: IColumnObject<Category>[] = [
   {
+    key: "id",
+    label: "ID",
+    sort: false,
+    type: "number",
+  },
+  {
     key: "name",
     label: "Name",
     sort: false,
     type: "string",
+    filter: true,
+    form: true,
   },
 ];
 
 const CategoriesPage: React.FC = () => {
-  const formatData = (categories: any[]) =>
+  const formatData = (categories: Category[]) =>
     categories.map((category) => {
-      return [category.name];
+      return [category.id.toString(), category.name];
     });
 
   return (
@@ -25,6 +33,8 @@ const CategoriesPage: React.FC = () => {
       route="categories"
       formatData={formatData}
       defaultSortBy={"name"}
+      add
+      update
     />
   );
 };

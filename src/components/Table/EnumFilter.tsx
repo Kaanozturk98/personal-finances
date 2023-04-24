@@ -1,6 +1,6 @@
 // EnumFilter.tsx
 import React, { useState, useEffect } from "react";
-import { IColumnObject } from "./types";
+import { IColumnObject } from "@component/types";
 import SelectInput from "../SelectInput";
 
 interface EnumFilterProps<T> {
@@ -25,16 +25,10 @@ const EnumFilter = <T,>({
     onFilterChange(column.key as keyof T, newValue);
   };
 
-  const options = [
-    { label: "Select", value: "" },
-    ...(column.options?.map((option) => ({ label: option, value: option })) ||
-      []),
-  ];
-
   return (
     <SelectInput
       id={`enum-filter-${column.key as string}`}
-      options={options}
+      optionValues={column.options}
       value={selectedValue}
       onChange={handleChange}
       label={column.label}

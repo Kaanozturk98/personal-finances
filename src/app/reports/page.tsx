@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { IColumnObject } from "@component/components/Table/types";
+import { IColumnObject } from "@component/types";
 import DateInput from "@component/components/DateInput";
 import Table from "@component/components/Table";
 import Card from "@component/components/Card";

@@ -4,11 +4,16 @@ import Pagination from "./Pagination";
 import SkeletonRow from "./SkeletonRows";
 import TruncatedText from "./TruncatedText";
 import clsx from "clsx";
-import { IColumnObject } from "./types";
 import FilterButton from "./FilterButton";
 import useDeepCompareEffect from "use-deep-compare-effect";
+import { DeepPartial, FieldValues } from "react-hook-form";
+import { IColumnObject } from "@component/types";
+import Form from "../Form";
+import Modal from "../Modal";
+import { capitalizeFirstLetter } from "@component/utils";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
-interface TableProps<T> {
+interface TableProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
   route: string;
   formatData: (data: T[]) => string[][];
@@ -16,9 +21,11 @@ interface TableProps<T> {
   defaultSortBy?: keyof T;
   defaultSortOrder?: "asc" | "desc";
   defaultFilter?: Partial<Record<keyof T, any>>;
+  add?: boolean;
+  update?: boolean;
 }
 
-const Table = <T,>({
+const Table = <T extends FieldValues>({
   columns,
   route,
   formatData,
@@ -26,6 +33,8 @@ const Table = <T,>({
   defaultSortBy = columns[0].key,
   defaultSortOrder = "asc",
   defaultFilter = {},
+  add = false,
+  update = false,
 }: TableProps<T>): React.ReactElement => {
   const [data, setData] = useState<T[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -95,15 +104,33 @@ const Table = <T,>({
   const formattedData = formatData(data);
 
   return (
-    <>
+    <div>
       <div className="flex-col space-y-4">
-        {columns.some((column) => column.filter) && (
-          <FilterButton<T>
-            columns={columns}
-            onFilterChange={handleFilterChange}
-            filterState={filter}
-          />
-        )}
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            {columns.some((column) => column.filter) && (
+              <FilterButton<T>
+                columns={columns}
+                onFilterChange={handleFilterChange}
+                filterState={filter}
+              />
+            )}
+          </div>
+          {add && (
+            <Modal
+              title={`Add ${capitalizeFirstLetter(route)}`}
+              trigger={
+                <button className="px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md h-10">
+                  <PlusIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
+                  <span className="align-middle">Add</span>
+                </button>
+              }
+            >
+              <Form<T> route={route} columns={columns} />
+            </Modal>
+          )}
+        </div>
+
         <table className="table table-zebra w-full">
           <thead className="relative z-0">
             <tr>
@@ -132,6 +159,13 @@ const Table = <T,>({
                   </div>
                 </th>
               ))}
+              {update && (
+                <th className={clsx("text-left w-32")}>
+                  <div className="inline-flex items-center w-full space-x-2">
+                    Actions
+                  </div>
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -140,22 +174,53 @@ const Table = <T,>({
               Array(itemsPerPage)
                 .fill(null)
                 .map((_, index) => (
-                  <SkeletonRow key={index} columns={columns.length} />
+                  <SkeletonRow
+                    key={index}
+                    columns={update ? columns.length + 1 : columns.length}
+                  />
                 ))
             ) : data.length > 0 ? (
-              formattedData.map((row, rowIndex) => (
-                <tr key={rowIndex} className="h-12">
-                  {row.map((cell, cellIndex) => (
-                    <td key={cellIndex} className="p-2">
-                      <TruncatedText text={cell} />
-                    </td>
-                  ))}
-                </tr>
-              ))
+              formattedData.map((row, rowIndex) => {
+                const defaultValues = {} as DeepPartial<T>;
+                if (update) {
+                  columns.forEach((column, columnIndex) => {
+                    (defaultValues as any)[column.key as keyof T] =
+                      row[columnIndex];
+                  });
+                }
+                return (
+                  <tr key={rowIndex} className="h-12">
+                    {row.map((cell, cellIndex) => (
+                      <td key={cellIndex} className="py-2 px-3">
+                        <TruncatedText text={cell} />
+                      </td>
+                    ))}
+                    {update && (
+                      <td className="py-2 px-3">
+                        <Modal
+                          title={`Update ${capitalizeFirstLetter(route)}`}
+                          trigger={
+                            <button className="px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md">
+                              <PlusIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
+                              <span className="align-middle">Update</span>
+                            </button>
+                          }
+                        >
+                          <Form<T>
+                            route={route}
+                            columns={columns}
+                            defaultValues={defaultValues}
+                          />
+                        </Modal>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })
             ) : (
               <tr>
                 <td
-                  colSpan={columns.length}
+                  colSpan={update ? columns.length + 1 : columns.length}
                   className="text-center py-4 text-base-content text-opacity-50"
                 >
                   🥺 No data available
@@ -171,7 +236,7 @@ const Table = <T,>({
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />
-    </>
+    </div>
   );
 };
 

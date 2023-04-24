@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { IColumnObject } from "./types";
 import SelectInput from "../SelectInput";
+import { IColumnObject } from "@component/types";
 
 interface BooleanFilterProps<T> {
   column: IColumnObject<T>;
