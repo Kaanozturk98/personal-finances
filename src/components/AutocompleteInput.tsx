@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
-import Select from "react-select";
+import Select, {
+  CSSObjectWithLabel,
+  GroupBase,
+  InputProps,
+  StylesConfig,
+} from "react-select";
 import { useFormContext, FieldValues, Controller } from "react-hook-form";
 import InputWrapper from "./InputWrapper";
 import { FieldError } from "react-hook-form/dist/types/errors";
 import { Category } from "@prisma/client";
+import clsx from "clsx";
 
 interface AutocompleteSelectProps {
   id: string;
@@ -16,6 +22,48 @@ interface AutocompleteSelectProps {
 }
 
 type OptionType = { value: string; label: string };
+
+const customStyles: StylesConfig<any, false, GroupBase<any>> = {
+  control: (provided: CSSObjectWithLabel, state: any) => ({
+    ...provided,
+    borderRadius: "0.375rem",
+    minHeight: "2.5rem",
+    background: state.isFocused ? "hsl(209, 54%, 23%)" : "hsl(210, 23%, 13%)",
+    borderColor: state.isFocused ? "hsl(210, 23%, 13%)" : "hsl(210, 11%, 6%)",
+    boxShadow: state.isFocused ? "0 0 0 1px hsl(210, 23%, 13%)" : "none",
+    color: "hsl(210, 15%, 90%)",
+    "&:hover": {
+      borderColor: "hsl(210, 23%, 13%)",
+    },
+  }),
+  input: (
+    provided: CSSObjectWithLabel,
+    props: InputProps<any, false, GroupBase<any>>
+  ) => ({
+    ...provided,
+    color: "hsl(210, 15%, 90%)",
+    height: "40px",
+  }),
+  menu: (provided: CSSObjectWithLabel) => ({
+    ...provided,
+    background: "hsl(210, 23%, 13%)",
+    borderRadius: "0.375rem",
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    background: state.isSelected
+      ? "hsl(209, 54%, 23%)"
+      : state.isFocused
+      ? "hsl(210, 11%, 6%)"
+      : "hsl(210, 23%, 13%)",
+    color: "hsl(210, 15%, 90%)",
+    cursor: "pointer",
+    borderRadius: "0.375rem",
+    "&:active": {
+      backgroundColor: "hsl(209, 54%, 23%)",
+    },
+  }),
+};
 
 const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
   id,
@@ -91,13 +139,14 @@ const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
               }}
               options={options}
               isClearable
+              styles={customStyles}
             />
           )}
         />
       ) : (
         <Select
           inputId={id}
-          className={additionalClassName}
+          className={clsx(additionalClassName)}
           value={
             isControlled
               ? options.find((option) => option.label === value)
@@ -106,6 +155,7 @@ const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
           onChange={handleChange}
           options={options}
           isClearable
+          styles={customStyles}
         />
       )}
       {error && <p className="text-red-600 mt-1">{error.message}</p>}
