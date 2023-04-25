@@ -11,9 +11,9 @@ export const metadata = {
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <html lang="en" data-theme="dark">
-      <body className="bg-gray-600 text-base-content">
-        <div className="flex min-h-screen">
+    <html lang="en" data-theme="dark" className="bg-gray-600">
+      <body className="text-base-content min-h-screen">
+        <div className="flex h-full">
           <div className="w-72 shadow-md">
             <SideNavbar />
           </div>

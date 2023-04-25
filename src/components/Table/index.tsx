@@ -45,6 +45,8 @@ const Table = <T extends FieldValues>({
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(defaultSortOrder);
   const [checkedRows, setCheckedRows] = useState<Record<string, boolean>>({});
 
+  console.log("checkedRows", checkedRows);
+
   const handleCheckboxChange = (rowIndex: number, value: boolean) => {
     setCheckedRows((prevCheckedRows) => ({
       ...prevCheckedRows,

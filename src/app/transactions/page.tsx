@@ -15,7 +15,6 @@ const columns: IColumnObject<TransactionWithCategory>[] = [
     label: "ID",
     sort: false,
     type: "number",
-    hidden: true,
   },
   {
     key: "description",
@@ -82,6 +81,7 @@ const TransactionsPage: React.FC = () => {
         : "-";
 
       return [
+        transaction.id.toString(),
         transaction.description,
         formattedCategory,
         transaction.cardType,
