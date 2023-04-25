@@ -2,10 +2,21 @@
 import Table from "@component/components/Table";
 import { IColumnObject } from "@component/types";
 import { numberWithCommas } from "@component/utils";
-import { CardType, Transaction } from "@prisma/client";
+import { CardType, Category, Transaction } from "@prisma/client";
 import React from "react";
 
-const columns: IColumnObject<Transaction>[] = [
+export type TransactionWithCategory = Transaction & {
+  category: Category | null;
+};
+
+const columns: IColumnObject<TransactionWithCategory>[] = [
+  {
+    key: "id",
+    label: "ID",
+    sort: false,
+    type: "number",
+    hidden: true,
+  },
   {
     key: "description",
     label: "Description",
@@ -17,6 +28,8 @@ const columns: IColumnObject<Transaction>[] = [
     label: "Category",
     sort: false,
     type: "reference",
+    form: true,
+    fetchUrl: "categories",
   },
   {
     key: "cardType",
@@ -56,16 +69,21 @@ const columns: IColumnObject<Transaction>[] = [
 ];
 
 const TransactionsPage: React.FC = () => {
-  const formatData = (transactions: Transaction[]) =>
+  const formatData = (transactions: TransactionWithCategory[]) =>
     transactions.map((transaction) => {
       const formattedDate = new Intl.DateTimeFormat("en-GB", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
       }).format(new Date(transaction.date));
+
+      const formattedCategory = transaction.category
+        ? transaction.category.name
+        : "-";
+
       return [
         transaction.description,
-        transaction.categoryId?.toString() ?? "-",
+        formattedCategory,
         transaction.cardType,
         formattedDate,
         transaction.installments.toString(),
@@ -75,11 +93,12 @@ const TransactionsPage: React.FC = () => {
     });
 
   return (
-    <Table<Transaction>
+    <Table<TransactionWithCategory>
       columns={columns}
       route="transactions"
       formatData={formatData}
       defaultSortBy={"date"}
+      update
     />
   );
 };

@@ -11,7 +11,7 @@ import { IColumnObject } from "@component/types";
 import Form from "../Form";
 import Modal from "../Modal";
 import { capitalizeFirstLetter } from "@component/utils";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { PencilSquareIcon, PlusIcon } from "@heroicons/react/24/outline";
 
 interface TableProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -103,6 +103,8 @@ const Table = <T extends FieldValues>({
 
   const formattedData = formatData(data);
 
+  const columnsToRender = columns.filter((column) => !column.hidden);
+
   return (
     <div>
       <div className="flex-col space-y-4">
@@ -134,7 +136,7 @@ const Table = <T extends FieldValues>({
         <table className="table table-zebra w-full">
           <thead className="relative z-0">
             <tr>
-              {columns.map((column, index) => (
+              {columnsToRender.map((column, index) => (
                 <th
                   key={index}
                   className={clsx(
@@ -176,7 +178,11 @@ const Table = <T extends FieldValues>({
                 .map((_, index) => (
                   <SkeletonRow
                     key={index}
-                    columns={update ? columns.length + 1 : columns.length}
+                    columns={
+                      update
+                        ? columnsToRender.length + 1
+                        : columnsToRender.length
+                    }
                   />
                 ))
             ) : data.length > 0 ? (
@@ -201,7 +207,7 @@ const Table = <T extends FieldValues>({
                           title={`Update ${capitalizeFirstLetter(route)}`}
                           trigger={
                             <button className="px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md">
-                              <PlusIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
+                              <PencilSquareIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
                               <span className="align-middle">Update</span>
                             </button>
                           }
@@ -220,7 +226,9 @@ const Table = <T extends FieldValues>({
             ) : (
               <tr>
                 <td
-                  colSpan={update ? columns.length + 1 : columns.length}
+                  colSpan={
+                    update ? columnsToRender.length + 1 : columnsToRender.length
+                  }
                   className="text-center py-4 text-base-content text-opacity-50"
                 >
                   🥺 No data available

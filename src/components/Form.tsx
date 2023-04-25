@@ -11,6 +11,7 @@ import TextInput from "./TextInput";
 import NumberInput from "./NumberInput";
 import SelectInput from "./SelectInput";
 import DateInput from "./DateInput";
+import AutocompleteInput from "./AutocompleteInput";
 
 interface FormProps<T extends FieldValues> {
   route: string;
@@ -31,17 +32,39 @@ const Form = <T extends FieldValues>({
 
   const method = mode === "create" ? "POST" : "PUT";
   const submitHandler = async (data: T) => {
+    // If the mode is "update", only include changed fields
+    let payload: Partial<T> = data;
+    if (mode === "update") {
+      payload = Object.entries(data).reduce(
+        (changedFields, [key, value]) => {
+          if (value !== defaultValues[key]) {
+            const isReferenceKey = columns.find((column) => column.key === key);
+            (changedFields as any)[key] = !isReferenceKey
+              ? value
+              : value === ""
+              ? null
+              : value;
+          }
+          return changedFields;
+        },
+        { id: parseInt(data.id) } as unknown as Partial<T>
+      );
+    }
+
     await fetch(`/api/cud-${route}`, {
       method: method,
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     })
       .then((response) => response.json()) // handle the response data
       .then((data) => console.log(data))
       .catch((error) => console.error(error));
   };
+
+  /* console.log("first", formMethods.watch()); */
+  console.log("formMethods", formMethods.getValues());
 
   return (
     <FormProvider {...formMethods}>
@@ -88,6 +111,16 @@ const Form = <T extends FieldValues>({
                   name={String(key)}
                   label={label}
                   optionValues={field.options}
+                />
+              );
+              break;
+            case "reference":
+              inputComponent = (
+                <AutocompleteInput
+                  id={String(key)}
+                  name={String(key)}
+                  label={label}
+                  fetchUrl={field.fetchUrl as string}
                 />
               );
               break;

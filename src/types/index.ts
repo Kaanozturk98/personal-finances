@@ -22,4 +22,6 @@ export type IColumnObject<T> = {
   options?: string[];
   filter?: boolean;
   form?: boolean;
+  fetchUrl?: string;
+  hidden?: boolean;
 };
