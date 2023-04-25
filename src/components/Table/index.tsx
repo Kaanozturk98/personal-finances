@@ -12,6 +12,7 @@ import Form from "../Form";
 import Modal from "../Modal";
 import { capitalizeFirstLetter } from "@component/utils";
 import { PencilSquareIcon, PlusIcon } from "@heroicons/react/24/outline";
+import CheckboxInput from "../CheckboxInput";
 
 interface TableProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -42,6 +43,14 @@ const Table = <T extends FieldValues>({
   const [loading, setLoading] = useState<boolean>(true);
   const [sortBy, setSortBy] = useState<keyof T>(defaultSortBy as keyof T);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(defaultSortOrder);
+  const [checkedRows, setCheckedRows] = useState<Record<string, boolean>>({});
+
+  const handleCheckboxChange = (rowIndex: number, value: boolean) => {
+    setCheckedRows((prevCheckedRows) => ({
+      ...prevCheckedRows,
+      [rowIndex]: value,
+    }));
+  };
 
   const [filter, setFilter] =
     useState<Partial<Record<keyof T, any>>>(defaultFilter);
@@ -136,6 +145,7 @@ const Table = <T extends FieldValues>({
         <table className="table table-zebra w-full">
           <thead className="relative z-0">
             <tr>
+              <th>{/* Empty header for the checkbox column */}</th>
               {columnsToRender.map((column, index) => (
                 <th
                   key={index}
@@ -180,8 +190,8 @@ const Table = <T extends FieldValues>({
                     key={index}
                     columns={
                       update
-                        ? columnsToRender.length + 1
-                        : columnsToRender.length
+                        ? columnsToRender.length + 2
+                        : columnsToRender.length + 1
                     }
                   />
                 ))
@@ -196,6 +206,16 @@ const Table = <T extends FieldValues>({
                 }
                 return (
                   <tr key={rowIndex} className="h-12">
+                    <td className="w-10">
+                      <CheckboxInput
+                        id={`checkbox-${rowIndex}`}
+                        checked={checkedRows[rowIndex] || false}
+                        onChange={(value) =>
+                          handleCheckboxChange(rowIndex, value)
+                        }
+                        label=""
+                      />
+                    </td>
                     {row.map((cell, cellIndex) => (
                       <td key={cellIndex} className="py-2 px-3">
                         <TruncatedText text={cell} />
@@ -227,7 +247,9 @@ const Table = <T extends FieldValues>({
               <tr>
                 <td
                   colSpan={
-                    update ? columnsToRender.length + 1 : columnsToRender.length
+                    update
+                      ? columnsToRender.length + 2
+                      : columnsToRender.length + 1
                   }
                   className="text-center py-4 text-base-content text-opacity-50"
                 >
