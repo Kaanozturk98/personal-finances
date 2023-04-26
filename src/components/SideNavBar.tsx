@@ -12,6 +12,7 @@ const navItems: NavItem[] = [
   { name: "Reports", href: "/reports" },
   { name: "Transactions", href: "/transactions" },
   { name: "Categories", href: "/categories" },
+  { name: "Upload", href: "/upload" },
 ];
 
 const SideNavbar: React.FC = () => {

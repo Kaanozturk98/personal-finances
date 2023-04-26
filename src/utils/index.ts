@@ -81,6 +81,7 @@ export function extractCreditCardTransactions(
       currency,
       cardType,
       categoryId: null,
+      parentTransactionId: null,
       isRepayment,
     };
   });
@@ -139,6 +140,7 @@ export function extractDebitCardTransactions(
         currency: currency as Currency,
         cardType,
         categoryId: null,
+        parentTransactionId: null,
         isRepayment,
       };
     } else {
@@ -171,6 +173,7 @@ export function extractDebitCardTransactions(
         currency: currency as Currency,
         cardType,
         categoryId: null,
+        parentTransactionId: null,
         isRepayment,
       };
     }
@@ -309,6 +312,11 @@ export function transformDebitCardPdfText(
   tmp = tmp.filter((e: string[]) =>
     e.some((k) => k.match(dateMatchRegex(cardType)))
   );
+  // Remove credit card payments from the debit card
+  tmp = tmp.filter(
+    (e: string[]) => !e.some((k) => k.includes("Enpara.com kredi kartı"))
+  );
+  //
   tmp = tmp.filter(
     (e: string[]) =>
       !e.some((k) =>

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState } from "react";
 
 const FileUpload: React.FC = () => {
@@ -15,9 +15,7 @@ const FileUpload: React.FC = () => {
       const reader = new FileReader();
       reader.onload = async (e: ProgressEvent<FileReader>) => {
         if (e.target && e.target.result) {
-          const base64String = e.target.result
-            .toString()
-            .split(",")[1];
+          const base64String = e.target.result.toString().split(",")[1];
           await fetch("/api/upload", {
             method: "POST",
             body: base64String,
@@ -31,7 +29,9 @@ const FileUpload: React.FC = () => {
   return (
     <div>
       <input type="file" accept="application/pdf" onChange={handleFileChange} />
-      <button onClick={handleUpload}>Upload</button>
+      <button className="btn" onClick={handleUpload}>
+        Upload
+      </button>
     </div>
   );
 };
