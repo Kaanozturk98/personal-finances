@@ -21,11 +21,42 @@ export async function GET(request: Request) {
   const whereSpent = {
     date: dateFilter,
     isRepayment: false, // Add isRepayment condition for totalSpent
+    OR: [
+      {
+        category: {
+          NOT: {
+            name: "Savings & Investments", // Filter out Savings & Investments
+          },
+        },
+      },
+      {
+        category: null, // Include transactions without a category
+      },
+    ],
   };
 
   const whereIncome = {
     date: dateFilter,
     isRepayment: true, // Add isRepayment condition for totalIncome
+    OR: [
+      {
+        category: {
+          NOT: {
+            name: "Savings & Investments", // Filter out Savings & Investments
+          },
+        },
+      },
+      {
+        category: null, // Include transactions without a category
+      },
+    ],
+  };
+
+  const whereSavingsAndInvestments = {
+    date: dateFilter,
+    category: {
+      name: "Savings & Investments", // Get only Savings & Investments
+    },
   };
 
   const totalSpent = await prisma.transaction.aggregate({
@@ -42,8 +73,16 @@ export async function GET(request: Request) {
     where: whereIncome,
   });
 
+  const savingsAndInvestments = await prisma.transaction.aggregate({
+    _sum: {
+      amount: true,
+    },
+    where: whereSavingsAndInvestments,
+  });
+
   return NextResponse.json({
     totalSpent: totalSpent._sum.amount || 0,
     totalIncome: totalIncome._sum.amount || 0,
+    savingsAndInvestments: savingsAndInvestments._sum.amount || 0,
   });
 }

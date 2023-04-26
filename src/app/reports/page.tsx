@@ -5,14 +5,20 @@ import DateInput from "@component/components/DateInput";
 import Table from "@component/components/Table";
 import Card from "@component/components/Card";
 import { numberWithCommas } from "@component/utils";
-import { Transaction } from "@prisma/client";
+import { TransactionWithCategory } from "../transactions/page";
 
-const columns: IColumnObject<Transaction>[] = [
+const columns: IColumnObject<TransactionWithCategory>[] = [
   {
     key: "description",
     label: "Description",
     sort: true,
     type: "string",
+  },
+  {
+    key: "categoryId",
+    label: "Category",
+    sort: false,
+    type: "reference",
   },
   {
     key: "date",
@@ -35,7 +41,7 @@ const columns: IColumnObject<Transaction>[] = [
   },
 ];
 
-const formatData = (data: Transaction[]): string[][] => {
+const formatData = (data: TransactionWithCategory[]): string[][] => {
   return data.map((transaction) => {
     const formattedDate = new Intl.DateTimeFormat("en-GB", {
       day: "2-digit",
@@ -43,8 +49,13 @@ const formatData = (data: Transaction[]): string[][] => {
       year: "numeric",
     }).format(new Date(transaction.date));
 
+    const formattedCategory = transaction.category
+      ? transaction.category.name
+      : "-";
+
     return [
       transaction.description,
+      formattedCategory,
       formattedDate,
       transaction.isRepayment ? "Yes" : "No",
 
@@ -57,7 +68,8 @@ const ReportsPage = () => {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [totalSpent, setTotalSpent] = useState(0);
-  const [totalIncome, setTotalIncome] = useState(0); // Add a new state variable for totalIncome
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [savingsAndInvestments, setSavingsAndInvestments] = useState(0);
 
   const handleDateChange = (type: "from" | "to", value: string) => {
     if (type === "from") {
@@ -75,10 +87,11 @@ const ReportsPage = () => {
 
     fetch(`/api/report?${searchParams.toString()}`)
       .then((response) => response.json())
-      .then(({ totalSpent, totalIncome }) => {
+      .then(({ totalSpent, totalIncome, savingsAndInvestments }) => {
         // Update fetched data to include totalIncome
         setTotalSpent(totalSpent);
-        setTotalIncome(totalIncome); // Set totalIncome state
+        setTotalIncome(totalIncome);
+        setSavingsAndInvestments(savingsAndInvestments);
       });
   }, [fromDate, toDate]);
 
@@ -111,17 +124,22 @@ const ReportsPage = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-1 mb-6">
         <Card title="Total Spent">
           <p className="text-lg font-semibold">
             {numberWithCommas(totalSpent)} TL
           </p>
         </Card>
 
-        {/* Add a new Card component for "Total Income" */}
         <Card title="Total Income">
           <p className="text-lg font-semibold">
             {numberWithCommas(totalIncome)} TL
+          </p>
+        </Card>
+
+        <Card title="Savings & Investments">
+          <p className="text-lg font-semibold">
+            {numberWithCommas(savingsAndInvestments)} TL
           </p>
         </Card>
       </div>
