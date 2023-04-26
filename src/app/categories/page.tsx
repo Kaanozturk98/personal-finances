@@ -35,6 +35,7 @@ const CategoriesPage: React.FC = () => {
       defaultSortBy={"name"}
       add
       update
+      checkbox={false}
     />
   );
 };
