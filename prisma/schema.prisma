@@ -9,19 +9,23 @@ datasource db {
 }
 
 model Transaction {
-  id           Int       @id @default(autoincrement())
-  description  String
-  amount       Float
-  date         DateTime
-  categoryId   Int?
-  installments Int       @default(1)
-  cardType     CardType
-  currency     Currency
-  category     Category? @relation(fields: [categoryId], references: [id])
-  isRepayment  Boolean   @default(false)
-  fingerprint  String    @unique
+  id                  Int           @id @default(autoincrement())
+  description         String
+  amount              Float
+  date                DateTime
+  categoryId          Int?
+  installments        Int           @default(1)
+  cardType            CardType
+  currency            Currency
+  category            Category?     @relation(fields: [categoryId], references: [id])
+  isRepayment         Boolean       @default(false)
+  fingerprint         String        @unique
+  parentTransactionId Int?          @map("parent_transaction_id")
+  parentTransaction   Transaction?  @relation("TransactionToSubTransaction", fields: [parentTransactionId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  subTransactions     Transaction[] @relation("TransactionToSubTransaction")
 
   @@index([categoryId])
+  @@index([parentTransactionId])
 }
 
 model Category {
@@ -33,6 +37,7 @@ model Category {
 enum CardType {
   DEBIT
   CREDIT
+  MIXED
 }
 
 enum Currency {

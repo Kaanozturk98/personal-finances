@@ -17,23 +17,28 @@ interface FormProps<T extends FieldValues> {
   route: string;
   columns: IColumnObject<T>[];
   defaultValues?: DeepPartial<T>;
+  mode?: "update" | "create";
+  formatPayload?: (data: Partial<T>) => Partial<T>;
 }
 
 const Form = <T extends FieldValues>({
   route,
   columns,
   defaultValues = {} as DeepPartial<T>,
+  mode,
+  formatPayload,
 }: FormProps<T>): React.ReactElement => {
   const formMethods = useForm<T>({ defaultValues });
 
   const fields = columns.filter((column) => column.form);
 
-  const mode = Object.keys(defaultValues).length > 0 ? "update" : "create";
+  if (!mode) mode = Object.keys(defaultValues).length > 0 ? "update" : "create";
 
   const method = mode === "create" ? "POST" : "PUT";
   const submitHandler = async (data: T) => {
     // If the mode is "update", only include changed fields
     let payload: Partial<T> = data;
+    payload = formatPayload ? formatPayload(payload) : payload;
     if (mode === "update") {
       payload = Object.entries(data).reduce(
         (changedFields, [key, value]) => {
@@ -51,7 +56,7 @@ const Form = <T extends FieldValues>({
       );
     }
 
-    await fetch(`/api/cud-${route}`, {
+    await fetch(`/api/${route}`, {
       method: method,
       headers: {
         "Content-Type": "application/json",
@@ -63,8 +68,8 @@ const Form = <T extends FieldValues>({
       .catch((error) => console.error(error));
   };
 
-  /* console.log("first", formMethods.watch()); */
-  console.log("formMethods", formMethods.getValues());
+  /*  console.log("first", formMethods.watch());
+  console.log("formMethods", formMethods.getValues()); */
 
   return (
     <FormProvider {...formMethods}>

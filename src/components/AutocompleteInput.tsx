@@ -74,7 +74,6 @@ const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
   label,
   fetchUrl,
 }) => {
-  console.log("name", name);
   const [options, setOptions] = useState<OptionType[]>([]);
   const formContext = useFormContext<FieldValues>();
   const isControlled = value !== undefined && onChange !== undefined;

@@ -1,14 +1,36 @@
 // Modal.tsx
+import clsx from "clsx";
 import React, { useState } from "react";
 
 interface ModalProps {
   title: string;
-  children: React.ReactNode;
   trigger: React.ReactNode;
+  children: React.ReactNode;
+  disabled?: boolean;
 }
 
-const Modal: React.FC<ModalProps> = ({ title, children, trigger }) => {
+const Modal: React.FC<ModalProps> = ({
+  title,
+  trigger,
+  children,
+  disabled = false,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const triggerWithDisabled = React.cloneElement(
+    trigger as React.ReactElement,
+    {
+      disabled: disabled,
+      "aria-disabled": disabled,
+      className: clsx(
+        (trigger as React.ReactElement).props.className,
+        disabled ? "btn-disabled" : ""
+      ),
+      onClick: () => {
+        setIsOpen(!isOpen);
+      },
+    }
+  );
 
   const modalClass = isOpen
     ? "opacity-100 pointer-events-auto"
@@ -16,7 +38,7 @@ const Modal: React.FC<ModalProps> = ({ title, children, trigger }) => {
 
   return (
     <>
-      <div onClick={() => setIsOpen(true)}>{trigger}</div>
+      {triggerWithDisabled}
       {isOpen && (
         <div
           className={`fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 transition-opacity ${modalClass}`}

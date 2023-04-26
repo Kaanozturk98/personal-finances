@@ -11,8 +11,13 @@ import { IColumnObject } from "@component/types";
 import Form from "../Form";
 import Modal from "../Modal";
 import { capitalizeFirstLetter } from "@component/utils";
-import { PencilSquareIcon, PlusIcon } from "@heroicons/react/24/outline";
+import {
+  PencilSquareIcon,
+  PlusIcon,
+  RectangleGroupIcon,
+} from "@heroicons/react/24/outline";
 import CheckboxInput from "../CheckboxInput";
+import MergeTransactions from "../MergeTransactions";
 
 interface TableProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -44,8 +49,6 @@ const Table = <T extends FieldValues>({
   const [sortBy, setSortBy] = useState<keyof T>(defaultSortBy as keyof T);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(defaultSortOrder);
   const [checkedRows, setCheckedRows] = useState<Record<string, boolean>>({});
-
-  console.log("checkedRows", checkedRows);
 
   const handleCheckboxChange = (rowIndex: number, value: boolean) => {
     setCheckedRows((prevCheckedRows) => ({
@@ -116,6 +119,9 @@ const Table = <T extends FieldValues>({
 
   const columnsToRender = columns.filter((column) => !column.hidden);
 
+  const mergeBtnDisabled =
+    Object.values(checkedRows).filter((checked) => checked).length < 2;
+
   return (
     <div>
       <div className="flex-col space-y-4">
@@ -129,19 +135,43 @@ const Table = <T extends FieldValues>({
               />
             )}
           </div>
-          {add && (
-            <Modal
-              title={`Add ${capitalizeFirstLetter(route)}`}
-              trigger={
-                <button className="px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md h-10">
-                  <PlusIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
-                  <span className="align-middle">Add</span>
-                </button>
-              }
-            >
-              <Form<T> route={route} columns={columns} />
-            </Modal>
-          )}
+          <div>
+            {route === "transactions" && (
+              <Modal
+                title={`Merge ${capitalizeFirstLetter(route)}`}
+                disabled={mergeBtnDisabled}
+                trigger={
+                  <button
+                    className={clsx(
+                      "px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md h-10"
+                    )}
+                  >
+                    <RectangleGroupIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
+                    <span className="align-middle">Merge</span>
+                  </button>
+                }
+              >
+                <MergeTransactions
+                  data={data as any}
+                  columns={columns as any}
+                  checkedRows={checkedRows}
+                />
+              </Modal>
+            )}
+            {add && (
+              <Modal
+                title={`Add ${capitalizeFirstLetter(route)}`}
+                trigger={
+                  <button className="px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md h-10">
+                    <PlusIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
+                    <span className="align-middle">Add</span>
+                  </button>
+                }
+              >
+                <Form<T> route={`cud-${route}`} columns={columns} />
+              </Modal>
+            )}
+          </div>
         </div>
 
         <table className="table table-zebra w-full">
@@ -235,7 +265,7 @@ const Table = <T extends FieldValues>({
                           }
                         >
                           <Form<T>
-                            route={route}
+                            route={`cud-${route}`}
                             columns={columns}
                             defaultValues={defaultValues}
                           />

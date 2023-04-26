@@ -390,7 +390,9 @@ export function generateFingerprint(transaction: TransactionCreate): string {
   const data = [
     transaction.description,
     transaction.amount.toFixed(2),
-    transaction.date.toISOString(),
+    typeof transaction.date === "string"
+      ? transaction.date
+      : transaction.date.toISOString(),
     transaction.categoryId || "",
     transaction.installments,
     transaction.cardType,

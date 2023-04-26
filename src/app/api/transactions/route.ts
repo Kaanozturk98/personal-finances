@@ -25,6 +25,7 @@ export async function GET(request: Request) {
   const transactions = await prisma.transaction.findMany({
     include: {
       category: true,
+      subTransactions: true,
     },
     orderBy: {
       [sortBy]: sortOrder,
@@ -32,6 +33,7 @@ export async function GET(request: Request) {
     where: {
       ...filterObj,
       date: dateFilter,
+      parentTransactionId: null,
     },
     skip,
     take: limit,
@@ -40,6 +42,7 @@ export async function GET(request: Request) {
     where: {
       ...filterObj,
       date: dateFilter,
+      parentTransactionId: null,
     },
   });
 
