@@ -15,6 +15,7 @@ interface SelectInputProps {
   optionValues?: string[];
   boolean?: boolean;
   label: string;
+  clearOption?: boolean;
 }
 
 const SelectInput: React.FC<SelectInputProps> = ({
@@ -27,6 +28,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
   optionValues,
   boolean = false,
   label,
+  clearOption = true,
 }) => {
   const formContext = useFormContext<FieldValues>();
 
@@ -45,12 +47,13 @@ const SelectInput: React.FC<SelectInputProps> = ({
   };
 
   const options = [
-    { label: "Select", value: "" },
     ...(combinedOptionValues?.map((option) => ({
       label: capitalizeFirstLetter(option),
       value: option,
     })) || []),
   ];
+
+  if (clearOption) options.unshift({ label: "Select", value: "" });
 
   return (
     <InputWrapper id={id} label={label}>

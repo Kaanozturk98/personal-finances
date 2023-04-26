@@ -47,6 +47,7 @@ const Table = <T extends FieldValues>({
   const [data, setData] = useState<T[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [perPage, setPerPage] = useState<number>(itemsPerPage);
   const [loading, setLoading] = useState<boolean>(true);
   const [sortBy, setSortBy] = useState<keyof T>(defaultSortBy as keyof T);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(defaultSortOrder);
@@ -97,10 +98,12 @@ const Table = <T extends FieldValues>({
 
   useEffect(() => {
     setLoading(true);
+    // Reset checked rows
+    setCheckedRows({});
 
     const searchParams = new URLSearchParams();
     searchParams.set("page", currentPage.toString());
-    searchParams.set("limit", itemsPerPage.toString());
+    searchParams.set("limit", perPage.toString());
     searchParams.set("sortBy", String(sortBy));
     searchParams.set("sortOrder", sortOrder);
     if (filter && Object.keys(filter).length > 0) {
@@ -113,10 +116,10 @@ const Table = <T extends FieldValues>({
       .then((response) => response.json())
       .then(({ data, total }) => {
         setData(data);
-        setTotalPages(total === 0 ? 1 : Math.ceil(total / itemsPerPage));
+        setTotalPages(total === 0 ? 1 : Math.ceil(total / perPage));
         setLoading(false);
       });
-  }, [currentPage, filter, formatData, itemsPerPage, route, sortBy, sortOrder]);
+  }, [currentPage, filter, formatData, perPage, route, sortBy, sortOrder]);
 
   const formattedData = formatData(data);
 
@@ -229,7 +232,7 @@ const Table = <T extends FieldValues>({
           <tbody>
             {loading ? (
               // Render skeleton rows here...
-              Array(itemsPerPage)
+              Array(perPage)
                 .fill(null)
                 .map((_, index) => (
                   <SkeletonRow
@@ -313,6 +316,8 @@ const Table = <T extends FieldValues>({
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
+        rowsPerPage={perPage}
+        setRowsPerPage={setPerPage}
       />
     </div>
   );
