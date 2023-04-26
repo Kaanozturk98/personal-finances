@@ -132,7 +132,6 @@ const Table = <T extends FieldValues>({
         ).length
       : false;
 
-  console.log("isParentTransactionChecked", isParentTransactionChecked);
   const mergeBtnDisabled = isNotAtleastTwoChecked || isParentTransactionChecked;
 
   return (
