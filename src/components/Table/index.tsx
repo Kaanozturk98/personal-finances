@@ -49,6 +49,7 @@ const Table = <T extends FieldValues>({
   const [sortBy, setSortBy] = useState<keyof T>(defaultSortBy as keyof T);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(defaultSortOrder);
   const [checkedRows, setCheckedRows] = useState<Record<string, boolean>>({});
+  const checkedRowsData = data.filter((_row, index) => checkedRows[index]);
 
   const handleCheckboxChange = (rowIndex: number, value: boolean) => {
     setCheckedRows((prevCheckedRows) => ({
@@ -119,8 +120,18 @@ const Table = <T extends FieldValues>({
 
   const columnsToRender = columns.filter((column) => !column.hidden);
 
-  const mergeBtnDisabled =
+  const isNotAtleastTwoChecked =
     Object.values(checkedRows).filter((checked) => checked).length < 2;
+
+  const isParentTransactionChecked =
+    route === "transactions"
+      ? !!Object.values(checkedRowsData).filter(
+          (row) => row.subTransactions.length
+        ).length
+      : false;
+
+  console.log("isParentTransactionChecked", isParentTransactionChecked);
+  const mergeBtnDisabled = isNotAtleastTwoChecked || isParentTransactionChecked;
 
   return (
     <div>
