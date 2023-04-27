@@ -21,9 +21,8 @@ const NumberFilter = <T,>({
     setSelectedValue(value || null);
   }, [value]);
 
-  const handleChange = (newValue: string) => {
-    const value = newValue ? parseInt(newValue) : null;
-    setSelectedValue(value);
+  const handleChange = (newValue: number) => {
+    setSelectedValue(newValue);
     onFilterChange(column.key as keyof T, value as number);
   };
 
