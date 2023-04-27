@@ -5,18 +5,14 @@ import { IColumnObject } from "@component/types";
 import { CardType } from "@prisma/client";
 
 interface MergeTransactionsProps {
-  data: TransactionWithCategory[];
   columns: IColumnObject<TransactionWithCategory>[];
-  checkedRows: Record<string, boolean>;
+  checkedRowsData: TransactionWithCategory[];
 }
 
 function MergeTransactions({
   columns,
-  checkedRows,
-  data,
+  checkedRowsData,
 }: MergeTransactionsProps) {
-  const checkedRowsData = data.filter((_row, index) => checkedRows[index]);
-
   const amount = checkedRowsData.reduce((_amount, row) => {
     if (row.isRepayment) {
       _amount -= Math.abs(row.amount);

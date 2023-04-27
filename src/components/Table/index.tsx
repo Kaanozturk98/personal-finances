@@ -51,14 +51,22 @@ const Table = <T extends FieldValues>({
   const [loading, setLoading] = useState<boolean>(true);
   const [sortBy, setSortBy] = useState<keyof T>(defaultSortBy as keyof T);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(defaultSortOrder);
-  const [checkedRows, setCheckedRows] = useState<Record<string, boolean>>({});
-  const checkedRowsData = data.filter((_row, index) => checkedRows[index]);
+  const [checkedRows, setCheckedRows] = useState<Record<string, T>>({});
+  const checkedRowsData = Object.values(checkedRows);
 
-  const handleCheckboxChange = (rowIndex: number, value: boolean) => {
-    setCheckedRows((prevCheckedRows) => ({
-      ...prevCheckedRows,
-      [rowIndex]: value,
-    }));
+  const handleCheckboxChange = (id: string, value: boolean) => {
+    setCheckedRows((prevCheckedRows) => {
+      const updatedCheckedRows = { ...prevCheckedRows };
+      if (value) {
+        const rowData = data.find((row) => row.id === id);
+        if (rowData) {
+          updatedCheckedRows[id] = rowData;
+        }
+      } else {
+        delete updatedCheckedRows[id];
+      }
+      return updatedCheckedRows;
+    });
   };
 
   const [filter, setFilter] =
@@ -98,8 +106,6 @@ const Table = <T extends FieldValues>({
 
   useEffect(() => {
     setLoading(true);
-    // Reset checked rows
-    setCheckedRows({});
 
     const searchParams = new URLSearchParams();
     searchParams.set("page", currentPage.toString());
@@ -119,14 +125,13 @@ const Table = <T extends FieldValues>({
         setTotalPages(total === 0 ? 1 : Math.ceil(total / perPage));
         setLoading(false);
       });
-  }, [currentPage, filter, formatData, perPage, route, sortBy, sortOrder]);
+  }, [currentPage, filter, perPage, route, sortBy, sortOrder]);
 
   const formattedData = formatData(data);
 
   const columnsToRender = columns.filter((column) => !column.hidden);
 
-  const isNotAtleastTwoChecked =
-    Object.values(checkedRows).filter((checked) => checked).length < 2;
+  const isNotAtleastTwoChecked = checkedRowsData.length < 2;
 
   const isParentTransactionChecked =
     route === "transactions"
@@ -167,9 +172,8 @@ const Table = <T extends FieldValues>({
                 }
               >
                 <MergeTransactions
-                  data={data as any}
                   columns={columns as any}
-                  checkedRows={checkedRows}
+                  checkedRowsData={checkedRowsData as any}
                 />
               </Modal>
             )}
@@ -253,15 +257,16 @@ const Table = <T extends FieldValues>({
                       row[columnIndex];
                   });
                 }
+                const objectId = data[rowIndex].id;
                 return (
                   <tr key={rowIndex} className="h-12">
                     {checkbox && (
                       <td className="w-10">
                         <CheckboxInput
                           id={`checkbox-${rowIndex}`}
-                          checked={checkedRows[rowIndex] || false}
+                          checked={!!checkedRows[objectId]}
                           onChange={(value) =>
-                            handleCheckboxChange(rowIndex, value)
+                            handleCheckboxChange(objectId, value)
                           }
                           label=""
                         />
