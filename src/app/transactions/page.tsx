@@ -101,6 +101,8 @@ const TransactionsPage: React.FC = () => {
       formatData={formatData}
       defaultSortBy={"date"}
       update
+      search={true}
+      searchKey="description"
     />
   );
 };

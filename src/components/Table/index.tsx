@@ -18,6 +18,7 @@ import {
 } from "@heroicons/react/24/outline";
 import CheckboxInput from "../CheckboxInput";
 import MergeTransactions from "../MergeTransactions";
+import TextInput from "../TextInput";
 
 interface TableProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -30,6 +31,8 @@ interface TableProps<T extends FieldValues> {
   add?: boolean;
   update?: boolean;
   checkbox?: boolean;
+  search?: boolean;
+  searchKey?: keyof T;
 }
 
 const Table = <T extends FieldValues>({
@@ -43,6 +46,8 @@ const Table = <T extends FieldValues>({
   add = false,
   update = false,
   checkbox = true,
+  search = false,
+  searchKey = "name",
 }: TableProps<T>): React.ReactElement => {
   const [data, setData] = useState<T[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -53,6 +58,11 @@ const Table = <T extends FieldValues>({
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(defaultSortOrder);
   const [checkedRows, setCheckedRows] = useState<Record<string, T>>({});
   const checkedRowsData = Object.values(checkedRows);
+  const [searchText, setSearchText] = useState<string>("");
+
+  const handleSearchChange = (text: string) => {
+    setSearchText(text);
+  };
 
   const handleCheckboxChange = (id: string, value: boolean) => {
     setCheckedRows((prevCheckedRows) => {
@@ -115,6 +125,10 @@ const Table = <T extends FieldValues>({
     if (filter && Object.keys(filter).length > 0) {
       searchParams.set("filter", JSON.stringify(filter));
     }
+    if (search && searchKey && searchText.trim() !== "") {
+      searchParams.set("searchKey", String(searchKey));
+      searchParams.set("searchText", searchText);
+    }
 
     const urlString = `/api/${route}?${searchParams.toString()}`;
 
@@ -125,7 +139,17 @@ const Table = <T extends FieldValues>({
         setTotalPages(total === 0 ? 1 : Math.ceil(total / perPage));
         setLoading(false);
       });
-  }, [currentPage, filter, perPage, route, sortBy, sortOrder]);
+  }, [
+    currentPage,
+    filter,
+    perPage,
+    route,
+    searchKey,
+    search,
+    searchText,
+    sortBy,
+    sortOrder,
+  ]);
 
   const formattedData = formatData(data);
 
@@ -146,13 +170,24 @@ const Table = <T extends FieldValues>({
     <div>
       <div className="flex-col space-y-4">
         <div className="flex justify-between items-center mb-4">
-          <div>
+          <div className="flex space-x-4">
             {columns.some((column) => column.filter) && (
               <FilterButton<T>
                 columns={columns}
                 onFilterChange={handleFilterChange}
                 filterState={filter}
               />
+            )}
+            {search && (
+              <div className="mb-4">
+                <TextInput
+                  id="search-input"
+                  label={`Search by ${searchKey as string}`}
+                  placeholder={`Search by ${searchKey as string}`}
+                  value={searchText}
+                  onChange={handleSearchChange}
+                />
+              </div>
             )}
           </div>
           <div>

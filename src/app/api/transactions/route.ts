@@ -14,6 +14,9 @@ export async function GET(request: Request) {
   const filter = searchParams.get("filter");
   const filterObj = filter ? JSON.parse(filter) : {};
 
+  const searchText = searchParams.get("searchText");
+  const searchKey = searchParams.get("searchKey");
+
   const dateFilter: { gte?: Date; lte?: Date } = {};
   if (filterObj.date && filterObj.date.from) {
     dateFilter.gte = new Date(filterObj.date.from);
@@ -34,15 +37,30 @@ export async function GET(request: Request) {
       ...filterObj,
       date: dateFilter,
       parentTransactionId: null,
+      ...(searchText && searchKey
+        ? {
+            [searchKey]: {
+              contains: searchText,
+            },
+          }
+        : {}),
     },
     skip,
     take: limit,
   });
+
   const totalTransactions = await prisma.transaction.count({
     where: {
       ...filterObj,
       date: dateFilter,
       parentTransactionId: null,
+      ...(searchText && searchKey
+        ? {
+            [searchKey]: {
+              contains: searchText,
+            },
+          }
+        : {}),
     },
   });
 
