@@ -22,7 +22,8 @@ const NumberFilter = <T,>({
   }, [value]);
 
   const handleChange = (newValue: number) => {
-    setSelectedValue(newValue);
+    const value = newValue ?? null;
+    setSelectedValue(value);
     onFilterChange(column.key as keyof T, value as number);
   };
 
