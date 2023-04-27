@@ -34,6 +34,13 @@ const columns: IColumnObject<TransactionWithCategory>[] = [
     filter: true,
   },
   {
+    key: "installments",
+    label: "Installments",
+    sort: true,
+    type: "number",
+    filter: true,
+  },
+  {
     key: "amount",
     label: "Amount",
     sort: true,
@@ -57,6 +64,7 @@ const formatData = (data: TransactionWithCategory[]): string[][] => {
       transaction.description,
       formattedCategory,
       formattedDate,
+      transaction.installments.toString(),
       transaction.isRepayment ? "Yes" : "No",
 
       `${numberWithCommas(transaction.amount)} TL`,
