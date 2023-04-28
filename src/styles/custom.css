@@ -5,3 +5,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.sticky-column {
+  position: sticky;
+  right: 0;
+  z-index: 10;
+  box-shadow: -8px 0 12px -4px rgba(0, 0, 0, 0.4);
+}

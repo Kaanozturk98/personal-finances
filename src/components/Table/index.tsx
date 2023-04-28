@@ -265,7 +265,7 @@ const Table = <T extends FieldValues>({
                   </th>
                 ))}
                 {update && (
-                  <th className={clsx("text-left w-32")}>
+                  <th className={clsx("text-left w-32 sticky-column")}>
                     <div className="inline-flex items-center w-full space-x-2">
                       Actions
                     </div>
@@ -318,7 +318,7 @@ const Table = <T extends FieldValues>({
                         </td>
                       ))}
                       {update && (
-                        <td className="py-2 px-3">
+                        <td className="py-2 px-3 sticky-column">
                           <Modal
                             title={`Update ${capitalizeFirstLetter(route)}`}
                             trigger={
