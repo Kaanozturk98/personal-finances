@@ -11,12 +11,16 @@ interface FilterButtonProps<T> {
   columns: IColumnObject<T>[];
   onFilterChange: (key: keyof T, value: any) => void;
   filterState: Partial<Record<keyof T, any>>; // Add this prop
+  handleSearchChange: (text: string) => void;
+  searchText: string;
 }
 
 const FilterButton = <T,>({
   columns,
   onFilterChange,
   filterState,
+  handleSearchChange,
+  searchText,
 }: FilterButtonProps<T>) => {
   const [showFilter, setShowFilter] = useState(false);
 
@@ -44,8 +48,8 @@ const FilterButton = <T,>({
                   <StringFilter
                     key={index}
                     column={column}
-                    onFilterChange={onFilterChange}
-                    value={filterState[column.key as keyof T]}
+                    handleSearchChange={handleSearchChange}
+                    value={searchText}
                   />
                 );
               case "number":

@@ -22,6 +22,7 @@ const columns: IColumnObject<TransactionWithCategory>[] = [
     sort: false,
     type: "string",
     form: true,
+    filter: true,
   },
   {
     key: "categoryId",

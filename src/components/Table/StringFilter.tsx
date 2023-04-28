@@ -4,13 +4,13 @@ import TextInput from "../TextInput";
 
 interface StringFilterProps<T> {
   column: IColumnObject<T>;
-  onFilterChange: (key: keyof T, value: string) => void;
+  handleSearchChange: (text: string) => void;
   value?: string;
 }
 
 const StringFilter = <T,>({
   column,
-  onFilterChange,
+  handleSearchChange,
   value,
 }: StringFilterProps<T>) => {
   const [selectedValue, setSelectedValue] = useState<string>(value || "");
@@ -21,14 +21,14 @@ const StringFilter = <T,>({
 
   const handleInputChange = (newValue: string) => {
     setSelectedValue(newValue);
-    onFilterChange(column.key as keyof T, newValue);
+    handleSearchChange(newValue);
   };
 
   return (
     <TextInput
       id={`filter-${column.key as string}`}
       label={column.label} // Pass the label
-      placeholder={`Filter by ${column.label}`}
+      placeholder={`Search by ${column.label}`}
       value={selectedValue}
       onChange={handleInputChange}
     />

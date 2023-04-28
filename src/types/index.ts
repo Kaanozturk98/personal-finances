@@ -24,4 +24,5 @@ export type IColumnObject<T> = {
   form?: boolean;
   fetchUrl?: string;
   hidden?: boolean;
+  search?: boolean;
 };

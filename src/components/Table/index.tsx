@@ -176,18 +176,9 @@ const Table = <T extends FieldValues>({
                 columns={columns}
                 onFilterChange={handleFilterChange}
                 filterState={filter}
+                handleSearchChange={handleSearchChange}
+                searchText={searchText}
               />
-            )}
-            {search && (
-              <div className="mb-4">
-                <TextInput
-                  id="search-input"
-                  label={`Search by ${searchKey as string}`}
-                  placeholder={`Search by ${searchKey as string}`}
-                  value={searchText}
-                  onChange={handleSearchChange}
-                />
-              </div>
             )}
           </div>
           <div>
