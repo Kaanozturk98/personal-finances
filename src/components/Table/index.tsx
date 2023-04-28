@@ -181,7 +181,18 @@ const Table = <T extends FieldValues>({
               />
             )}
           </div>
-          <div>
+          <div className="flex space-x-4 items-center">
+            <span
+              className="tooltip tooltip-bottom cursor-pointer"
+              data-tip={`${checkedRowsData
+                .map((row) => row[searchKey])
+                .join("***|||***")}`}
+            >
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-base-300 text-base-content">
+                {checkedRowsData.length} row
+                {checkedRowsData.length !== 1 ? "s" : ""} selected
+              </span>
+            </span>
             {route === "transactions" && (
               <Modal
                 title={`Merge ${capitalizeFirstLetter(route)}`}
@@ -219,128 +230,132 @@ const Table = <T extends FieldValues>({
           </div>
         </div>
 
-        <table className="table table-zebra w-full">
-          <thead className="relative z-0">
-            <tr>
-              {checkbox && (
-                <th>{/* Empty header for the checkbox column */}</th>
-              )}
-              {columnsToRender.map((column, index) => (
-                <th
-                  key={index}
-                  className={clsx(
-                    "text-left",
-                    column.sort ? "cursor-pointer" : ""
-                  )}
-                  onClick={
-                    column.sort ? () => handleHeaderClick(column) : undefined
-                  }
-                >
-                  <div className="inline-flex items-center w-full space-x-2">
-                    <span
-                      className={clsx(
-                        column.sort && sortBy === column.key ? "underline" : ""
-                      )}
-                    >
-                      {column.label}
-                    </span>
-                    {column.sort && sortBy === column.key && (
-                      <span>{sortOrder === "asc" ? "↑" : "↓"}</span>
-                    )}
-                  </div>
-                </th>
-              ))}
-              {update && (
-                <th className={clsx("text-left w-32")}>
-                  <div className="inline-flex items-center w-full space-x-2">
-                    Actions
-                  </div>
-                </th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              // Render skeleton rows here...
-              Array(perPage)
-                .fill(null)
-                .map((_, index) => (
-                  <SkeletonRow
+        <div className="overflow-x-auto">
+          <table className="table table-compact table-zebra w-full">
+            <thead className="relative z-0">
+              <tr>
+                {checkbox && (
+                  <th>{/* Empty header for the checkbox column */}</th>
+                )}
+                {columnsToRender.map((column, index) => (
+                  <th
                     key={index}
-                    columns={
+                    className={clsx(
+                      "text-left",
+                      column.sort ? "cursor-pointer" : ""
+                    )}
+                    onClick={
+                      column.sort ? () => handleHeaderClick(column) : undefined
+                    }
+                  >
+                    <div className="inline-flex items-center w-full space-x-2">
+                      <span
+                        className={clsx(
+                          column.sort && sortBy === column.key
+                            ? "underline"
+                            : ""
+                        )}
+                      >
+                        {column.label}
+                      </span>
+                      {column.sort && sortBy === column.key && (
+                        <span>{sortOrder === "asc" ? "↑" : "↓"}</span>
+                      )}
+                    </div>
+                  </th>
+                ))}
+                {update && (
+                  <th className={clsx("text-left w-32")}>
+                    <div className="inline-flex items-center w-full space-x-2">
+                      Actions
+                    </div>
+                  </th>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                // Render skeleton rows here...
+                Array(perPage)
+                  .fill(null)
+                  .map((_, index) => (
+                    <SkeletonRow
+                      key={index}
+                      columns={
+                        update
+                          ? columnsToRender.length + (checkbox ? 2 : 1)
+                          : columnsToRender.length + (checkbox ? 1 : 0)
+                      }
+                    />
+                  ))
+              ) : data.length > 0 ? (
+                formattedData.map((row, rowIndex) => {
+                  const defaultValues = {} as DeepPartial<T>;
+                  if (update) {
+                    columns.forEach((column, columnIndex) => {
+                      (defaultValues as any)[column.key as keyof T] =
+                        row[columnIndex];
+                    });
+                  }
+                  const objectId = data[rowIndex].id;
+                  return (
+                    <tr key={rowIndex} className="h-12">
+                      {checkbox && (
+                        <td className="w-10">
+                          <CheckboxInput
+                            id={`checkbox-${rowIndex}`}
+                            checked={!!checkedRows[objectId]}
+                            onChange={(value) =>
+                              handleCheckboxChange(objectId, value)
+                            }
+                            label=""
+                          />
+                        </td>
+                      )}
+                      {row.map((cell, cellIndex) => (
+                        <td key={cellIndex} className="py-2 px-3">
+                          <TruncatedText text={cell} />
+                        </td>
+                      ))}
+                      {update && (
+                        <td className="py-2 px-3">
+                          <Modal
+                            title={`Update ${capitalizeFirstLetter(route)}`}
+                            trigger={
+                              <button className="px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md">
+                                <PencilSquareIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
+                                <span className="align-middle">Update</span>
+                              </button>
+                            }
+                          >
+                            <Form<T>
+                              route={`cud-${route}`}
+                              columns={columns}
+                              defaultValues={defaultValues}
+                            />
+                          </Modal>
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td
+                    colSpan={
                       update
                         ? columnsToRender.length + (checkbox ? 2 : 1)
                         : columnsToRender.length + (checkbox ? 1 : 0)
                     }
-                  />
-                ))
-            ) : data.length > 0 ? (
-              formattedData.map((row, rowIndex) => {
-                const defaultValues = {} as DeepPartial<T>;
-                if (update) {
-                  columns.forEach((column, columnIndex) => {
-                    (defaultValues as any)[column.key as keyof T] =
-                      row[columnIndex];
-                  });
-                }
-                const objectId = data[rowIndex].id;
-                return (
-                  <tr key={rowIndex} className="h-12">
-                    {checkbox && (
-                      <td className="w-10">
-                        <CheckboxInput
-                          id={`checkbox-${rowIndex}`}
-                          checked={!!checkedRows[objectId]}
-                          onChange={(value) =>
-                            handleCheckboxChange(objectId, value)
-                          }
-                          label=""
-                        />
-                      </td>
-                    )}
-                    {row.map((cell, cellIndex) => (
-                      <td key={cellIndex} className="py-2 px-3">
-                        <TruncatedText text={cell} />
-                      </td>
-                    ))}
-                    {update && (
-                      <td className="py-2 px-3">
-                        <Modal
-                          title={`Update ${capitalizeFirstLetter(route)}`}
-                          trigger={
-                            <button className="px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md">
-                              <PencilSquareIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
-                              <span className="align-middle">Update</span>
-                            </button>
-                          }
-                        >
-                          <Form<T>
-                            route={`cud-${route}`}
-                            columns={columns}
-                            defaultValues={defaultValues}
-                          />
-                        </Modal>
-                      </td>
-                    )}
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td
-                  colSpan={
-                    update
-                      ? columnsToRender.length + (checkbox ? 2 : 1)
-                      : columnsToRender.length + (checkbox ? 1 : 0)
-                  }
-                  className="text-center py-4 text-base-content text-opacity-50"
-                >
-                  🥺 No data available
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                    className="text-center py-4 text-base-content text-opacity-50"
+                  >
+                    🥺 No data available
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <Pagination

@@ -17,7 +17,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
           <div className="w-72 shadow-md">
             <SideNavbar />
           </div>
-          <div className="flex-1 p-8">{children}</div>
+          <div className="flex-1 p-8 max-w-[calc(100vw-288px)]">{children}</div>
         </div>
       </body>
     </html>
