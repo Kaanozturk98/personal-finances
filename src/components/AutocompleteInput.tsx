@@ -23,7 +23,11 @@ interface AutocompleteSelectProps {
 
 type OptionType = { value: string; label: string };
 
-const customStyles: StylesConfig<any, false, GroupBase<any>> = {
+/* const customStyles: StylesConfig<any, false, GroupBase<any>> = {
+  valueContainer: (provided: CSSObjectWithLabel) => ({
+    ...provided,
+    color: "hsl(220, 13.376%, 69.216%)",
+  }),
   control: (provided: CSSObjectWithLabel, state: any) => ({
     ...provided,
     borderRadius: "0.375rem",
@@ -31,7 +35,7 @@ const customStyles: StylesConfig<any, false, GroupBase<any>> = {
     background: state.isFocused ? "hsl(209, 54%, 23%)" : "hsl(210, 23%, 13%)",
     borderColor: state.isFocused ? "hsl(210, 23%, 13%)" : "hsl(210, 11%, 6%)",
     boxShadow: state.isFocused ? "0 0 0 1px hsl(210, 23%, 13%)" : "none",
-    color: "hsl(210, 15%, 90%)",
+    color: "hsl(220, 13.376%, 69.216%)",
     "&:hover": {
       borderColor: "hsl(210, 23%, 13%)",
     },
@@ -41,7 +45,7 @@ const customStyles: StylesConfig<any, false, GroupBase<any>> = {
     props: InputProps<any, false, GroupBase<any>>
   ) => ({
     ...provided,
-    color: "hsl(210, 15%, 90%)",
+    color: "hsl(220, 13.376%, 69.216%)",
     height: "40px",
   }),
   menu: (provided: CSSObjectWithLabel) => ({
@@ -56,14 +60,14 @@ const customStyles: StylesConfig<any, false, GroupBase<any>> = {
       : state.isFocused
       ? "hsl(210, 11%, 6%)"
       : "hsl(210, 23%, 13%)",
-    color: "hsl(210, 15%, 90%)",
+    color: "hsl(220, 13.376%, 69.216%)",
     cursor: "pointer",
     borderRadius: "0.375rem",
     "&:active": {
       backgroundColor: "hsl(209, 54%, 23%)",
     },
   }),
-};
+}; */
 
 const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
   id,
@@ -138,7 +142,7 @@ const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
               }}
               options={options}
               isClearable
-              styles={customStyles}
+              /* styles={customStyles} */
             />
           )}
         />
@@ -154,7 +158,7 @@ const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
           onChange={handleChange}
           options={options}
           isClearable
-          styles={customStyles}
+          /* styles={customStyles} */
         />
       )}
       {error && <p className="text-red-600 mt-1">{error.message}</p>}
