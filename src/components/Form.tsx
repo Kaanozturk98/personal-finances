@@ -12,6 +12,7 @@ import NumberInput from "./NumberInput";
 import SelectInput from "./SelectInput";
 import DateInput from "./DateInput";
 import AutocompleteInput from "./AutocompleteInput";
+import useToast from "./Toast";
 
 interface FormProps<T extends FieldValues> {
   route: string;
@@ -19,6 +20,7 @@ interface FormProps<T extends FieldValues> {
   defaultValues?: DeepPartial<T>;
   mode?: "update" | "create";
   formatPayload?: (data: Partial<T>) => Partial<T>;
+  onSuccess?: () => void;
 }
 
 const Form = <T extends FieldValues>({
@@ -27,8 +29,10 @@ const Form = <T extends FieldValues>({
   defaultValues = {} as DeepPartial<T>,
   mode,
   formatPayload,
+  onSuccess,
 }: FormProps<T>): React.ReactElement => {
   const formMethods = useForm<T>({ defaultValues });
+  const showToast = useToast();
 
   const fields = columns.filter((column) => column.form);
 
@@ -64,7 +68,10 @@ const Form = <T extends FieldValues>({
       body: JSON.stringify(payload),
     })
       .then((response) => response.json()) // handle the response data
-      .then((data) => console.log(data))
+      .then(({ message }) => {
+        onSuccess && onSuccess();
+        showToast(message, "success");
+      })
       .catch((error) => console.error(error));
   };
 
@@ -139,10 +146,7 @@ const Form = <T extends FieldValues>({
             </div>
           );
         })}
-        <button
-          type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded"
-        >
+        <button type="submit" className="btn btn-primary">
           Submit
         </button>
       </form>

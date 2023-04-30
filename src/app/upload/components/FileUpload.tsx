@@ -1,8 +1,10 @@
 "use client";
+import useToast from "@component/components/Toast";
 import { useState } from "react";
 
 const FileUpload: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
+  const showToast = useToast();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -20,6 +22,7 @@ const FileUpload: React.FC = () => {
             method: "POST",
             body: base64String,
           });
+          showToast("PDF uploaded Successfully", "success");
         }
       };
       reader.readAsDataURL(file);

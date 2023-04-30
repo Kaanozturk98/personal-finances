@@ -1,6 +1,6 @@
 .truncate-description {
   display: inline-block;
-  max-width: 250px; /* Set the maximum width for the description cell */
+  max-width: 350px; /* Set the maximum width for the description cell */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

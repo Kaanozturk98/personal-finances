@@ -268,6 +268,9 @@ export function transformCreditCardPdfText(pdfText: string): string[] {
   });
   tmp = tmp.flat();
 
+  // Workarounds
+  tmp = tmp.filter((e: any) => !e.includes("Ödeme - Otomatik tahsilat"));
+
   return tmp;
 }
 
@@ -314,7 +317,12 @@ export function transformDebitCardPdfText(
   );
   // Remove credit card payments from the debit card
   tmp = tmp.filter(
-    (e: string[]) => !e.some((k) => k.includes("Enpara.com kredi kartı"))
+    (e: string[]) =>
+      !e.some(
+        (k) =>
+          k.includes("Enpara.com kredi kartı") ||
+          k.includes("Ödeme, Talimatlı kredi kartı ödemesi")
+      )
   );
   //
   tmp = tmp.filter(

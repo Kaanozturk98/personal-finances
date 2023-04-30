@@ -14,11 +14,11 @@ import { capitalizeFirstLetter } from "@component/utils";
 import {
   PencilSquareIcon,
   PlusIcon,
-  RectangleGroupIcon,
+  SquaresPlusIcon,
 } from "@heroicons/react/24/outline";
 import CheckboxInput from "../CheckboxInput";
 import MergeTransactions from "../MergeTransactions";
-import TextInput from "../TextInput";
+import BulkUpdate from "./BulkUpdate";
 
 interface TableProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -33,6 +33,7 @@ interface TableProps<T extends FieldValues> {
   checkbox?: boolean;
   search?: boolean;
   searchKey?: keyof T;
+  bulkUpdate?: boolean;
 }
 
 const Table = <T extends FieldValues>({
@@ -48,6 +49,7 @@ const Table = <T extends FieldValues>({
   checkbox = true,
   search = false,
   searchKey = "name",
+  bulkUpdate = false,
 }: TableProps<T>): React.ReactElement => {
   const [data, setData] = useState<T[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -59,6 +61,8 @@ const Table = <T extends FieldValues>({
   const [checkedRows, setCheckedRows] = useState<Record<string, T>>({});
   const checkedRowsData = Object.values(checkedRows);
   const [searchText, setSearchText] = useState<string>("");
+
+  const [fetchKey, setFetchKey] = useState<number>(0);
 
   const handleSearchChange = (text: string) => {
     setSearchText(text);
@@ -149,6 +153,7 @@ const Table = <T extends FieldValues>({
     searchText,
     sortBy,
     sortOrder,
+    fetchKey,
   ]);
 
   const formattedData = formatData(data);
@@ -193,6 +198,17 @@ const Table = <T extends FieldValues>({
                 {checkedRowsData.length !== 1 ? "s" : ""} selected
               </span>
             </span>
+            {bulkUpdate && (
+              <BulkUpdate<T>
+                columns={columns}
+                checkedRowsData={checkedRowsData}
+                route={`cud-${route}`}
+                onSuccess={() => {
+                  setFetchKey(fetchKey + 1);
+                  setCheckedRows({});
+                }}
+              />
+            )}
             {route === "transactions" && (
               <Modal
                 title={`Merge ${capitalizeFirstLetter(route)}`}
@@ -203,7 +219,7 @@ const Table = <T extends FieldValues>({
                       "px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md h-10"
                     )}
                   >
-                    <RectangleGroupIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
+                    <SquaresPlusIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
                     <span className="align-middle">Merge</span>
                   </button>
                 }
@@ -332,6 +348,7 @@ const Table = <T extends FieldValues>({
                               route={`cud-${route}`}
                               columns={columns}
                               defaultValues={defaultValues}
+                              onSuccess={() => setFetchKey(fetchKey + 1)}
                             />
                           </Modal>
                         </td>

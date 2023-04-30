@@ -53,7 +53,7 @@ const columns: IColumnObject<TransactionWithCategory>[] = [
     sort: true,
     type: "number",
     filter: true,
-    form: false,
+    form: true,
   },
   {
     key: "isRepayment",
@@ -104,6 +104,7 @@ const TransactionsPage: React.FC = () => {
       update
       search={true}
       searchKey="description"
+      bulkUpdate
     />
   );
 };

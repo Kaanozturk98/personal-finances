@@ -45,7 +45,7 @@ const Modal: React.FC<ModalProps> = ({
           onClick={() => setIsOpen(false)}
         >
           <div
-            className="w-full max-w-md bg-base-200 p-6 mx-4 md:mx-0 my-8 rounded-xl shadow-lg z-10 relative"
+            className="w-full max-w-md bg-base-200 p-6 mx-4 md:mx-0 my-8 rounded-xl shadow-lg relative"
             onClick={(e) => e.stopPropagation()}
           >
             <button

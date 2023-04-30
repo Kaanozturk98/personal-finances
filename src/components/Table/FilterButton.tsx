@@ -38,7 +38,7 @@ const FilterButton = <T,>({
         <span className="align-middle">Filter</span>
       </button>
       {showFilter && (
-        <div className="absolute z-10 mt-2 p-4 bg-base-200 shadow-2xl rounded border border-content flex flex-col space-y-4">
+        <div className="absolute z-50 mt-2 p-4 bg-base-200 shadow-2xl rounded border border-content flex flex-col space-y-4">
           {/* Map through columns and render different filter components */}
           {columns.map((column, index) => {
             if (!column.filter) return;

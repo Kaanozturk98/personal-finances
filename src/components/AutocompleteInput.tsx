@@ -91,7 +91,7 @@ const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
       try {
         const searchParams = new URLSearchParams();
         searchParams.set("page", "1");
-        searchParams.set("limit", "5");
+        searchParams.set("limit", "99");
         searchParams.set("sortBy", "name");
         searchParams.set("sortOrder", "asc");
 
