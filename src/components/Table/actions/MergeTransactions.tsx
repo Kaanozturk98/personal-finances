@@ -1,5 +1,5 @@
 import React from "react";
-import Form from "./Form";
+import Form from "../../Form";
 import { TransactionWithCategory } from "@component/app/transactions/page";
 import { IColumnObject } from "@component/types";
 import { CardType } from "@prisma/client";

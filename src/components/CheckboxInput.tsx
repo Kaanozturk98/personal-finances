@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   useFormContext,
   RegisterOptions,
@@ -17,6 +17,7 @@ interface CheckboxInputProps {
   label: string;
   checked?: boolean;
   onChange?: (value: boolean) => void;
+  indeterminate?: boolean;
 }
 
 const CheckboxInput: React.FC<CheckboxInputProps> = ({
@@ -27,6 +28,7 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
   label,
   checked,
   onChange,
+  indeterminate = false,
 }) => {
   const formContext = useFormContext<FieldValues>();
 
@@ -41,6 +43,13 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
       onChange(e.target.checked);
     }
   };
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.indeterminate = indeterminate;
+    }
+  }, [indeterminate]);
 
   return (
     <InputWrapper id={id} label={label}>
@@ -48,6 +57,7 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
         {...(name && !isControlled && formContext
           ? formContext.register(name, rules)
           : {})}
+        ref={inputRef}
         id={id}
         name={name}
         type="checkbox"

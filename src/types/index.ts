@@ -26,3 +26,8 @@ export type IColumnObject<T> = {
   hidden?: boolean;
   search?: boolean;
 };
+
+export type IAssignment = {
+  transactionId: string;
+  categoryId: string;
+};

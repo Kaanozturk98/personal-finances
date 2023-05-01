@@ -17,8 +17,9 @@ import {
   SquaresPlusIcon,
 } from "@heroicons/react/24/outline";
 import CheckboxInput from "../CheckboxInput";
-import MergeTransactions from "../MergeTransactions";
-import BulkUpdate from "./BulkUpdate";
+import MergeTransactions from "./actions/MergeTransactions";
+import BulkUpdate from "./actions/BulkUpdate";
+import AutoCategorizeTransactions from "./actions/AutoCategorizeTransactions";
 
 interface TableProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -58,8 +59,14 @@ const Table = <T extends FieldValues>({
   const [loading, setLoading] = useState<boolean>(true);
   const [sortBy, setSortBy] = useState<keyof T>(defaultSortBy as keyof T);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(defaultSortOrder);
+
   const [checkedRows, setCheckedRows] = useState<Record<string, T>>({});
   const checkedRowsData = Object.values(checkedRows);
+  const isAllRowsChecked =
+    data.length > 0 && data.length === Object.keys(checkedRows).length;
+  const isSomeRowsChecked =
+    Object.keys(checkedRows).length > 0 && !isAllRowsChecked;
+
   const [searchText, setSearchText] = useState<string>("");
 
   const [fetchKey, setFetchKey] = useState<number>(0);
@@ -81,6 +88,18 @@ const Table = <T extends FieldValues>({
       }
       return updatedCheckedRows;
     });
+  };
+
+  const handleGeneralCheckboxChange = () => {
+    if (isAllRowsChecked) {
+      setCheckedRows({});
+    } else {
+      const newCheckedRows: Record<string, T> = {};
+      data.forEach((row) => {
+        newCheckedRows[row.id] = row;
+      });
+      setCheckedRows(newCheckedRows);
+    }
   };
 
   const [filter, setFilter] =
@@ -210,6 +229,15 @@ const Table = <T extends FieldValues>({
               />
             )}
             {route === "transactions" && (
+              <AutoCategorizeTransactions<T>
+                checkedRowsData={checkedRowsData}
+                onSuccess={() => {
+                  setFetchKey(fetchKey + 1);
+                  setCheckedRows({});
+                }}
+              />
+            )}
+            {route === "transactions" && (
               <Modal
                 title={`Merge ${capitalizeFirstLetter(route)}`}
                 disabled={mergeBtnDisabled}
@@ -251,7 +279,15 @@ const Table = <T extends FieldValues>({
             <thead className="relative z-0">
               <tr>
                 {checkbox && (
-                  <th>{/* Empty header for the checkbox column */}</th>
+                  <th>
+                    <CheckboxInput
+                      id={`checkbox-all`}
+                      checked={isAllRowsChecked}
+                      indeterminate={isSomeRowsChecked}
+                      onChange={handleGeneralCheckboxChange}
+                      label=""
+                    />
+                  </th>
                 )}
                 {columnsToRender.map((column, index) => (
                   <th

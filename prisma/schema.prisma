@@ -34,6 +34,12 @@ model Category {
   transactions Transaction[]
 }
 
+model ChatGptUsage {
+  id           Int @id @default(autoincrement())
+  count        Int
+  total_tokens Int
+}
+
 enum CardType {
   DEBIT
   CREDIT

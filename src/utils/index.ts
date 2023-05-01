@@ -1,5 +1,5 @@
-import { TransactionCreate } from "@component/types";
-import { CardType, Currency } from "@prisma/client";
+import { IAssignment, TransactionCreate } from "@component/types";
+import { CardType, Category, Currency, Transaction } from "@prisma/client";
 import crypto from "crypto";
 
 const dateMatchRegex = (cardType: CardType) =>
@@ -431,4 +431,63 @@ export function numberWithCommas(n: number) {
 
 export function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+export async function getCategoryPredictions(
+  transactions: Transaction[],
+  categories: Category[]
+): Promise<{ assignments: IAssignment[]; usage: Record<string, number> }> {
+  const prompt = `Given the following transaction descriptions and categories, please assign the most appropriate category to each transaction:
+
+Transaction descriptions:
+${transactions
+  .map((transaction) => `${transaction.id}. ${transaction.description}`)
+  .join(",\n")}
+
+Categories:
+${categories.map((category) => `${category.id}. ${category.name}`).join(",\n")}
+
+Assignments (format: <transaction id>.<transaction description> ||  <category id>. <category name>, one per line):`;
+
+  console.log("prompt", prompt);
+  /* return prompt as any; */
+
+  const openaiApiKey = process.env.OPENAI_API_KEY;
+
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${openaiApiKey}`,
+    },
+    body: JSON.stringify({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "system", content: prompt }],
+      max_tokens: 80 * transactions.length,
+      n: 1,
+      stop: null,
+      temperature: 0,
+    }),
+  });
+
+  const data = await response.json();
+  console.log("data", data);
+  console.log("data", data.choices[0].message);
+  const assignments = data.choices[0].message.content
+    .trim()
+    .split("\n")
+    .map((assignment: string) => {
+      const [transactionWithIndex, categoryWithIndex] = assignment.split("||"); // Updated the separator to '||'
+      const transactionId = parseInt(transactionWithIndex.split(".")[0].trim());
+      const categoryId = parseInt(categoryWithIndex.split(".")[0].trim());
+
+      return {
+        transactionId,
+        categoryId,
+      };
+    });
+
+  const usage = data.usage;
+  console.log("assignments", assignments);
+  return { assignments, usage };
 }
