@@ -79,7 +79,8 @@ const ReportsPage = () => {
   const [toDate, setToDate] = useState("");
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalIncome, setTotalIncome] = useState(0);
-  const [savingsAndInvestments, setSavingsAndInvestments] = useState(0);
+  const [labels, setLabels] = useState([]);
+  const [data, setData] = useState([]);
 
   const handleDateChange = (type: "from" | "to", value: string) => {
     if (type === "from") {
@@ -97,11 +98,20 @@ const ReportsPage = () => {
 
     fetch(`/api/report?${searchParams.toString()}`)
       .then((response) => response.json())
-      .then(({ totalSpent, totalIncome, savingsAndInvestments }) => {
+      .then(({ totalSpent, totalIncome, categoryData }) => {
         // Update fetched data to include totalIncome
         setTotalSpent(totalSpent);
         setTotalIncome(totalIncome);
-        setSavingsAndInvestments(savingsAndInvestments);
+
+        const labels = categoryData.map((item: { categoryName: string }) => [
+          item.categoryName,
+        ]);
+        const data = categoryData.map(
+          (item: { categoryAmount: number }) => item.categoryAmount
+        );
+
+        setLabels(labels);
+        setData(data);
       });
   }, [fromDate, toDate]);
 
@@ -111,9 +121,6 @@ const ReportsPage = () => {
       to: toDate,
     },
   };
-
-  const data = [12, 19, 3, 5, 2, 3];
-  const labels = [["Jan"], ["Feb"], ["Mar"], ["Apr"], ["May"], ["Jun"]];
 
   return (
     <div className="container mx-auto p-6">
@@ -137,7 +144,7 @@ const ReportsPage = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-2 gap-4 mb-6">
         <Card title="Total Spent">
           <p className="text-lg font-semibold">
             {numberWithCommas(totalSpent)} TL
@@ -147,12 +154,6 @@ const ReportsPage = () => {
         <Card title="Total Income">
           <p className="text-lg font-semibold">
             {numberWithCommas(totalIncome)} TL
-          </p>
-        </Card>
-
-        <Card title="Savings & Investments">
-          <p className="text-lg font-semibold">
-            {numberWithCommas(savingsAndInvestments)} TL
           </p>
         </Card>
       </div>
@@ -165,7 +166,7 @@ const ReportsPage = () => {
         </div>
         <div className="w-1/2 h-full overflow-hidden">
           <Card title="Column Graph">
-            <ColumnGraph data={data} labels={labels} />
+            <ColumnGraph data={data} labels={labels} label="Amount (TL)" />
           </Card>
         </div>
       </div>

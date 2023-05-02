@@ -491,3 +491,23 @@ Assignments (format: <transaction id>.<transaction description> ||  <category id
   console.log("assignments", assignments);
   return { assignments, usage };
 }
+
+export function stringToHashCode(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return hash;
+}
+
+export function getValidRGBAFromString(
+  inputString: string,
+  alpha: number = 1
+): string {
+  const hash = stringToHashCode(inputString);
+  const r = (hash & 0xff0000) >> 16;
+  const g = (hash & 0x00ff00) >> 8;
+  const b = hash & 0x0000ff;
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}

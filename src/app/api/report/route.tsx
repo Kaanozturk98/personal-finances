@@ -17,46 +17,38 @@ export async function GET(request: Request) {
     dateFilter.lte = new Date(toDate);
   }
 
-  // Create a where object for filtering
   const whereSpent = {
     date: dateFilter,
-    isRepayment: false, // Add isRepayment condition for totalSpent
+    isRepayment: false,
     OR: [
       {
         category: {
           NOT: {
-            name: "Savings & Investments", // Filter out Savings & Investments
+            name: "Savings & Investments",
           },
         },
       },
-      {
-        category: null, // Include transactions without a category
-      },
+      /* {
+        category: null,
+      }, */
     ],
   };
 
   const whereIncome = {
     date: dateFilter,
-    isRepayment: true, // Add isRepayment condition for totalIncome
+    isRepayment: true,
     OR: [
       {
         category: {
           NOT: {
-            name: "Savings & Investments", // Filter out Savings & Investments
+            name: "Savings & Investments",
           },
         },
       },
-      {
-        category: null, // Include transactions without a category
-      },
+      /* {
+        category: null,
+      }, */
     ],
-  };
-
-  const whereSavingsAndInvestments = {
-    date: dateFilter,
-    category: {
-      name: "Savings & Investments", // Get only Savings & Investments
-    },
   };
 
   const totalSpent = await prisma.transaction.aggregate({
@@ -73,16 +65,41 @@ export async function GET(request: Request) {
     where: whereIncome,
   });
 
-  const savingsAndInvestments = await prisma.transaction.aggregate({
-    _sum: {
-      amount: true,
+  // Fetch all categories
+  const categories = await prisma.category.findMany({
+    where: {
+      name: {
+        not: "Income",
+      },
     },
-    where: whereSavingsAndInvestments,
   });
+
+  // Loop through each category and fetch the aggregated data for that category
+  const categoryData = await Promise.all(
+    categories.map(async (category) => {
+      const categoryTransactions = await prisma.transaction.aggregate({
+        _sum: {
+          amount: true,
+        },
+        where: {
+          date: dateFilter,
+          category: {
+            id: category.id,
+          },
+        },
+      });
+
+      return {
+        categoryId: category.id,
+        categoryName: category.name,
+        categoryAmount: categoryTransactions._sum.amount || 0,
+      };
+    })
+  );
 
   return NextResponse.json({
     totalSpent: totalSpent._sum.amount || 0,
     totalIncome: totalIncome._sum.amount || 0,
-    savingsAndInvestments: savingsAndInvestments._sum.amount || 0,
+    categoryData,
   });
 }

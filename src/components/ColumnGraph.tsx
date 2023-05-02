@@ -8,6 +8,7 @@ import {
   CategoryScale,
 } from "chart.js";
 import { ChartData, ChartOptions } from "chart.js";
+import { getValidRGBAFromString } from "@component/utils";
 
 // Register the necessary components
 Chart.register(BarElement, BarController, LinearScale, CategoryScale);
@@ -15,17 +16,20 @@ Chart.register(BarElement, BarController, LinearScale, CategoryScale);
 interface ColumnGraphProps {
   data: number[];
   labels: string[][];
+  label: string;
 }
 
-const ColumnGraph: React.FC<ColumnGraphProps> = ({ data, labels }) => {
+const ColumnGraph: React.FC<ColumnGraphProps> = ({ data, labels, label }) => {
   const chartData: ChartData<"bar", number[], string[]> = {
     labels: labels,
     datasets: [
       {
-        label: "Your Label",
+        label,
         data: data,
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
-        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: labels.map((label) =>
+          getValidRGBAFromString(label[0], 0.4)
+        ),
+        borderColor: labels.map((label) => getValidRGBAFromString(label[0], 1)),
         borderWidth: 1,
       },
     ],
