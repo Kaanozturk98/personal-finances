@@ -19,7 +19,7 @@ const columns: IColumnObject<TransactionWithCategory>[] = [
   {
     key: "description",
     label: "Description",
-    sort: false,
+    sort: true,
     type: "string",
     form: true,
     filter: true,
@@ -31,6 +31,7 @@ const columns: IColumnObject<TransactionWithCategory>[] = [
     type: "reference",
     form: true,
     fetchUrl: "categories",
+    filter: true,
   },
   {
     key: "cardType",

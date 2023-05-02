@@ -6,6 +6,8 @@ import Table from "@component/components/Table";
 import Card from "@component/components/Card";
 import { numberWithCommas } from "@component/utils";
 import { TransactionWithCategory } from "../transactions/page";
+import ColumnGraph from "@component/components/ColumnGraph";
+import PieChart from "@component/components/PieChart";
 
 const columns: IColumnObject<TransactionWithCategory>[] = [
   {
@@ -110,6 +112,9 @@ const ReportsPage = () => {
     },
   };
 
+  const data = [12, 19, 3, 5, 2, 3];
+  const labels = [["Jan"], ["Feb"], ["Mar"], ["Apr"], ["May"], ["Jun"]];
+
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-xl font-semibold mb-4">Reports</h1>
@@ -132,7 +137,7 @@ const ReportsPage = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-1 mb-6">
+      <div className="grid grid-cols-3 gap-4 mb-6">
         <Card title="Total Spent">
           <p className="text-lg font-semibold">
             {numberWithCommas(totalSpent)} TL
@@ -150,6 +155,19 @@ const ReportsPage = () => {
             {numberWithCommas(savingsAndInvestments)} TL
           </p>
         </Card>
+      </div>
+
+      <div className="flex flex-row space-x-4 mb-6">
+        <div className="w-1/2 h-full overflow-hidden">
+          <Card title="Pie Chart">
+            <PieChart data={data} labels={labels} />
+          </Card>
+        </div>
+        <div className="w-1/2 h-full overflow-hidden">
+          <Card title="Column Graph">
+            <ColumnGraph data={data} labels={labels} />
+          </Card>
+        </div>
       </div>
 
       <Table
