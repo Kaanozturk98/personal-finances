@@ -15,12 +15,14 @@ import { ToastContainer } from "react-toastify";
 const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
     <html lang="en" data-theme="dark" className="bg-gray-600">
-      <body className="text-base-content">
+      <body className="text-base-content overflow-x-hidden">
         <div className="flex min-h-screen">
-          <div className="w-72 shadow-md">
+          <div className="w-72 shadow-md hidden 2xl:block">
             <SideNavbar />
           </div>
-          <div className="flex-1 p-8 max-w-[calc(100vw-288px)]">{children}</div>
+          <div className="flex-1 p-8 max-w-[100vw] 2xl:max-w-[calc(100vw-288px)]">
+            {children}
+          </div>
         </div>
         <ToastContainer />
       </body>

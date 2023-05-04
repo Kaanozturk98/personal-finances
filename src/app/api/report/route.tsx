@@ -40,9 +40,7 @@ export async function GET(request: Request) {
     OR: [
       {
         category: {
-          NOT: {
-            name: "Savings & Investments",
-          },
+          name: "Income",
         },
       },
       /* {
@@ -83,6 +81,7 @@ export async function GET(request: Request) {
         },
         where: {
           date: dateFilter,
+          isRepayment: false,
           category: {
             id: category.id,
           },

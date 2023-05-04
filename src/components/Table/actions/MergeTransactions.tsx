@@ -27,6 +27,9 @@ function MergeTransactions({
   const finalIsRepayment = amount < 0;
 
   const defaultValues = {
+    description: checkedRowsData[0].description,
+    // categoryId: checkedRowsData[0].categoryId,
+    installments: checkedRowsData[0].installments,
     subTransactionIds: Object.values(checkedRowsData).map((row) => row.id),
     isRepayment: finalIsRepayment,
     amount: finalAmount,
