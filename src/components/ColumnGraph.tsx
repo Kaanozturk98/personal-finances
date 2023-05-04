@@ -50,7 +50,7 @@ const ColumnGraph: React.FC<ColumnGraphProps> = ({ data, labels, label }) => {
     },
     responsive: true,
     maintainAspectRatio: false,
-    minBarLength: 100,
+    minBarLength: 5,
     scales: {
       x: {
         display: true,
