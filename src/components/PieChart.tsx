@@ -37,7 +37,7 @@ const PieChart: React.FC<PieChartProps> = ({ data, labels }) => {
   const options: ChartOptions<"pie"> = {
     plugins: {
       legend: {
-        position: "left",
+        position: "bottom",
       },
     },
     responsive: true,

@@ -4,14 +4,21 @@ import {
   Chart,
   BarElement,
   BarController,
-  LinearScale,
   CategoryScale,
+  LogarithmicScale,
+  LinearScale,
 } from "chart.js";
 import { ChartData, ChartOptions } from "chart.js";
 import { getValidRGBAFromString } from "@component/utils";
 
 // Register the necessary components
-Chart.register(BarElement, BarController, LinearScale, CategoryScale);
+Chart.register(
+  BarElement,
+  BarController,
+  LinearScale,
+  LogarithmicScale,
+  CategoryScale
+);
 
 interface ColumnGraphProps {
   data: number[];
@@ -36,11 +43,21 @@ const ColumnGraph: React.FC<ColumnGraphProps> = ({ data, labels, label }) => {
   };
 
   const options: ChartOptions<"bar"> = {
-    plugins: {},
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
     responsive: true,
     maintainAspectRatio: false,
+    minBarLength: 100,
     scales: {
+      x: {
+        display: true,
+      },
       y: {
+        display: true,
+        type: "logarithmic",
         beginAtZero: true,
       },
     },

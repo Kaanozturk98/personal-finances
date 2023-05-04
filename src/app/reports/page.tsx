@@ -19,7 +19,7 @@ const columns: IColumnObject<TransactionWithCategory>[] = [
   {
     key: "categoryId",
     label: "Category",
-    sort: false,
+    sort: true,
     type: "reference",
   },
   {
