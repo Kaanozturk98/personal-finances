@@ -31,7 +31,7 @@ export default async function handler(
       return; */
 
       // Transform the parsed PDF data into rows
-      const { rows, cardType } = transformPdfText(cleanedText);
+      const { rows, cardType, pdfdate } = transformPdfText(cleanedText);
 
       /* console.log("rows", rows);
 
@@ -41,13 +41,27 @@ export default async function handler(
       // Extract transactions from the transformed PDF data
       const transactions: TransactionCreate[] = extractTransactions(
         rows,
-        cardType
+        cardType,
+        pdfdate
       );
 
-      /* console.log("transactions", transactions);
+      /* console.log("transactions", transactions); */
 
-      res.status(200).json({ transactions });
+      /* res.status(200).json({ transactions });
       return; */
+
+      // Bug fix block
+      /* for await (const transaction of transactions) {
+        try {
+          const fingerprint = generateFingerprint(transaction);
+          await prisma.transaction.create({
+            data: { ...transaction, fingerprint },
+          });
+        } catch (error) {
+          console.log("Error inserting object:", transaction);
+          console.log("Error message:", error);
+        }
+      } */
 
       // Insert the transactions into the database in batches of 100
       const batchSize = 100;

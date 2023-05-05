@@ -25,9 +25,17 @@ function parseDate(dateEl: string, cardType: CardType) {
   return date;
 }
 
+function areDatesInSameMonth(date1: Date, date2: Date) {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth()
+  );
+}
+
 export function extractCreditCardTransactions(
   rows: string[],
-  cardType: CardType
+  cardType: CardType,
+  pdfdate: Date
 ): TransactionCreate[] {
   const transactions = rows.map((line) => {
     /* if (line.includes("GETİR") || true) {
@@ -75,6 +83,11 @@ export function extractCreditCardTransactions(
     // Extract description
     // Only description left from the initial string
     const description = line.trim();
+
+    // Assign the correct date to the transactions with installments
+    if (installments > 1 && !areDatesInSameMonth(date, pdfdate)) {
+      date = pdfdate;
+    }
 
     return {
       date,
@@ -187,12 +200,17 @@ export function extractDebitCardTransactions(
 
 export function extractTransactions(
   rows: string[] | string[][],
-  cardType: CardType
+  cardType: CardType,
+  pdfdate: Date
 ): TransactionCreate[] {
   let transactions: TransactionCreate[] = [];
   switch (cardType) {
     case CardType.CREDIT:
-      transactions = extractCreditCardTransactions(rows as string[], cardType);
+      transactions = extractCreditCardTransactions(
+        rows as string[],
+        cardType,
+        pdfdate
+      );
       break;
 
     case CardType.DEBIT:
@@ -211,7 +229,7 @@ export function transformCreditCardPdfText(
   tmp.shift();
 
   tmp = tmp.map((page: any, index: number) => {
-    console.log("page", page);
+    // console.log("page", page);
     let rows: string[] = page.split("\n");
     // Remove the upper redundant rows
     rows = rows.filter((row) => !row.includes("Enpara.com Cep"));
@@ -271,7 +289,7 @@ export function transformCreditCardPdfText(
           row.includes("Seri-Sıra no :")
         )
     );
-    console.log("rows", rows);
+    // console.log("rows", rows);
 
     return rows;
   });
@@ -349,10 +367,27 @@ export function transformDebitCardPdfText(
 export function transformPdfText(pdfText: string): {
   rows: string[];
   cardType: CardType;
+  pdfdate: Date;
 } {
   const cardType = pdfText.includes("\n\nEkstre tarihi")
     ? CardType.CREDIT
     : CardType.DEBIT;
+
+  const cuttOffDate = parseDate(
+    pdfText
+      .split("\n")
+      .filter((e) => e)[0]
+      .replace("Ekstre tarihi", ""),
+    cardType
+  );
+
+  const pdfdate = new Date(cuttOffDate.setMonth(cuttOffDate.getMonth() - 1));
+
+  /*   console.log(
+    "pdfText",
+    cuttOffDate,
+    new Date(cuttOffDate.setMonth(cuttOffDate.getMonth() - 1))
+  ); */
 
   let rows: string[] = [];
   switch (cardType) {
@@ -365,7 +400,7 @@ export function transformPdfText(pdfText: string): {
       break;
   }
 
-  return { rows, cardType };
+  return { rows, cardType, pdfdate };
 }
 
 export function cleanPdfText(pdfText: string) {
@@ -395,7 +430,7 @@ export function generateFingerprint(transaction: TransactionCreate): string {
   // Get the current time
   const currentTime = new Date();
 
-  // Round the current time to the nearest minute
+  // Round the current time to the nearest second
   const roundedCurrentTime = new Date(
     currentTime.getFullYear(),
     currentTime.getMonth(),
@@ -405,10 +440,10 @@ export function generateFingerprint(transaction: TransactionCreate): string {
     currentTime.getSeconds()
   );
 
-  // Generate a key for the current minute
+  // Generate a key for the current second
   const counterKey = roundedCurrentTime.toISOString();
 
-  // Increment the counter for the current minute or initialize it with 1
+  // Increment the counter for the current second or initialize it with 1
   fingerprintCounter[counterKey] = (fingerprintCounter[counterKey] || 0) + 1;
   const counterValue = fingerprintCounter[counterKey];
 

@@ -18,11 +18,20 @@ const FileUpload: React.FC = () => {
       reader.onload = async (e: ProgressEvent<FileReader>) => {
         if (e.target && e.target.result) {
           const base64String = e.target.result.toString().split(",")[1];
-          await fetch("/api/upload", {
-            method: "POST",
-            body: base64String,
-          });
-          showToast("PDF uploaded Successfully", "success");
+          try {
+            const response = await fetch("/api/upload", {
+              method: "POST",
+              body: base64String,
+            });
+
+            if (response.ok) {
+              showToast("PDF uploaded Successfully", "success");
+            } else {
+              showToast(`Error uploading PDF: ${response.status}`, "error");
+            }
+          } catch (error) {
+            showToast("Error uploading PDF", "error");
+          }
         }
       };
       reader.readAsDataURL(file);
