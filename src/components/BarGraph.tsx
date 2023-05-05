@@ -9,7 +9,7 @@ import {
   LinearScale,
 } from "chart.js";
 import { ChartData, ChartOptions } from "chart.js";
-import { getValidRGBAFromString } from "@component/utils";
+import { getColorForLabel } from "@component/utils";
 
 // Register the necessary components
 Chart.register(
@@ -20,23 +20,21 @@ Chart.register(
   CategoryScale
 );
 
-interface ColumnGraphProps {
+interface BarGraphProps {
   data: number[];
-  labels: string[][];
+  labels: string[];
   label: string;
 }
 
-const ColumnGraph: React.FC<ColumnGraphProps> = ({ data, labels, label }) => {
-  const chartData: ChartData<"bar", number[], string[]> = {
+const BarGraph: React.FC<BarGraphProps> = ({ data, labels, label }) => {
+  const chartData: ChartData<"bar", number[], string> = {
     labels: labels,
     datasets: [
       {
         label,
         data: data,
-        backgroundColor: labels.map((label) =>
-          getValidRGBAFromString(label[0], 0.4)
-        ),
-        borderColor: labels.map((label) => getValidRGBAFromString(label[0], 1)),
+        backgroundColor: labels.map((label) => getColorForLabel(label)),
+        borderColor: labels.map((label) => getColorForLabel(label)),
         borderWidth: 1,
       },
     ],
@@ -50,15 +48,26 @@ const ColumnGraph: React.FC<ColumnGraphProps> = ({ data, labels, label }) => {
     },
     responsive: true,
     maintainAspectRatio: false,
-    minBarLength: 5,
     scales: {
       x: {
         display: true,
+        ticks: {
+          color: "#A6ADBB",
+        },
+        grid: {
+          color: "rgba(166, 173, 187, 0.4)",
+        },
       },
       y: {
         display: true,
-        type: "logarithmic",
+        type: "linear",
         beginAtZero: true,
+        ticks: {
+          color: "#A6ADBB",
+        },
+        grid: {
+          color: "rgba(166, 173, 187, 0.4)",
+        },
       },
     },
   };
@@ -72,4 +81,4 @@ const ColumnGraph: React.FC<ColumnGraphProps> = ({ data, labels, label }) => {
   );
 };
 
-export default ColumnGraph;
+export default BarGraph;

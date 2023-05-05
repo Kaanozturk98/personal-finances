@@ -30,7 +30,7 @@ const FileUpload: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="flex flex-row gap-x-4">
       <input
         type="file"
         accept="application/pdf"

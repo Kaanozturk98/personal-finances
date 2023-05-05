@@ -30,6 +30,9 @@ export function extractCreditCardTransactions(
   cardType: CardType
 ): TransactionCreate[] {
   const transactions = rows.map((line) => {
+    /* if (line.includes("GETİR") || true) {
+      console.log("line", line);
+    } */
     // Extract date
     const dateMatch = line.match(dateMatchRegex(cardType));
     let date: Date = new Date(0);
@@ -40,8 +43,8 @@ export function extractCreditCardTransactions(
     }
 
     // Extract amount and currency
-    const amountAndCurrencyRegex =
-      /\s(?:[$]|)[+-]?[0-9]{1,3}(?:[0-9]*(?:[.,][0-9]{2})?|(?:.[0-9]{3})*(?:\,[0-9]{1,2})?)\s*TL$/;
+    const amountAndCurrencyRegex = /\s(\d{1,3}\.{0,1})*\d{1,3},\d{2}\sTL$/;
+    // /\s(?:[$]|)[+-]?[0-9]{1,3}(?:[0-9]*(?:[.,][0-9]{2})?|(?:.[0-9]{3})*(?:\,[0-9]{1,2})?)\s*TL$/;
     const amountAndCurrencyMatch = line.match(amountAndCurrencyRegex);
     let amount: number = -1;
     let currency: Currency = "TL";
@@ -200,11 +203,15 @@ export function extractTransactions(
   return transactions;
 }
 
-export function transformCreditCardPdfText(pdfText: string): string[] {
+export function transformCreditCardPdfText(
+  pdfText: string,
+  cardType: CardType
+): string[] {
   let tmp: any = pdfText.split("İşlem tarihiAçıklamaTaksitTutar\n");
   tmp.shift();
 
   tmp = tmp.map((page: any, index: number) => {
+    console.log("page", page);
     let rows: string[] = page.split("\n");
     // Remove the upper redundant rows
     rows = rows.filter((row) => !row.includes("Enpara.com Cep"));
@@ -219,7 +226,8 @@ export function transformCreditCardPdfText(pdfText: string): string[] {
       if (
         index !== rows.length - 1 &&
         rows[index + 1].match(/[0-9]+\/[0-9]+\s/i) &&
-        !rows[index + 1].match(/\)[0-9]+\/[0-9]+\s/i)
+        !rows[index + 1].match(/\)[0-9]+\/[0-9]+\s/i) &&
+        !rows[index + 1].match(dateMatchRegex(cardType))
       ) {
         installmentRowIndexes.push(index + 1);
         return row.concat(" ", rows[index + 1]);
@@ -263,6 +271,7 @@ export function transformCreditCardPdfText(pdfText: string): string[] {
           row.includes("Seri-Sıra no :")
         )
     );
+    console.log("rows", rows);
 
     return rows;
   });
@@ -348,7 +357,7 @@ export function transformPdfText(pdfText: string): {
   let rows: string[] = [];
   switch (cardType) {
     case CardType.CREDIT:
-      rows = transformCreditCardPdfText(pdfText);
+      rows = transformCreditCardPdfText(pdfText, cardType);
       break;
 
     case CardType.DEBIT:
@@ -492,22 +501,52 @@ Assignments (format: <transaction id>.<transaction description> ||  <category id
   return { assignments, usage };
 }
 
-export function stringToHashCode(str: string): number {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+const colorPool = [
+  "#FF6384", // Light Red
+  "#36A2EB", // Light Blue
+  "#FFCE56", // Light Yellow
+  "#4BC0C0", // Light Turquoise
+  "#9966FF", // Light Purple
+  "#FF9F40", // Light Orange
+  "#26D07C", // Light Green
+  "#FF6A82", // Coral
+  "#6A67FF", // Periwinkle
+  "#40C057", // Green
+  "#A461D8", // Medium Purple
+  "#FFB400", // Orange
+  "#EC5D57", // Red
+  "#56B4E9", // Sky Blue
+  "#F0E442", // Yellow
+  "#D55E00", // Brown
+];
+const labelColors: Record<string, string> = {};
+export function getColorForLabel(label: string): string {
+  // Check if the color is already assigned to the label
+  if (labelColors[label]) {
+    return labelColors[label];
   }
-  return hash;
+
+  // Find the next available color from the pool
+  const color = colorPool.find((c) => !Object.values(labelColors).includes(c));
+
+  // If all colors are used, start reusing the colors
+  if (!color) {
+    const index = Object.keys(labelColors).length % colorPool.length;
+    labelColors[label] = colorPool[index];
+  } else {
+    labelColors[label] = color;
+  }
+
+  return labelColors[label];
 }
 
-export function getValidRGBAFromString(
-  inputString: string,
-  alpha: number = 1
-): string {
-  const hash = stringToHashCode(inputString);
-  const r = (hash & 0xff0000) >> 16;
-  const g = (hash & 0x00ff00) >> 8;
-  const b = hash & 0x0000ff;
-
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+// Utility function to generate month ranges for a given year
+export function getMonthRange(year: number) {
+  const monthRanges = [];
+  for (let month = 1; month <= 12; month++) {
+    const fromDate = new Date(year, month - 1, 1);
+    const toDate = new Date(year, month, 0);
+    monthRanges.push({ fromDate, toDate });
+  }
+  return monthRanges;
 }

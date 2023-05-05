@@ -97,9 +97,6 @@ export async function GET(request: Request) {
         },
       });
 
-      console.log("where", whereCategory(false));
-      console.log("where", whereCategory(true));
-
       const categoryTransactionsNotRepayment =
         await prisma.transaction.aggregate({
           _sum: {
@@ -114,16 +111,6 @@ export async function GET(request: Request) {
         },
         where: whereCategory(true),
       });
-
-      console.log("category", category);
-      console.log(
-        "categoryTransactionsNotRepayment._sum",
-        categoryTransactionsNotRepayment._sum
-      );
-      console.log(
-        "categoryTransactionsRepayment._sum",
-        categoryTransactionsRepayment._sum
-      );
 
       const categoryAmount =
         (categoryTransactionsNotRepayment._sum.amount || 0) -

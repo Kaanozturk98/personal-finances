@@ -1,11 +1,11 @@
 // pages/upload.tsx
-import React from 'react';
-import FileUpload from './components/FileUpload';
+import React from "react";
+import FileUpload from "./components/FileUpload";
 
 const UploadPage: React.FC = () => {
   return (
-    <div>
-      <h1>Upload your PDF</h1>
+    <div className="flex flex-col gap-y-4">
+      <h1 className="text-xl font-semibold">Upload your PDF</h1>
       <FileUpload />
     </div>
   );

@@ -9,26 +9,24 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { getValidRGBAFromString } from "@component/utils";
+import { getColorForLabel } from "@component/utils";
 
 // Register required elements, controllers and plugins
 Chart.register(ArcElement, PieController, Tooltip, Legend);
 
 interface PieChartProps {
   data: number[];
-  labels: string[][];
+  labels: string[];
 }
 
 const PieChart: React.FC<PieChartProps> = ({ data, labels }) => {
-  const chartData: ChartData<"pie", number[], string[]> = {
+  const chartData: ChartData<"pie", number[], string> = {
     labels: labels,
     datasets: [
       {
         data: data,
-        backgroundColor: labels.map((label) =>
-          getValidRGBAFromString(label[0], 0.4)
-        ),
-        borderColor: labels.map((label) => getValidRGBAFromString(label[0], 1)),
+        backgroundColor: labels.map((label) => getColorForLabel(label)),
+        borderColor: labels.map((label) => getColorForLabel(label)),
         borderWidth: 1,
       },
     ],
@@ -38,6 +36,9 @@ const PieChart: React.FC<PieChartProps> = ({ data, labels }) => {
     plugins: {
       legend: {
         position: "bottom",
+        labels: {
+          color: "#A6ADBB",
+        },
       },
     },
     responsive: true,

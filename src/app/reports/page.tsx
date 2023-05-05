@@ -6,7 +6,7 @@ import Table from "@component/components/Table";
 import Card from "@component/components/Card";
 import { numberWithCommas } from "@component/utils";
 import { TransactionWithCategory } from "../transactions/page";
-import ColumnGraph from "@component/components/ColumnGraph";
+import BarGraph from "@component/components/BarGraph";
 import PieChart from "@component/components/PieChart";
 
 const columns: IColumnObject<TransactionWithCategory>[] = [
@@ -96,16 +96,16 @@ const ReportsPage = () => {
     if (fromDate) searchParams.set("fromDate", fromDate);
     if (toDate) searchParams.set("toDate", toDate);
 
-    fetch(`/api/report?${searchParams.toString()}`)
+    fetch(`/api/reports?${searchParams.toString()}`)
       .then((response) => response.json())
       .then(({ totalSpent, totalIncome, categoryData }) => {
         // Update fetched data to include totalIncome
         setTotalSpent(totalSpent);
         setTotalIncome(totalIncome);
 
-        const labels = categoryData.map((item: { categoryName: string }) => [
-          item.categoryName,
-        ]);
+        const labels = categoryData.map(
+          (item: { categoryName: string }) => item.categoryName
+        );
         const data = categoryData.map(
           (item: { categoryAmount: number }) => item.categoryAmount
         );
@@ -166,7 +166,7 @@ const ReportsPage = () => {
         </div>
         <div className="w-1/2 h-full overflow-hidden">
           <Card title="Column Graph">
-            <ColumnGraph data={data} labels={labels} label="Amount (TL)" />
+            <BarGraph data={data} labels={labels} label="Amount (TL)" />
           </Card>
         </div>
       </div>
