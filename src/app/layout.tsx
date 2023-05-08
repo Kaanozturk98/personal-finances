@@ -17,10 +17,10 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
     <html lang="en" data-theme="dark" className="bg-gray-600">
       <body className="text-base-content overflow-x-hidden">
         <div className="flex min-h-screen">
-          <div className="w-72 shadow-md hidden 2xl:block">
+          <div className="w-72 shadow-md hidden xl:block">
             <SideNavbar />
           </div>
-          <div className="flex-1 p-8 max-w-[100vw] 2xl:max-w-[calc(100vw-288px)]">
+          <div className="flex-1 p-8 max-w-[100vw] xl:max-w-[calc(100vw-288px)]">
             {children}
           </div>
         </div>

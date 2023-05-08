@@ -11,7 +11,7 @@ const Analytics = () => {
     { label: string; data: number[]; backgroundColor: string }[]
   >([]);
   const [labels, setLabels] = useState<string[]>([]);
-  const [year, setYear] = useState<number>(2022 /* new Date().getFullYear() */);
+  const [year, setYear] = useState<number>(new Date().getFullYear());
 
   useEffect(() => {
     // Fetch the data from your API endpoint
@@ -37,8 +37,8 @@ const Analytics = () => {
         };
       });
 
-      setDatasets(datasets);
       setLabels(labels);
+      setDatasets(datasets);
     };
 
     fetchData();
@@ -62,7 +62,7 @@ const Analytics = () => {
           clearOption={false}
         />
       </div>
-      {datasets && labels ? (
+      {datasets.length > 0 && labels.length > 0 ? (
         <div className="h-[calc(100vh-216px)]">
           <Card>
             <StackedBarChart datasets={datasets} labels={labels} />
