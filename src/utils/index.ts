@@ -505,7 +505,7 @@ Assignments (format: <transaction id>.<transaction description> ||  <category id
       Authorization: `Bearer ${openaiApiKey}`,
     },
     body: JSON.stringify({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4",
       messages: [{ role: "system", content: prompt }],
       max_tokens: 80 * transactions.length,
       n: 1,
@@ -514,9 +514,14 @@ Assignments (format: <transaction id>.<transaction description> ||  <category id
     }),
   });
 
+    // Check if the response is not OK
+    if (!response.ok) 
+      throw new Error(`Error fetching category predictions: ${response.statusText}`);
+    
+
   const data = await response.json();
-  console.log("data", data);
-  console.log("data", data.choices[0].message);
+  /* console.log("data", data);
+  console.log("data", data.choices[0].message); */
   const assignments = data.choices[0].message.content
     .trim()
     .split("\n")
