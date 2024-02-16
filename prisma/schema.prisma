@@ -16,6 +16,7 @@ model Transaction {
   categoryId          Int?
   installments        Int           @default(1)
   cardType            CardType
+  bank                Bank          @default(ENPARA) // Set default value for bank
   currency            Currency
   category            Category?     @relation(fields: [categoryId], references: [id])
   isRepayment         Boolean       @default(false)
@@ -48,4 +49,9 @@ enum CardType {
 
 enum Currency {
   TL
+}
+
+enum Bank {
+  ENPARA
+  YAPI_KREDI
 }

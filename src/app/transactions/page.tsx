@@ -2,7 +2,7 @@
 import Table from "@component/components/Table";
 import { IColumnObject } from "@component/types";
 import { numberWithCommas } from "@component/utils";
-import { CardType, Category, Transaction } from "@prisma/client";
+import { Bank, CardType, Category, Transaction } from "@prisma/client";
 import React from "react";
 
 export type TransactionWithCategory = Transaction & {
@@ -34,9 +34,17 @@ const columns: IColumnObject<TransactionWithCategory>[] = [
     filter: true,
   },
   {
+    key: "bank",
+    label: "Bank",
+    sort: false,
+    type: "enum",
+    filter: true,
+    options: Object.values(Bank),
+  },
+  {
     key: "cardType",
     label: "Card Type",
-    sort: true,
+    sort: false,
     type: "enum",
     filter: true,
     options: Object.values(CardType),
@@ -88,6 +96,7 @@ const TransactionsPage: React.FC = () => {
         transaction.id.toString(),
         transaction.description,
         formattedCategory,
+        transaction.bank,
         transaction.cardType,
         formattedDate,
         transaction.installments.toString(),

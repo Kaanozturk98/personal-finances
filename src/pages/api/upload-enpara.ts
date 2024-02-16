@@ -6,8 +6,8 @@ import {
   transformPdfText,
   extractTransactions,
   cleanPdfText,
-  generateFingerprint,
-} from "@component/utils";
+} from "@component/utils/upload-enpara";
+import { generateFingerprint } from "@component/utils";
 
 const prisma = new PrismaClient();
 

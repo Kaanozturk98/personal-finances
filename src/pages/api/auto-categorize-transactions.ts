@@ -53,7 +53,7 @@ export default async function handler(
         },
       });
 
-      const estimatedCostPerTotalToken = 0.03 * 0.8 + 0.06 * 0.2
+      const estimatedCostPerTotalToken = 0.03 * 0.8 + 0.06 * 0.2;
 
       res.status(200).json({
         message: `Transactions categorized successfully. Cost: $${
@@ -62,7 +62,7 @@ export default async function handler(
         assignments: allAssignments,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       console.error("Error categorizing transactions", error);
       res.status(500).json({ message: "Error categorizing transactions" });
     }
