@@ -25,43 +25,15 @@ export default async function handler(
       // Replace problematic characters with the correct ones
       const cleanedText = cleanPdfText(pdfData.text);
 
-      /* console.log("cleanedText", cleanedText);
-
-      res.status(200).json({ cleanedText });
-      return; */
-
       // Transform the parsed PDF data into rows
-      const { rows, cardType, pdfdate } = transformPdfText(cleanedText);
-
-      /* console.log("rows", rows);
-
-      res.status(200).json({ rows, cardType });
-      return; */
+      const { rows, cardType, pdfDate } = transformPdfText(cleanedText);
 
       // Extract transactions from the transformed PDF data
       const transactions: TransactionCreate[] = extractTransactions(
         rows,
         cardType,
-        pdfdate
+        pdfDate
       );
-
-      /* console.log("transactions", transactions); */
-
-      /* res.status(200).json({ transactions });
-      return; */
-
-      // Bug fix block
-      /* for await (const transaction of transactions) {
-        try {
-          const fingerprint = generateFingerprint(transaction);
-          await prisma.transaction.create({
-            data: { ...transaction, fingerprint },
-          });
-        } catch (error) {
-          console.log("Error inserting object:", transaction);
-          console.log("Error message:", error);
-        }
-      } */
 
       // Insert the transactions into the database in batches of 100
       const batchSize = 100;

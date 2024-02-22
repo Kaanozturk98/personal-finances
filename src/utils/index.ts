@@ -1,5 +1,5 @@
 import { IAssignment, TransactionCreate } from "@component/types";
-import { Category, Transaction } from "@prisma/client";
+import { CardType, Category, Transaction } from "@prisma/client";
 import { fingerprintCounter } from "./upload-enpara";
 import crypto from "crypto";
 
@@ -170,4 +170,26 @@ export function generateFingerprint(transaction: TransactionCreate): string {
 
   const hash = crypto.createHash("md5").update(data).digest("hex");
   return hash;
+}
+
+export function areDatesInSameMonth(date1: Date, date2: Date) {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth()
+  );
+}
+
+export function parseDate(dateEl: string, cardType: CardType) {
+  const [day, month, year] = dateEl.split("/");
+  const date = new Date(
+    Date.UTC(
+      parseInt((cardType === CardType.DEBIT ? "20" : "") + year),
+      parseInt(month) - 1,
+      parseInt(day),
+      0,
+      0,
+      0
+    )
+  );
+  return date;
 }

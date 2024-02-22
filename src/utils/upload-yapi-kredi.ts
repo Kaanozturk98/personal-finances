@@ -1,12 +1,7 @@
 import { Bank, CardType, Currency } from "@prisma/client";
-import { parseDate, parseAmount } from "@component/utils/upload-enpara";
 import { TransactionCreate } from "@component/types";
-
-// Define the transactions to filter out as a constant
-const transactionsToFilter = new Set([
-  "Önceki Dönem TL Hesap Özeti Borcu",
-  "ÖDEME-İNTERNET BANKACILIĞI",
-]);
+import { parseDate, areDatesInSameMonth } from ".";
+import { parseAmount } from "./upload-enpara";
 
 function getBillingPeriodDates(billingDateStr: string): [Date, Date] {
   const billingDate = parseDate(billingDateStr, CardType.CREDIT);
@@ -36,6 +31,12 @@ export function processExcelFile(rows: string[][]): TransactionCreate[] {
   // Assume the billing period date is in the third column of the 13th row
   const billingPeriodDates = getBillingPeriodDates(rows[12][2]);
 
+  // Define the transactions to filter out as a constant
+  const transactionsToFilter = new Set([
+    "Önceki Dönem TL Hesap Özeti Borcu",
+    "ÖDEME-İNTERNET BANKACILIĞI",
+  ]);
+
   // Skip the header and filter out unwanted transactions
   return rows
     .slice(16)
@@ -46,12 +47,14 @@ export function processExcelFile(rows: string[][]): TransactionCreate[] {
     )
     .map((row) => {
       let date = parseDate(row[0], CardType.CREDIT);
-      date = adjustDateToBillingPeriod(billingPeriodDates[0]);
-
       const description = row[1];
       const amount = parseAmount(row[3]);
       const isRepayment = row[3].startsWith("+");
       const installments = extractInstallmentNumber(description);
+
+      // Assign the correct date to the transactions with installments
+      if (installments > 1 && !areDatesInSameMonth(date, billingPeriodDates[0]))
+        date = billingPeriodDates[0];
 
       return {
         date,

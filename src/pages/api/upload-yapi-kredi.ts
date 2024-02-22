@@ -30,17 +30,9 @@ export default async function handler(
         defval: "",
       });
 
-      /* console.log("rows", rows);
-
-      throw new Error("Test error"); */
-
       const transactions: TransactionCreate[] = processExcelFile(
         rows as unknown as string[][]
       );
-
-      /* console.log("transactions", transactions);
-
-        throw new Error("Test error"); */
 
       // Insert the transactions into the database in batches
       const batchSize = 100;

@@ -1,5 +1,6 @@
 import { TransactionCreate } from "@component/types";
 import { Bank, CardType, Currency } from "@prisma/client";
+import { parseDate, areDatesInSameMonth } from ".";
 
 const dateMatchRegex = (cardType: CardType) =>
   cardType === CardType.DEBIT ? /^\d{2}\/\d{2}\/\d{2}/ : /^\d{2}\/\d{2}\/\d{4}/;
@@ -9,32 +10,10 @@ export function parseAmount(amountString: string) {
   return parseFloat(normalizedAmount);
 }
 
-export function parseDate(dateEl: string, cardType: CardType) {
-  const [day, month, year] = dateEl.split("/");
-  const date = new Date(
-    Date.UTC(
-      parseInt((cardType === CardType.DEBIT ? "20" : "") + year),
-      parseInt(month) - 1,
-      parseInt(day),
-      0,
-      0,
-      0
-    )
-  );
-  return date;
-}
-
-function areDatesInSameMonth(date1: Date, date2: Date) {
-  return (
-    date1.getFullYear() === date2.getFullYear() &&
-    date1.getMonth() === date2.getMonth()
-  );
-}
-
 export function extractCreditCardTransactions(
   rows: string[],
   cardType: CardType,
-  pdfdate: Date
+  pdfDate: Date
 ): TransactionCreate[] {
   const transactions = rows.map((line) => {
     /* if (line.includes("GETİR") || true) {
@@ -84,9 +63,7 @@ export function extractCreditCardTransactions(
     const description = line.trim();
 
     // Assign the correct date to the transactions with installments
-    if (installments > 1 && !areDatesInSameMonth(date, pdfdate)) {
-      date = pdfdate;
-    }
+    if (installments > 1 && !areDatesInSameMonth(date, pdfDate)) date = pdfDate;
 
     return {
       date,
@@ -203,7 +180,7 @@ export function extractDebitCardTransactions(
 export function extractTransactions(
   rows: string[] | string[][],
   cardType: CardType,
-  pdfdate: Date
+  pdfDate: Date
 ): TransactionCreate[] {
   let transactions: TransactionCreate[] = [];
   switch (cardType) {
@@ -211,7 +188,7 @@ export function extractTransactions(
       transactions = extractCreditCardTransactions(
         rows as string[],
         cardType,
-        pdfdate
+        pdfDate
       );
       break;
 
@@ -298,7 +275,11 @@ export function transformCreditCardPdfText(
   tmp = tmp.flat();
 
   // Workarounds
-  tmp = tmp.filter((e: any) => !e.includes("Ödeme - Otomatik tahsilat"));
+  const transactionsToFilter = new Set([
+    "Ödeme - Otomatik tahsilat",
+    "Bir önceki ekstre bakiyeniz",
+  ]);
+  tmp = tmp.filter((e: any) => !transactionsToFilter.has(e));
 
   return tmp;
 }
@@ -336,29 +317,30 @@ export function transformDebitCardPdfText(
 
     return rows;
   });
+
   tmp = tmp.flat();
-  // Workarounds
+
+  // Define the set of transactions to filter
+  const transactionsToFilter = new Set([
+    "Alış/Satış",
+    "Enpara.com kredi kartı",
+    "Ödeme, Talimatlı kredi kartı ödemesi",
+    "itibarıyla QNB Finansbank dışından gelen yabancı para transferi (SWIFT) ücreti",
+  ]);
+
+  // Existing code
   tmp = tmp.filter((e: string[]) => e.length);
-  tmp = tmp.filter((e: string[]) => !e.some((k) => k.includes("Alış/Satış")));
   // Remove if any of the rows arrays don't include a date
   tmp = tmp.filter((e: string[]) =>
     e.some((k) => k.match(dateMatchRegex(cardType)))
   );
-  // Remove credit card payments from the debit card
-  tmp = tmp.filter(
-    (e: string[]) =>
-      !e.some(
-        (k) =>
-          k.includes("Enpara.com kredi kartı") ||
-          k.includes("Ödeme, Talimatlı kredi kartı ödemesi")
-      )
-  );
-  //
+
+  // Refactored filter condition using transactionsToFilter set
   tmp = tmp.filter(
     (e: string[]) =>
       !e.some((k) =>
-        k.includes(
-          "itibarıyla QNB Finansbank dışından gelen yabancı para transferi (SWIFT) ücreti"
+        Array.from(transactionsToFilter).some((filterItem) =>
+          k.includes(filterItem)
         )
       )
   );
@@ -369,7 +351,7 @@ export function transformDebitCardPdfText(
 export function transformPdfText(pdfText: string): {
   rows: string[];
   cardType: CardType;
-  pdfdate: Date;
+  pdfDate: Date;
 } {
   const cardType = pdfText.includes("\n\nEkstre tarihi")
     ? CardType.CREDIT
@@ -383,13 +365,7 @@ export function transformPdfText(pdfText: string): {
     cardType
   );
 
-  const pdfdate = new Date(cuttOffDate.setMonth(cuttOffDate.getMonth() - 1));
-
-  /*   console.log(
-    "pdfText",
-    cuttOffDate,
-    new Date(cuttOffDate.setMonth(cuttOffDate.getMonth() - 1))
-  ); */
+  const pdfDate = new Date(cuttOffDate.setMonth(cuttOffDate.getMonth() - 1));
 
   let rows: string[] = [];
   switch (cardType) {
@@ -402,7 +378,7 @@ export function transformPdfText(pdfText: string): {
       break;
   }
 
-  return { rows, cardType, pdfdate };
+  return { rows, cardType, pdfDate };
 }
 
 export function cleanPdfText(pdfText: string) {
