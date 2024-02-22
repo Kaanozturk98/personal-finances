@@ -41,6 +41,33 @@ model ChatGptUsage {
   total_tokens Int
 }
 
+model AssetType {
+  id             Int           @id @default(autoincrement())
+  name           String
+  shortName      String
+  valuationInUSD Float? // Optional valuation in USD
+  valuationInTRY Float? // Optional valuation in TRY
+  assetCategory  AssetCategory
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  holdings AssetHolding[]
+
+  @@index([valuationInUSD, valuationInTRY])
+}
+
+model AssetHolding {
+  id          Int             @id @default(autoincrement())
+  quantity    Float // Quantity of the asset held
+  assetTypeId Int
+  assetType   AssetType       @relation(fields: [assetTypeId], references: [id])
+  holdingForm HoldingForm // Enum to represent the form (cash, bank account, etc.)
+  platform    HoldingPlatform // Enum for the platform
+  createdAt   DateTime        @default(now())
+
+  @@index([assetTypeId, holdingForm, platform])
+}
+
 enum CardType {
   DEBIT
   CREDIT
@@ -54,4 +81,27 @@ enum Currency {
 enum Bank {
   ENPARA
   YAPI_KREDI
+}
+
+enum AssetCategory {
+  CURRENCY
+  STOCK
+  GOLD
+  OTHER
+}
+
+enum HoldingForm {
+  CASH
+  BANK_ACCOUNT
+  INVESTMENT_ACCOUNT
+  OTHER
+}
+
+enum HoldingPlatform {
+  ENPARA
+  YAPI_KREDI
+  DEEL
+  MIDAS
+  PHYSICAL // Special identifier for cash holdings
+  OTHER // For any other platforms not listed
 }

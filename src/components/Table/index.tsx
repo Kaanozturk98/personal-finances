@@ -271,6 +271,9 @@ const Table = <T extends FieldValues>({
                 <Form<T> route={`cud-${route}`} columns={columns} />
               </Modal>
             )}
+            {
+              // if delete is enabled, add a delete selected button here
+            }
           </div>
         </div>
 

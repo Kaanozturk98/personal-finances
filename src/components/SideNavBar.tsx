@@ -13,6 +13,8 @@ const navItems: NavItem[] = [
   { name: "Analytics", href: "/analytics" },
   { name: "Transactions", href: "/transactions" },
   { name: "Categories", href: "/categories" },
+  { name: "Asset Types", href: "/asset-types" },
+  { name: "Asset Holdings", href: "/asset-holdings" },
   { name: "Upload", href: "/upload" },
 ];
 
