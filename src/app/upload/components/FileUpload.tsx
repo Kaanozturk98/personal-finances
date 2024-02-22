@@ -2,37 +2,40 @@
 import useToast from "@component/components/Toast";
 import { useState } from "react";
 
-const FileUpload: React.FC = () => {
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [xlsFile, setXlsFile] = useState<File | null>(null);
+interface FileUploadProps {
+  fileType: string; // e.g., "application/pdf" or ".xls, .xlsx"
+  endpoint: string; // e.g., "upload-enpara" or "upload-yapi-kredi"
+  label: string; // e.g., "Upload Enpara" or "Upload Yapı Kredi"
+}
+
+const FileUpload: React.FC<FileUploadProps> = ({
+  fileType,
+  endpoint,
+  label,
+}) => {
+  const [file, setFile] = useState<File | null>(null);
   const showToast = useToast();
 
-  const handlePdfFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setPdfFile(e.target.files[0]);
+      setFile(e.target.files[0]);
     }
   };
 
-  const handleXlsFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setXlsFile(e.target.files[0]);
-    }
-  };
-
-  const handleUpload = async (path: string, file: File | null) => {
+  const handleUpload = async () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = async (e: ProgressEvent<FileReader>) => {
         if (e.target && e.target.result) {
           const base64String = e.target.result.toString().split(",")[1];
           try {
-            const response = await fetch(`/api/${path}`, {
+            const response = await fetch(`/api/${endpoint}`, {
               method: "POST",
               body: base64String,
             });
 
             if (response.ok) {
-              showToast("File uploaded Successfully", "success");
+              showToast("File uploaded successfully", "success");
             } else {
               showToast(`Error uploading file: ${response.status}`, "error");
             }
@@ -46,36 +49,16 @@ const FileUpload: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-y-4">
-      <div className="flex flex-row gap-x-4">
-        <input
-          type="file"
-          accept="application/pdf"
-          onChange={handlePdfFileChange}
-          className="file-input"
-        />
-        <button
-          className="btn btn-base"
-          onClick={() => handleUpload("upload-enpara", pdfFile)}
-        >
-          Upload Enpara
-        </button>
-      </div>
-
-      <div className="flex flex-row gap-x-4">
-        <input
-          type="file"
-          accept=".xls, .xlsx"
-          onChange={handleXlsFileChange}
-          className="file-input"
-        />
-        <button
-          className="btn btn-base"
-          onClick={() => handleUpload("upload-yapi-kredi", xlsFile)}
-        >
-          Upload Yapı Kredi
-        </button>
-      </div>
+    <div className="flex flex-row gap-x-4">
+      <input
+        type="file"
+        accept={fileType}
+        onChange={handleFileChange}
+        className="file-input"
+      />
+      <button className="btn btn-base" onClick={handleUpload}>
+        {label}
+      </button>
     </div>
   );
 };
