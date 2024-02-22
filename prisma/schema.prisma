@@ -44,7 +44,7 @@ model ChatGptUsage {
 model AssetType {
   id             Int           @id @default(autoincrement())
   name           String
-  shortName      String
+  shortName      String        @unique
   valuationInUSD Float? // Optional valuation in USD
   valuationInTRY Float? // Optional valuation in TRY
   assetCategory  AssetCategory
@@ -86,7 +86,7 @@ enum Bank {
 enum AssetCategory {
   CURRENCY
   STOCK
-  GOLD
+  COMMODITY
   OTHER
 }
 

@@ -1,4 +1,4 @@
-import { TransactionCreate } from "@component/types";
+import { AnyArray, TransactionCreate } from "@component/types";
 import { Bank, CardType, Currency } from "@prisma/client";
 import { parseDate, areDatesInSameMonth } from ".";
 
@@ -284,12 +284,57 @@ export function transformCreditCardPdfText(
   return tmp;
 }
 
+function parseBalances(text: string) {
+  const tryRegex = /Vadesiz TL--([\d.,]+)TL/;
+  const usdRegex = /Vadesiz USD--([\d.,]+)USD/;
+  const eurRegex = /Vadesiz EUR--([\d.,]+)EUR/;
+  const goldRegex = /Altın--([\d.,]+)gr\./;
+
+  const parseCurrencyValue = (regex: RegExp) => {
+    const match = regex.exec(text);
+    return match ? parseFloat(match[1].replace(",", ".")) : 0.0;
+  };
+
+  const balances: AnyArray = [
+    {
+      name: "Turkish Lira",
+      shortName: "TRY",
+      quantity: parseCurrencyValue(tryRegex),
+      valuationInTRY: 1,
+      assetCategory: "CURRENCY",
+    },
+    {
+      name: "US Dollar",
+      shortName: "USD",
+      quantity: parseCurrencyValue(usdRegex),
+      valuationInUSD: 1,
+      assetCategory: "CURRENCY",
+    },
+    {
+      name: "Euro",
+      shortName: "EUR",
+      quantity: parseCurrencyValue(eurRegex),
+      assetCategory: "CURRENCY",
+    },
+    {
+      name: "Gold(gr.)",
+      shortName: "GAU",
+      quantity: parseCurrencyValue(goldRegex),
+      assetCategory: "COMMODITY",
+    },
+  ];
+
+  return balances;
+}
+
 export function transformDebitCardPdfText(
   pdfText: string,
   cardType: CardType
-): string[] {
-  let tmp: any = pdfText.split("TarihAçıklamaTutarBakiye\n");
-  tmp.shift();
+): { rows: string[]; balances: AnyArray } {
+  let tmp: any[] = pdfText.split("TarihAçıklamaTutarBakiye\n");
+
+  const firstPart = tmp.shift();
+  const balances = parseBalances(firstPart);
 
   tmp = tmp.map((page: any) => {
     const cells: string[] = page.split("\n");
@@ -345,13 +390,14 @@ export function transformDebitCardPdfText(
       )
   );
 
-  return tmp;
+  return { rows: tmp, balances };
 }
 
 export function transformPdfText(pdfText: string): {
   rows: string[];
   cardType: CardType;
   pdfDate: Date;
+  balances: AnyArray | null;
 } {
   const cardType = pdfText.includes("\n\nEkstre tarihi")
     ? CardType.CREDIT
@@ -368,17 +414,21 @@ export function transformPdfText(pdfText: string): {
   const pdfDate = new Date(cuttOffDate.setMonth(cuttOffDate.getMonth() - 1));
 
   let rows: string[] = [];
+  let balances: AnyArray | null = null;
   switch (cardType) {
     case CardType.CREDIT:
       rows = transformCreditCardPdfText(pdfText, cardType);
       break;
 
     case CardType.DEBIT:
-      rows = transformDebitCardPdfText(pdfText, cardType);
+      const { rows: tmpRows, balances: tmpBalances } =
+        transformDebitCardPdfText(pdfText, cardType);
+      rows = tmpRows;
+      balances = tmpBalances;
       break;
   }
 
-  return { rows, cardType, pdfDate };
+  return { rows, cardType, pdfDate, balances };
 }
 
 export function cleanPdfText(pdfText: string) {

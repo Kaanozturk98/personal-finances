@@ -4,7 +4,7 @@ import { useState } from "react";
 
 interface FileUploadProps {
   fileType: string; // e.g., "application/pdf" or ".xls, .xlsx"
-  endpoint: string; // e.g., "upload-enpara" or "upload-yapi-kredi"
+  endpoint: string; // e.g., "upload-enpara" or "upload-yapi-kredi-credit"
   label: string; // e.g., "Upload Enpara" or "Upload Yapı Kredi"
 }
 

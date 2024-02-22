@@ -15,6 +15,9 @@ export async function GET(request: Request) {
   const filterObj = filter ? JSON.parse(filter) : {};
 
   const assetHoldings = await prisma.assetHolding.findMany({
+    include: {
+      assetType: true, // Include related assetType data
+    },
     orderBy: {
       [sortBy]: sortOrder,
     },
@@ -24,6 +27,7 @@ export async function GET(request: Request) {
     skip,
     take: limit,
   });
+
   const totalAssetHoldings = await prisma.assetHolding.count({
     where: {
       ...filterObj,

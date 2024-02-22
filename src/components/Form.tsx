@@ -42,6 +42,19 @@ const Form = <T extends FieldValues>({
   const submitHandler = async (data: T) => {
     // If the mode is "update", only include changed fields
     let payload: Partial<T> = data;
+
+    // Parse numbers and set them to null if they are empty
+    for (const [key, value] of Object.entries(data)) {
+      const column = columns.find((c) => c.key === key);
+      if (column && column.type === "number") {
+        // Parse the value to a number if it's a number field
+        payload[key as keyof T] =
+          value === "" ? undefined : (Number(value) as T[keyof T]);
+      } else {
+        payload[key as keyof T] = value;
+      }
+    }
+
     payload = formatPayload ? formatPayload(payload) : payload;
     if (mode === "update") {
       payload = Object.entries(data).reduce(
@@ -75,7 +88,7 @@ const Form = <T extends FieldValues>({
       .catch((error) => console.error(error));
   };
 
-  /*  console.log("first", formMethods.watch());
+  /* console.log("first", formMethods.watch());
   console.log("formMethods", formMethods.getValues()); */
 
   return (

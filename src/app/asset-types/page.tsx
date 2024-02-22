@@ -1,7 +1,7 @@
 "use client";
 import Table from "@component/components/Table";
 import { IColumnObject } from "@component/types";
-import { AssetType } from "@prisma/client";
+import { AssetCategory, AssetType } from "@prisma/client";
 import React from "react";
 
 const columns: IColumnObject<AssetType>[] = [
@@ -44,8 +44,9 @@ const columns: IColumnObject<AssetType>[] = [
     key: "assetCategory",
     label: "Asset Category",
     sort: false,
-    type: "string",
+    type: "enum",
     form: true,
+    options: Object.values(AssetCategory),
   },
   {
     key: "createdAt",
@@ -59,6 +60,12 @@ const columns: IColumnObject<AssetType>[] = [
 const AssetTypesPage: React.FC = () => {
   const formatData = (types: AssetType[]) =>
     types.map((type) => {
+      const formattedDate = new Intl.DateTimeFormat("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }).format(new Date(type.createdAt));
+
       return [
         type.id.toString(),
         type.name,
@@ -66,7 +73,7 @@ const AssetTypesPage: React.FC = () => {
         type.valuationInUSD?.toString() || "",
         type.valuationInTRY?.toString() || "",
         type.assetCategory,
-        type.createdAt.toISOString().split("T")[0],
+        formattedDate,
       ];
     });
 

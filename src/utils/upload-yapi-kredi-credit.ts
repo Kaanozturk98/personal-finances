@@ -18,10 +18,6 @@ function getBillingPeriodDates(billingDateStr: string): [Date, Date] {
   return [startDate, endDate];
 }
 
-function adjustDateToBillingPeriod(startDate: Date): Date {
-  return startDate;
-}
-
 export function extractInstallmentNumber(description: string): number {
   const installmentMatch = description.match(/(\d+)\/(\d+)\s*taksidi/i);
   return installmentMatch ? parseInt(installmentMatch[2], 10) : 1;

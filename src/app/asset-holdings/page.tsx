@@ -1,15 +1,29 @@
 "use client";
 import Table from "@component/components/Table";
 import { IColumnObject } from "@component/types";
-import { AssetHolding } from "@prisma/client";
+import { AssetHolding, HoldingForm, HoldingPlatform } from "@prisma/client";
 import React from "react";
 
-const columns: IColumnObject<AssetHolding>[] = [
+export type AssetHoldingWithAssetType = AssetHolding & {
+  assetType: {
+    name: string;
+    shortName: string;
+  };
+};
+
+const columns: IColumnObject<AssetHoldingWithAssetType>[] = [
   {
     key: "id",
     label: "ID",
     sort: false,
     type: "number",
+  },
+  {
+    key: "assetTypeId",
+    label: "Asset Type",
+    sort: true,
+    type: "number",
+    form: true,
   },
   {
     key: "quantity",
@@ -22,15 +36,17 @@ const columns: IColumnObject<AssetHolding>[] = [
     key: "holdingForm",
     label: "Holding Form",
     sort: false,
-    type: "string",
+    type: "enum",
     form: true,
+    options: Object.values(HoldingForm),
   },
   {
     key: "platform",
     label: "Platform",
     sort: true,
-    type: "string",
+    type: "enum",
     form: true,
+    options: Object.values(HoldingPlatform),
   },
   {
     key: "createdAt",
@@ -42,19 +58,30 @@ const columns: IColumnObject<AssetHolding>[] = [
 ];
 
 const AssetHoldingsPage: React.FC = () => {
-  const formatData = (holdings: AssetHolding[]) =>
+  const formatData = (holdings: AssetHoldingWithAssetType[]) =>
     holdings.map((holding) => {
+      const formattedDate = new Intl.DateTimeFormat("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }).format(new Date(holding.createdAt));
+
+      const formattedAssetType = holding.assetType
+        ? holding.assetType.shortName
+        : "-";
+
       return [
         holding.id.toString(),
+        formattedAssetType,
         holding.quantity.toString(),
         holding.holdingForm,
         holding.platform,
-        holding.createdAt.toISOString().split("T")[0],
+        formattedDate,
       ];
     });
 
   return (
-    <Table<AssetHolding>
+    <Table<AssetHoldingWithAssetType>
       columns={columns}
       route="asset-holdings"
       formatData={formatData}

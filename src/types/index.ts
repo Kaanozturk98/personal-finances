@@ -31,3 +31,6 @@ export type IAssignment = {
   transactionId: string;
   categoryId: string;
 };
+
+export type AnyObject = Record<string, any>;
+export type AnyArray = any[];

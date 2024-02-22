@@ -26,9 +26,12 @@ export default async function handler(
       const cleanedText = cleanPdfText(pdfData.text);
 
       // Transform the parsed PDF data into rows
-      const { rows, cardType, pdfDate } = transformPdfText(cleanedText);
+      const { rows, cardType, pdfDate, balances } =
+        transformPdfText(cleanedText);
 
-      // Extract transactions from the transformed PDF data
+      console.log("balances", balances);
+
+      /* // Extract transactions from the transformed PDF data
       const transactions: TransactionCreate[] = extractTransactions(
         rows,
         cardType,
@@ -48,6 +51,42 @@ export default async function handler(
           fingerprint: fingerprints[i],
         }));
         await prisma.transaction.createMany({ data });
+      } */
+
+      if (balances) {
+        for (const balance of balances) {
+          const {
+            name,
+            shortName,
+            quantity,
+            valuationInUSD,
+            valuationInTRY,
+            assetCategory,
+          } = balance;
+
+          const valuation =
+            valuationInUSD !== undefined ? valuationInUSD : valuationInTRY;
+
+          const assetType = await prisma.assetType.upsert({
+            where: { shortName },
+            update: { valuationInUSD: valuation },
+            create: {
+              name,
+              shortName,
+              valuationInUSD: valuation,
+              assetCategory,
+            },
+          });
+
+          await prisma.assetHolding.create({
+            data: {
+              quantity,
+              assetTypeId: assetType.id,
+              holdingForm: "BANK_ACCOUNT",
+              platform: "ENPARA",
+            },
+          });
+        }
       }
 
       res.status(200).json({ message: "Transactions created successfully" });
