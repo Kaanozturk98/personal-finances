@@ -118,8 +118,8 @@ export async function getCategoryPredictions(
     .split("\n")
     .map((assignment: string) => {
       const [transactionWithIndex, categoryWithIndex] = assignment.split("||"); // Updated the separator to '||'
-      const transactionId = parseInt(transactionWithIndex.split(".")[0].trim());
-      const categoryId = parseInt(categoryWithIndex.split(".")[0].trim());
+      const transactionId = parseInt(transactionWithIndex.trim());
+      const categoryId = parseInt(categoryWithIndex.trim());
 
       return {
         transactionId,
