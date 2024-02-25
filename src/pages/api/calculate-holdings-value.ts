@@ -58,9 +58,6 @@ export default async function handler(
         }
       });
 
-      console.log("totalValueTRY", totalValueTRY);
-      console.log("totalValueUSD", totalValueUSD);
-
       // Adjust the totals based on the USD exchange rate
       if (!usdValuationInTRY) {
         // Fetch from schema if not available

@@ -73,3 +73,16 @@ export async function generateTransactionFiles() {
     console.log(`File transactions_${fileIndex}.json written successfully`);
   }
 }
+
+export async function fixYkKkTransactionDates() {
+  const transactions = await prisma.transaction.findMany({
+    where: {
+      bank: "YAPI_KREDI",
+      date: {
+        gt: new Date("2023-10-23"),
+      },
+    },
+  });
+
+  return transactions;
+}

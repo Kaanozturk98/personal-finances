@@ -45,8 +45,8 @@ const Form = <T extends FieldValues>({
 
     // Parse numbers and set them to null if they are empty
     for (const [key, value] of Object.entries(data)) {
-      const column = columns.find((c) => c.key === key);
-      if (column && column.type === "number") {
+      const field = fields.find((c) => c.key === key);
+      if (field && field.type === "number") {
         // Parse the value to a number if it's a number field
         payload[key as keyof T] =
           value === "" ? undefined : (Number(value) as T[keyof T]);
@@ -60,7 +60,7 @@ const Form = <T extends FieldValues>({
       payload = Object.entries(data).reduce(
         (changedFields, [key, value]) => {
           if (value !== defaultValues[key]) {
-            const isReferenceKey = columns.find((column) => column.key === key);
+            const isReferenceKey = fields.find((field) => field.key === key);
             (changedFields as any)[key] = !isReferenceKey
               ? value
               : value === ""

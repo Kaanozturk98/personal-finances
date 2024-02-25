@@ -36,9 +36,10 @@ model Category {
 }
 
 model ChatGptUsage {
-  id           Int @id @default(autoincrement())
+  id           Int                @id @default(autoincrement())
   count        Int
   total_tokens Int
+  status       ChatGptUsageStatus @default(IN_PROGRESS)
 }
 
 model AssetType {
@@ -104,4 +105,10 @@ enum HoldingPlatform {
   MIDAS
   PHYSICAL // Special identifier for cash holdings
   OTHER // For any other platforms not listed
+}
+
+enum ChatGptUsageStatus {
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
 }

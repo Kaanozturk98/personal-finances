@@ -32,5 +32,11 @@ export type IAssignment = {
   categoryId: string;
 };
 
+export type IUsage = {
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+};
+
 export type AnyObject = Record<string, any>;
 export type AnyArray = any[];

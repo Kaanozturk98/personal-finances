@@ -24,12 +24,13 @@ export default async function handler(
       }
 
       const categories = await prisma.category.findMany();
-      const batchSize = 25;
+      const batchSize = 250;
       let totalTokens = 0;
       const allAssignments = [];
 
       for (let i = 0; i < filteredTransactions.length; i += batchSize) {
         const batch = filteredTransactions.slice(i, i + batchSize);
+
         const { assignments, usage } = await getCategoryPredictions(
           batch,
           categories
@@ -46,14 +47,7 @@ export default async function handler(
         }
       }
 
-      await prisma.chatGptUsage.create({
-        data: {
-          count: allAssignments.length,
-          total_tokens: totalTokens,
-        },
-      });
-
-      const estimatedCostPerTotalToken = 0.03 * 0.8 + 0.06 * 0.2;
+      const estimatedCostPerTotalToken = 0.01 * 0.95 + 0.03 * 0.05;
 
       res.status(200).json({
         message: `Transactions categorized successfully. Cost: $${

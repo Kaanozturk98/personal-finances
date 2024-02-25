@@ -1,7 +1,17 @@
-import { IAssignment, TransactionCreate } from "@component/types";
-import { CardType, Category, Transaction } from "@prisma/client";
+import { IAssignment, IUsage, TransactionCreate } from "@component/types";
+import OpenAI from "openai";
+import {
+  CardType,
+  Category,
+  ChatGptUsageStatus,
+  PrismaClient,
+  Transaction,
+} from "@prisma/client";
 import { fingerprintCounter } from "./upload-enpara";
 import crypto from "crypto";
+import { MessageContentText } from "openai/resources/beta/threads/messages/messages";
+
+const prisma = new PrismaClient();
 
 const colorPool = [
   "#FF6384", // Light Red
@@ -68,58 +78,109 @@ export function capitalizeFirstLetter(string: string) {
 export async function getCategoryPredictions(
   transactions: Transaction[],
   categories: Category[]
-): Promise<{ assignments: IAssignment[]; usage: Record<string, number> }> {
-  const prompt = `Given the following transaction descriptions and categories, please assign the most appropriate category to each transaction:
-  
-  Transaction descriptions:
-  ${transactions
-    .map((transaction) => `${transaction.id}. ${transaction.description}`)
-    .join(",\n")}
-  
-  Categories:
-  ${categories
-    .map((category) => `${category.id}. ${category.name}`)
-    .join(",\n")}
-  
-  Assignments (format: <transaction id>.<transaction description> ||  <category id>. <category name>, one per line):`;
-
-  console.log("prompt", prompt);
-  /* return prompt as any; */
-
+): Promise<{ assignments: IAssignment[]; usage: IUsage }> {
   const openaiApiKey = process.env.OPENAI_API_KEY;
+  const openai = new OpenAI({ apiKey: openaiApiKey });
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${openaiApiKey}`,
+  const chatGptUsage = await prisma.chatGptUsage.create({
+    data: {
+      count: transactions.length,
+      total_tokens: 0,
     },
-    body: JSON.stringify({
-      model: "gpt-4",
-      messages: [{ role: "system", content: prompt }],
-      max_tokens: 80 * transactions.length,
-      n: 1,
-      stop: null,
-      temperature: 0,
-    }),
   });
 
-  // Check if the response is not OK
-  if (!response.ok)
-    throw new Error(
-      `Error fetching category predictions: ${response.statusText}`
+  const prompt = `Given the following transaction details (format: Id: Description, Amount, Installment Count) and categories, please assign the most appropriate category to each transaction:
+
+Transaction details:
+  ${transactions
+    .map(
+      (transaction) =>
+        `${transaction.id}: ${transaction.description}, ${transaction.amount}, ${transaction.installments}`
+    )
+    .join("\n")}
+  
+Categories:
+  ${categories
+    .map((category) => `${category.id}. ${category.name}`)
+    .join("\n")}`;
+
+  console.log(prompt);
+
+  const run = await openai.beta.threads.createAndRun({
+    assistant_id: "asst_cRX3uWtOxr1VBaCxFmvunPLf",
+    thread: {
+      messages: [{ role: "user", content: prompt }],
+    },
+  });
+
+  let lastStatus = "";
+  let completed = false;
+  let usage: IUsage = {
+    prompt_tokens: 0,
+    completion_tokens: 0,
+    total_tokens: 0,
+  };
+
+  while (!completed) {
+    const processingRun = await openai.beta.threads.runs.retrieve(
+      run.thread_id,
+      run.id
     );
 
-  const data = await response.json();
-  /* console.log("data", data);
-    console.log("data", data.choices[0].message); */
-  const assignments = data.choices[0].message.content
+    if (
+      processingRun.status !== lastStatus ||
+      processingRun.status === "cancelled" ||
+      processingRun.status === "completed"
+    ) {
+      const status =
+        processingRun.status === "completed"
+          ? ChatGptUsageStatus.COMPLETED
+          : processingRun.status === "cancelled"
+          ? ChatGptUsageStatus.CANCELLED
+          : ChatGptUsageStatus.IN_PROGRESS;
+
+      // Update status in chatGptUsage
+      await prisma.chatGptUsage.update({
+        data: {
+          status,
+          total_tokens: processingRun.usage?.total_tokens,
+        },
+        where: {
+          id: chatGptUsage.id,
+        },
+      });
+
+      lastStatus = processingRun.status;
+    }
+
+    if (processingRun.status === "completed") {
+      completed = true;
+      usage = processingRun.usage as any;
+    } else if (processingRun.status === "cancelled")
+      throw new Error("Thread run was cancelled");
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+
+  const {
+    data: [lastMessage],
+  } = await openai.beta.threads.messages.list(run.thread_id, {
+    limit: 1,
+    order: "desc",
+  });
+
+  const data = (lastMessage.content as MessageContentText[])[0].text.value;
+
+  console.log("data", typeof data, data);
+
+  const assignments = data
     .trim()
     .split("\n")
     .map((assignment: string) => {
-      const [transactionWithIndex, categoryWithIndex] = assignment.split("||"); // Updated the separator to '||'
-      const transactionId = parseInt(transactionWithIndex.trim());
-      const categoryId = parseInt(categoryWithIndex.trim());
+      const [unparcedTransactionId, unparcedCategoryId] =
+        assignment.split("||"); // Updated the separator to '||'
+      const transactionId = unparcedTransactionId.trim();
+      const categoryId = unparcedCategoryId.trim();
 
       return {
         transactionId,
@@ -127,8 +188,8 @@ export async function getCategoryPredictions(
       };
     });
 
-  const usage = data.usage;
   console.log("assignments", assignments);
+
   return { assignments, usage };
 }
 
