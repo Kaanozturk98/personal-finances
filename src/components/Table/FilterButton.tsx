@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { FunnelIcon } from "@heroicons/react/24/outline";
 import StringFilter from "./StringFilter";
 import NumberFilter from "./NumberFilter";
@@ -6,12 +6,14 @@ import BooleanFilter from "./BooleanFilter";
 import EnumFilter from "./EnumFilter";
 import { IColumnObject } from "@component/types";
 import DateFilter from "./DateFilter";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import debounce from "lodash/debounce";
 
 interface FilterButtonProps<T> {
   columns: IColumnObject<T>[];
   onFilterChange: (key: keyof T, value: any) => void;
   filterState: Partial<Record<keyof T, any>>; // Add this prop
-  handleSearchChange: (text: string) => void;
+  search: boolean;
   searchText: string;
 }
 
@@ -19,14 +21,29 @@ const FilterButton = <T,>({
   columns,
   onFilterChange,
   filterState,
-  handleSearchChange,
+  search,
   searchText,
 }: FilterButtonProps<T>) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [showFilter, setShowFilter] = useState(false);
 
   const handleFilterButtonClick = () => {
     setShowFilter(!showFilter);
   };
+
+  // Inside your component
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedPush = useCallback(
+    debounce(
+      (path: string, searchString: string): void =>
+        router.push(`${path}?${searchString}`),
+      1000
+    ),
+    []
+  );
 
   return (
     <div className="relative inline-block">
@@ -44,14 +61,28 @@ const FilterButton = <T,>({
             if (!column.filter) return;
             switch (column.type) {
               case "string":
-                return (
-                  <StringFilter
-                    key={index}
-                    column={column}
-                    handleSearchChange={handleSearchChange}
-                    value={searchText}
-                  />
-                );
+                if (search) {
+                  return (
+                    <StringFilter
+                      key={index}
+                      column={column}
+                      handleSearchChange={(text: string) => {
+                        const toBeUpdatedSearchParams = !searchParams
+                          ? new URLSearchParams()
+                          : new URLSearchParams(searchParams);
+                        toBeUpdatedSearchParams.set("searchText", text);
+                        debouncedPush(
+                          pathname as string,
+                          toBeUpdatedSearchParams.toString()
+                        );
+                      }}
+                      value={searchText}
+                    />
+                  );
+                }
+
+                break;
+
               case "number":
                 return (
                   <NumberFilter

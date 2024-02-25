@@ -80,6 +80,10 @@ export async function fixYkKkTransactionDates() {
       bank: "YAPI_KREDI",
       date: {
         gt: new Date("2023-10-23"),
+        lt: new Date("2024-01-23"),
+      },
+      parentTransactionId: {
+        not: null,
       },
     },
   });

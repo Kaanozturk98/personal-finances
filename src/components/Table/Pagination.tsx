@@ -1,36 +1,50 @@
 import React from "react";
 import SelectInput from "../SelectInput";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  onPageChange: (page: number) => void;
   rowsPerPage: number;
-  setRowsPerPage: (rowsPerPage: number) => void;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
-  onPageChange,
   rowsPerPage,
-  setRowsPerPage,
 }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const handlePrevious = () => {
     if (currentPage > 1) {
-      onPageChange(currentPage - 1);
+      const toBeUpdatedSearchParams = !searchParams
+        ? new URLSearchParams()
+        : new URLSearchParams(searchParams);
+      toBeUpdatedSearchParams.set("page", (currentPage - 1).toString());
+      router.push(`${pathname}?${toBeUpdatedSearchParams?.toString()}`);
     }
   };
 
   const handleNext = () => {
     if (currentPage < totalPages) {
-      onPageChange(currentPage + 1);
+      const toBeUpdatedSearchParams = !searchParams
+        ? new URLSearchParams()
+        : new URLSearchParams(searchParams);
+      toBeUpdatedSearchParams.set("page", (currentPage + 1).toString());
+      router.push(`${pathname}?${toBeUpdatedSearchParams?.toString()}`);
     }
   };
 
   const handleRowsPerPageChange = (value: string) => {
     const newRowsPerPage = parseInt(value, 10);
-    setRowsPerPage(newRowsPerPage);
+
+    const toBeUpdatedSearchParams = !searchParams
+      ? new URLSearchParams()
+      : new URLSearchParams(searchParams);
+    toBeUpdatedSearchParams.set("limit", newRowsPerPage.toString());
+    router.push(`${pathname}?${toBeUpdatedSearchParams?.toString()}`);
   };
 
   const rowsPerPageOptions = ["10", "20", "30", "50", "100", "200"];

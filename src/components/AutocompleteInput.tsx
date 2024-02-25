@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Select, {
-  CSSObjectWithLabel,
-  GroupBase,
-  InputProps,
-  StylesConfig,
-} from "react-select";
+import Select from "react-select";
 import { useFormContext, FieldValues, Controller } from "react-hook-form";
 import InputWrapper from "./InputWrapper";
 import { FieldError } from "react-hook-form/dist/types/errors";

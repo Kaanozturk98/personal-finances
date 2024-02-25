@@ -11,8 +11,17 @@ export async function GET(request: Request) {
   const skip = (page - 1) * limit;
   const sortBy = searchParams.get("sortBy") as string;
   const sortOrder = searchParams.get("sortOrder");
+
   const filter = searchParams.get("filter");
-  const filterObj = filter ? JSON.parse(filter) : {};
+  let filterObj: any = {};
+
+  try {
+    if (filter) filterObj = JSON.parse(filter);
+    // throw new Error("Error parsing filter");
+  } catch (error) {
+    console.error("Error parsing filter", error);
+    throw new Error("Error parsing filter");
+  }
 
   const searchText = searchParams.get("searchText");
   const searchKey = searchParams.get("searchKey");

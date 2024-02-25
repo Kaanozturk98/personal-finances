@@ -1,7 +1,7 @@
 import React from "react";
-import { TransactionWithCategory } from "@component/app/transactions/page";
 import useToast from "@component/components/Toast";
 import { TagIcon } from "@heroicons/react/24/outline";
+import clsx from "clsx";
 
 interface AutoCategorizeTransactionsProps<T> {
   checkedRowsData: T[];
@@ -36,7 +36,11 @@ const AutoCategorizeTransactions = <T,>({
 
   return (
     <button
-      className="px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md h-10"
+      className={clsx(
+        "px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md h-10 transition-all duration-300",
+        "disabled:btn-disabled"
+      )}
+      disabled={checkedRowsData.length < 2}
       type="button"
       onClick={handleClick}
     >

@@ -10,6 +10,7 @@ import {
 import { fingerprintCounter } from "./upload-enpara";
 import crypto from "crypto";
 import { MessageContentText } from "openai/resources/beta/threads/messages/messages";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const prisma = new PrismaClient();
 

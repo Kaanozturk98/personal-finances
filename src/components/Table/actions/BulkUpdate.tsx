@@ -8,6 +8,7 @@ import AutocompleteInput from "../../AutocompleteInput";
 import NumberInput from "../../NumberInput";
 import TextInput from "../../TextInput";
 import { FieldValues, FormProvider, useForm } from "react-hook-form";
+import clsx from "clsx";
 
 interface BulkEditProps<T> {
   columns: IColumnObject<T>[];
@@ -70,10 +71,11 @@ const BulkEdit = <T,>({
 
     Promise.all(requests).then((responses) => {
       if (responses.every((r) => r.ok)) {
-        showToast("Bulk update successful", "success");
+        showToast("Update successful", "success");
         onSuccess && onSuccess();
+        onSuccess && setShowForm(false);
       } else {
-        showToast("Bulk update failed", "error");
+        showToast("Update failed", "error");
       }
     });
   };
@@ -81,11 +83,15 @@ const BulkEdit = <T,>({
   return (
     <div className="relative inline-block">
       <button
-        className="px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md h-10"
+        className={clsx(
+          "px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md h-10 transition-all duration-300",
+          "disabled:btn-disabled"
+        )}
+        disabled={checkedRowsData.length === 0}
         onClick={handleBulkEditClick}
       >
         <RectangleGroupIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
-        <span className="align-middle">Bulk Edit</span>
+        <span className="align-middle">Update</span>
       </button>
       {showForm && (
         <FormProvider {...formMethods}>
