@@ -4,13 +4,8 @@ import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const year =
-    parseInt(searchParams.get("year") as string, 10) ||
-    new Date().getFullYear();
-
-  const monthRanges = getMonthRange(year);
+export async function GET(_request: Request) {
+  const monthRanges = getMonthRange();
 
   const categoryDataByMonth: Record<string, any> = {};
 

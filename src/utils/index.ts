@@ -53,12 +53,17 @@ export function getColorForLabel(label: string): string {
   return labelColors[label];
 }
 
-// Utility function to generate month ranges for a given year
-export function getMonthRange(year: number) {
+// Utility function to generate month ranges for last 12 months
+export function getMonthRange() {
   const monthRanges = [];
-  for (let month = 1; month <= 12; month++) {
-    const fromDate = new Date(year, month - 1, 1);
-    const toDate = new Date(year, month, 0);
+  const currentDate = new Date();
+  for (let i = 11; i >= 0; i--) {
+    const fromDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - i,
+      1
+    );
+    const toDate = new Date(fromDate.getFullYear(), fromDate.getMonth() + 1, 0);
     monthRanges.push({ fromDate, toDate });
   }
   return monthRanges;

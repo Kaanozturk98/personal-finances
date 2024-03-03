@@ -1,7 +1,7 @@
 "use client";
 import Card from "@component/components/Card";
-import SelectInput from "@component/components/SelectInput";
 import StackedBarChart from "@component/components/StackedBarChart";
+import { AnyObject } from "@component/types";
 import { getColorForLabel } from "@component/utils";
 import { Category } from "@prisma/client";
 import React, { useEffect, useState } from "react";
@@ -11,23 +11,24 @@ const Analytics = () => {
     { label: string; data: number[]; backgroundColor: string }[]
   >([]);
   const [labels, setLabels] = useState<string[]>([]);
-  const [year, setYear] = useState<number>(new Date().getFullYear());
 
   useEffect(() => {
-    // Fetch the data from your API endpoint
-    const searchParams = new URLSearchParams();
-    if (year) searchParams.set("year", year.toString());
-
     const fetchData = async () => {
-      const response = await fetch(`/api/analytics?${searchParams.toString()}`);
+      const response = await fetch(`/api/analytics`);
       const { categoryDataByMonth, categories } = await response.json();
 
-      // Extract category labels from the data
       const labels = Object.keys(categoryDataByMonth);
+      const datasets = categories.map((category: Category) => {
+        const data = labels.map((label) => {
+          // Find the corresponding category data for the month
+          const categoryDataForMonth = categoryDataByMonth[label].find(
+            (data: AnyObject) => data.categoryId === category.id
+          );
 
-      const datasets = categories.map((category: Category, index: number) => {
-        const data = labels.map((label: string) => {
-          return categoryDataByMonth[label][index].categoryAmount;
+          // Return the categoryAmount, or null if not found
+          return categoryDataForMonth
+            ? categoryDataForMonth.categoryAmount
+            : null;
         });
 
         return {
@@ -42,26 +43,11 @@ const Analytics = () => {
     };
 
     fetchData();
-  }, [year]);
-
-  const years = Array.from(
-    { length: 2 },
-    (_, i) => new Date().getFullYear() - i
-  );
+  }, []);
 
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-semibold">Monthly Expenses by Category</h1>
-      <div className="max-w-xs">
-        <SelectInput
-          id="year-select"
-          label="Year"
-          value={year.toString()}
-          onChange={(value) => setYear(parseInt(value, 10))}
-          optionValues={years.map((y) => y.toString())}
-          clearOption={false}
-        />
-      </div>
       {datasets.length > 0 && labels.length > 0 ? (
         <div className="h-[calc(100vh-216px)]">
           <Card>

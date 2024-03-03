@@ -10,15 +10,20 @@ import clsx from "clsx";
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
   // Initialize the state directly from localStorage
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    const savedIsCollapsed = localStorage.getItem("isCollapsed");
-    return savedIsCollapsed !== null ? savedIsCollapsed === "true" : false;
-  });
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+  useEffect(() => {
+    const isCollapsedFromLocalStorage = localStorage.getItem("isCollapsed");
+    if (isCollapsedFromLocalStorage) {
+      setIsCollapsed(isCollapsedFromLocalStorage === "true");
+    }
+  }, []);
 
   // Save the collapsed state to localStorage when it changes
   useEffect(() => {
     localStorage.setItem("isCollapsed", String(isCollapsed));
   }, [isCollapsed]);
+
   useEffect(() => {
     const toggleNavbar = () => {
       setIsCollapsed(!isCollapsed);

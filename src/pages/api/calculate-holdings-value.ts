@@ -11,25 +11,51 @@ export default async function handler(
     try {
       // Get the current month and year
       const currentDate = new Date();
-      const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth();
+      let currentYear = currentDate.getFullYear();
+      let currentMonth = currentDate.getMonth();
+
+      // Function to query assetHoldings
+      const queryAssetHoldings = async (year: number, month: number) => {
+        return await prisma.assetHolding.findMany({
+          include: {
+            assetType: true, // Include related assetType data
+          },
+          where: {
+            createdAt: {
+              gte: new Date(year, month, 1),
+              lt: new Date(year, month + 1, 1),
+            },
+          },
+        });
+      };
 
       // Query assetHoldings for the current month
-      const assetHoldings = await prisma.assetHolding.findMany({
-        include: {
-          assetType: true, // Include related assetType data
-        },
-        where: {
-          createdAt: {
-            gte: new Date(currentYear, currentMonth, 1),
-            lt: new Date(currentYear, currentMonth + 1, 1),
-          },
-        },
-      });
+      let assetHoldings = await queryAssetHoldings(currentYear, currentMonth);
+
+      // If there are no holdings for the current month, query for the last month
+      if (assetHoldings.length === 0) {
+        // Adjust month and year for the previous month
+        if (currentMonth === 0) {
+          currentYear -= 1;
+          currentMonth = 11; // December of the previous year
+        } else {
+          currentMonth -= 1;
+        }
+
+        // Query for the previous month
+        assetHoldings = await queryAssetHoldings(currentYear, currentMonth);
+      }
 
       let totalValueUSD = 0;
       let totalValueTRY = 0;
       let usdValuationInTRY = null;
+
+      // If there are still no holdings (even from the previous month)
+      if (assetHoldings.length === 0) {
+        return res.status(200).json({ totalValueUSD, totalValueTRY });
+      }
+
+      console.log("assetHoldings", assetHoldings);
 
       // Calculate total value in USD and TRY
       assetHoldings.forEach((holding) => {

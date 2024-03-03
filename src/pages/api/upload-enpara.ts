@@ -31,7 +31,7 @@ export default async function handler(
 
       console.log("balances", balances);
 
-      /* // Extract transactions from the transformed PDF data
+      // Extract transactions from the transformed PDF data
       const transactions: TransactionCreate[] = extractTransactions(
         rows,
         cardType,
@@ -51,7 +51,7 @@ export default async function handler(
           fingerprint: fingerprints[i],
         }));
         await prisma.transaction.createMany({ data });
-      } */
+      }
 
       if (balances) {
         for (const balance of balances) {

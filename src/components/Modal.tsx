@@ -1,6 +1,5 @@
-// Modal.tsx
-import clsx from "clsx";
 import React, { useState } from "react";
+import ReactDOM from "react-dom";
 
 interface ModalProps {
   title: string;
@@ -22,10 +21,6 @@ const Modal: React.FC<ModalProps> = ({
     {
       disabled: disabled,
       "aria-disabled": disabled,
-      className: clsx(
-        (trigger as React.ReactElement).props.className,
-        disabled ? "btn-disabled" : ""
-      ),
       onClick: () => {
         setIsOpen(!isOpen);
       },
@@ -39,26 +34,28 @@ const Modal: React.FC<ModalProps> = ({
   return (
     <>
       {triggerWithDisabled}
-      {isOpen && (
-        <div
-          className={`fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 transition-opacity ${modalClass}`}
-          onClick={() => setIsOpen(false)}
-        >
+      {isOpen &&
+        ReactDOM.createPortal(
           <div
-            className="w-full max-w-md bg-base-200 p-6 mx-4 md:mx-0 my-8 rounded-xl shadow-lg relative"
-            onClick={(e) => e.stopPropagation()}
+            className={`fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 transition-opacity ${modalClass}`}
+            onClick={() => setIsOpen(false)}
           >
-            <button
-              className="close-btn btn btn-circle btn-ghost absolute top-4 right-4"
-              onClick={() => setIsOpen(false)}
+            <div
+              className="w-full max-w-md bg-base-200 p-6 mx-4 md:mx-0 my-8 rounded-xl shadow-lg relative"
+              onClick={(e) => e.stopPropagation()}
             >
-              ×
-            </button>
-            <h3 className="text-lg font-medium leading-6">{title}</h3>
-            <div className="mt-4">{children}</div>
-          </div>
-        </div>
-      )}
+              <button
+                className="close-btn btn btn-circle btn-ghost absolute top-4 right-4"
+                onClick={() => setIsOpen(false)}
+              >
+                ×
+              </button>
+              <h3 className="text-lg font-medium leading-6">{title}</h3>
+              <div className="mt-4">{children}</div>
+            </div>
+          </div>,
+          document.body
+        )}
     </>
   );
 };
