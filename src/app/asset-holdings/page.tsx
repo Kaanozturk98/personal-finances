@@ -22,8 +22,9 @@ const columns: IColumnObject<AssetHoldingWithAssetType>[] = [
     key: "assetTypeId",
     label: "Asset Type",
     sort: true,
-    type: "number",
+    type: "reference",
     form: true,
+    fetchUrl: "asset-types",
   },
   {
     key: "quantity",
