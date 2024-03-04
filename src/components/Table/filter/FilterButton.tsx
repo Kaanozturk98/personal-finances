@@ -8,6 +8,7 @@ import { IColumnObject } from "@component/types";
 import DateFilter from "./DateFilter";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import debounce from "lodash/debounce";
+import ReferenceFilter from "./ReferenceFilter";
 
 interface FilterButtonProps<T> {
   columns: IColumnObject<T>[];
@@ -113,6 +114,15 @@ const FilterButton = <T,>({
               case "date":
                 return (
                   <DateFilter
+                    key={index}
+                    column={column}
+                    onFilterChange={onFilterChange}
+                    value={filterState[column.key as keyof T]}
+                  />
+                );
+              case "reference":
+                return (
+                  <ReferenceFilter
                     key={index}
                     column={column}
                     onFilterChange={onFilterChange}

@@ -111,8 +111,9 @@ const TransactionsPage: React.FC = () => {
       route="transactions"
       formatData={formatData}
       defaultSortBy={"date"}
+      defaultSortOrder="desc"
       update
-      search={true}
+      search
       searchKey="description"
       bulkUpdate
     />

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { IColumnObject } from "@component/types";
-import NumberInput from "../NumberInput";
+import NumberInput from "../../NumberInput";
 
 interface NumberFilterProps<T> {
   column: IColumnObject<T>;

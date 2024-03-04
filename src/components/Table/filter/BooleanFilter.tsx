@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import SelectInput from "../SelectInput";
+import SelectInput from "../../SelectInput";
 import { IColumnObject } from "@component/types";
 
 interface BooleanFilterProps<T> {

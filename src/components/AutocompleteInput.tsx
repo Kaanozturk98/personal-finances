@@ -11,7 +11,7 @@ interface AutocompleteSelectProps {
   name?: string;
   additionalClassName?: string;
   value?: string | undefined;
-  onChange?: (value: string | null) => void;
+  onChange?: (value: string) => void;
   label: string;
   fetchUrl: string;
 }
@@ -81,8 +81,26 @@ const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
     formContext &&
     (formContext.formState.errors[name] as FieldError | undefined);
 
+  const TTL = 3600000; // TTL in milliseconds (e.g., 3600000 ms = 1 hour)
+
   useEffect(() => {
     const fetchOptions = async () => {
+      const now = new Date().getTime();
+      const cachedOptions = localStorage.getItem(`options-${fetchUrl}`);
+
+      if (cachedOptions) {
+        const { data, expiry } = JSON.parse(cachedOptions);
+
+        // Check if the data is still valid
+        if (now < expiry) {
+          setOptions(data);
+          return;
+        }
+
+        // Data has expired, clear it from localStorage
+        localStorage.removeItem(`options-${fetchUrl}`);
+      }
+
       try {
         const searchParams = new URLSearchParams();
         searchParams.set("page", "1");
@@ -101,6 +119,13 @@ const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
           })),
         ];
         setOptions(opts);
+
+        // Save fetched options with expiry time
+        const item = {
+          data: opts,
+          expiry: now + TTL,
+        };
+        localStorage.setItem(`options-${fetchUrl}`, JSON.stringify(item));
       } catch (error) {
         console.error("Error fetching options:", error);
       }
@@ -147,7 +172,9 @@ const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
           className={clsx(additionalClassName)}
           value={
             isControlled
-              ? options.find((option) => option.label === value)
+              ? options.find(
+                  (option) => option.label === value || option.value === value
+                )
               : undefined
           }
           onChange={handleChange}

@@ -55,8 +55,6 @@ export default async function handler(
         return res.status(200).json({ totalValueUSD, totalValueTRY });
       }
 
-      console.log("assetHoldings", assetHoldings);
-
       // Calculate total value in USD and TRY
       assetHoldings.forEach((holding) => {
         const valuationUSD = holding.assetType.valuationInUSD ?? 0;

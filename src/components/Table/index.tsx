@@ -5,7 +5,7 @@ import Pagination from "./Pagination";
 import SkeletonRow from "./SkeletonRows";
 import TruncatedText from "./TruncatedText";
 import clsx from "clsx";
-import FilterButton from "./FilterButton";
+import FilterButton from "./filter/FilterButton";
 /* import useDeepCompareEffect from "use-deep-compare-effect"; */
 import { DeepPartial, FieldValues } from "react-hook-form";
 import { IColumnObject } from "@component/types";

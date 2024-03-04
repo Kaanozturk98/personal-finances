@@ -1,19 +1,19 @@
-// EnumFilter.tsx
-import React, { useState, useEffect } from "react";
+import AutocompleteInput from "@component/components/AutocompleteInput";
+import SelectInput from "@component/components/SelectInput";
 import { IColumnObject } from "@component/types";
-import SelectInput from "../SelectInput";
+import React, { useEffect, useState } from "react";
 
-interface EnumFilterProps<T> {
+interface ReferenceFilterProps<T> {
   column: IColumnObject<T>;
   onFilterChange: (key: keyof T, value: string) => void;
   value?: string;
 }
 
-const EnumFilter = <T,>({
+const ReferenceFilter = <T,>({
   column,
   onFilterChange,
   value,
-}: EnumFilterProps<T>) => {
+}: ReferenceFilterProps<T>) => {
   const [selectedValue, setSelectedValue] = useState<string>(value || "");
 
   useEffect(() => {
@@ -26,14 +26,14 @@ const EnumFilter = <T,>({
   };
 
   return (
-    <SelectInput
-      id={`enum-filter-${column.key as string}`}
-      optionValues={column.options}
+    <AutocompleteInput
+      id={`reference-filter-${column.key as string}`}
+      label={column.label}
       value={selectedValue}
       onChange={handleChange}
-      label={column.label}
+      fetchUrl={column.fetchUrl as string}
     />
   );
 };
 
-export default EnumFilter;
+export default ReferenceFilter;
