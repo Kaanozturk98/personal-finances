@@ -27,7 +27,6 @@ const columns: IColumnObject<TransactionWithCategory>[] = [
   {
     key: "categoryId",
     label: "Category",
-    sort: true,
     type: "reference",
     form: true,
     fetchUrl: "categories",

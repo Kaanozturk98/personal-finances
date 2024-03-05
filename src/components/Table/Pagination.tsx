@@ -23,7 +23,12 @@ const Pagination: React.FC<PaginationProps> = ({
         ? new URLSearchParams()
         : new URLSearchParams(searchParams);
       toBeUpdatedSearchParams.set("page", (currentPage - 1).toString());
-      router.push(`${pathname}?${toBeUpdatedSearchParams?.toString()}`);
+
+      window.history.pushState(
+        {},
+        "",
+        pathname + "?" + toBeUpdatedSearchParams.toString()
+      );
     }
   };
 
@@ -33,7 +38,12 @@ const Pagination: React.FC<PaginationProps> = ({
         ? new URLSearchParams()
         : new URLSearchParams(searchParams);
       toBeUpdatedSearchParams.set("page", (currentPage + 1).toString());
-      router.push(`${pathname}?${toBeUpdatedSearchParams?.toString()}`);
+
+      window.history.pushState(
+        {},
+        "",
+        pathname + "?" + toBeUpdatedSearchParams.toString()
+      );
     }
   };
 
@@ -44,7 +54,12 @@ const Pagination: React.FC<PaginationProps> = ({
       ? new URLSearchParams()
       : new URLSearchParams(searchParams);
     toBeUpdatedSearchParams.set("limit", newRowsPerPage.toString());
-    router.push(`${pathname}?${toBeUpdatedSearchParams?.toString()}`);
+
+    window.history.pushState(
+      {},
+      "",
+      pathname + "?" + toBeUpdatedSearchParams.toString()
+    );
   };
 
   const rowsPerPageOptions = ["10", "20", "30", "50", "100", "200"];

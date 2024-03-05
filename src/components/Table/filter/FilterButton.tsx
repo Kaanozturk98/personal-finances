@@ -40,7 +40,7 @@ const FilterButton = <T,>({
   const debouncedPush = useCallback(
     debounce(
       (path: string, searchString: string): void =>
-        router.push(`${path}?${searchString}`),
+        window.history.pushState({}, "", path + "?" + searchString),
       1000
     ),
     [router]
