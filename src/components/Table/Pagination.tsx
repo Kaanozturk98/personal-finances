@@ -1,27 +1,27 @@
 import React from "react";
 import SelectInput from "../Inputs/SelectInput";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { TableState } from ".";
+import { FieldValues } from "react-hook-form";
 
-interface PaginationProps {
-  currentPage: number;
+interface PaginationProps<T extends FieldValues> {
   totalPages: number;
-  rowsPerPage: number;
+  tableState: TableState<T>;
+  createStateParams: (state: TableState<T>) => URLSearchParams;
 }
 
-const Pagination: React.FC<PaginationProps> = ({
-  currentPage,
+const Pagination = <T extends FieldValues>({
   totalPages,
-  rowsPerPage,
-}) => {
-  const router = useRouter();
+  tableState,
+  createStateParams,
+}: PaginationProps<T>) => {
+  const { currentPage, perPage: rowsPerPage } = tableState;
+
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   const handlePrevious = () => {
     if (currentPage > 1) {
-      const toBeUpdatedSearchParams = !searchParams
-        ? new URLSearchParams()
-        : new URLSearchParams(searchParams);
+      const toBeUpdatedSearchParams = createStateParams(tableState);
       toBeUpdatedSearchParams.set("page", (currentPage - 1).toString());
 
       window.history.pushState(
@@ -34,9 +34,7 @@ const Pagination: React.FC<PaginationProps> = ({
 
   const handleNext = () => {
     if (currentPage < totalPages) {
-      const toBeUpdatedSearchParams = !searchParams
-        ? new URLSearchParams()
-        : new URLSearchParams(searchParams);
+      const toBeUpdatedSearchParams = createStateParams(tableState);
       toBeUpdatedSearchParams.set("page", (currentPage + 1).toString());
 
       window.history.pushState(
@@ -49,10 +47,7 @@ const Pagination: React.FC<PaginationProps> = ({
 
   const handleRowsPerPageChange = (value: string) => {
     const newRowsPerPage = parseInt(value, 10);
-
-    const toBeUpdatedSearchParams = !searchParams
-      ? new URLSearchParams()
-      : new URLSearchParams(searchParams);
+    const toBeUpdatedSearchParams = createStateParams(tableState);
     toBeUpdatedSearchParams.set("limit", newRowsPerPage.toString());
 
     window.history.pushState(

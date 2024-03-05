@@ -9,22 +9,25 @@ import DateFilter from "./DateFilter";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import debounce from "lodash/debounce";
 import ReferenceFilter from "./ReferenceFilter";
+import { TableState } from "..";
+import { FieldValues } from "react-hook-form";
 
-interface FilterButtonProps<T> {
+interface FilterButtonProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
   onFilterChange: (key: keyof T, value: any) => void;
-  filterState: Partial<Record<keyof T, any>>; // Add this prop
   search: boolean;
-  searchText: string;
+  tableState: TableState<T>;
+  createStateParams: (state: TableState<T>) => URLSearchParams;
 }
 
-const FilterButton = <T,>({
+const FilterButton = <T extends FieldValues>({
   columns,
   onFilterChange,
-  filterState,
   search,
-  searchText,
+  tableState,
+  createStateParams,
 }: FilterButtonProps<T>) => {
+  const { filter: filterState, searchText } = tableState;
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -68,9 +71,8 @@ const FilterButton = <T,>({
                       key={index}
                       column={column}
                       handleSearchChange={(text: string) => {
-                        const toBeUpdatedSearchParams = !searchParams
-                          ? new URLSearchParams()
-                          : new URLSearchParams(searchParams);
+                        const toBeUpdatedSearchParams =
+                          createStateParams(tableState);
                         toBeUpdatedSearchParams.set("searchText", text);
                         debouncedPush(
                           pathname as string,

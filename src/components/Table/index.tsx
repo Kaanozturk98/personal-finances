@@ -25,6 +25,15 @@ interface TableProps<T extends FieldValues> {
   bulkUpdate?: boolean;
 }
 
+export interface TableState<T extends FieldValues> {
+  currentPage: number;
+  perPage: number;
+  sortBy: keyof T | string;
+  sortOrder: "asc" | "desc";
+  searchText: string;
+  filter: Partial<Record<keyof T, any>>;
+}
+
 const Table = <T extends FieldValues>({
   columns,
   route,
@@ -150,14 +159,7 @@ const Table = <T extends FieldValues>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, tableState]);
 
-  const createStateParams = (state: {
-    currentPage: number;
-    perPage: number;
-    sortBy: keyof T | string;
-    sortOrder: "asc" | "desc";
-    searchText: string;
-    filter: Partial<Record<keyof T, any>>;
-  }): URLSearchParams => {
+  const createStateParams = (state: TableState<T>): URLSearchParams => {
     const params = new URLSearchParams();
 
     if (state.currentPage !== 1)
@@ -262,8 +264,6 @@ const Table = <T extends FieldValues>({
       <div className="flex-col space-y-4">
         <TableActions<T>
           columns={columns}
-          filterState={filter}
-          searchText={searchText}
           handleFilterChange={handleFilterChange}
           checkedRowsData={checkedRowsData}
           bulkUpdate={bulkUpdate}
@@ -273,6 +273,8 @@ const Table = <T extends FieldValues>({
           fetchKey={fetchKey}
           setFetchKey={setFetchKey}
           setCheckedRows={setCheckedRows}
+          tableState={tableState}
+          createStateParams={createStateParams}
         />
 
         <div className="overflow-x-auto" ref={scrollRef}>
@@ -300,10 +302,10 @@ const Table = <T extends FieldValues>({
         </div>
       </div>
 
-      <Pagination
-        currentPage={currentPage}
+      <Pagination<T>
         totalPages={totalPages}
-        rowsPerPage={perPage}
+        tableState={tableState}
+        createStateParams={createStateParams}
       />
     </div>
   );

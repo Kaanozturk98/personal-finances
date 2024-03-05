@@ -11,11 +11,10 @@ import Form from "../Form";
 import AutoCategorizeTransactions from "./actions/AutoCategorizeTransactions";
 import BulkUpdate from "./actions/BulkUpdate";
 import MergeTransactions from "./actions/MergeTransactions";
+import { TableState } from ".";
 
 interface TableActionsProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
-  filterState: Partial<Record<keyof T, any>>;
-  searchText: string;
   handleFilterChange: (key: keyof T, value: any) => void;
   checkedRowsData: T[];
   bulkUpdate: boolean;
@@ -25,12 +24,12 @@ interface TableActionsProps<T extends FieldValues> {
   fetchKey: number;
   setFetchKey: (key: number) => void;
   setCheckedRows: (rows: Record<string, T>) => void;
+  tableState: TableState<T>;
+  createStateParams: (state: TableState<T>) => URLSearchParams;
 }
 
 const TableActions = <T extends FieldValues>({
   columns,
-  filterState,
-  searchText,
   handleFilterChange,
   checkedRowsData,
   bulkUpdate,
@@ -40,6 +39,8 @@ const TableActions = <T extends FieldValues>({
   fetchKey,
   setFetchKey,
   setCheckedRows,
+  tableState,
+  createStateParams,
 }: TableActionsProps<T>) => {
   const isNotAtleastTwoChecked = checkedRowsData.length < 2;
 
@@ -59,9 +60,9 @@ const TableActions = <T extends FieldValues>({
           <FilterButton<T>
             columns={columns}
             onFilterChange={handleFilterChange}
-            filterState={filterState}
             search
-            searchText={searchText}
+            tableState={tableState}
+            createStateParams={createStateParams}
           />
         )}
       </div>
