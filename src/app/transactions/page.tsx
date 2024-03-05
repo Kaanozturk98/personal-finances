@@ -112,7 +112,6 @@ const TransactionsPage: React.FC = () => {
       formatData={formatData}
       defaultSortBy={"date"}
       defaultSortOrder="desc"
-      update
       search
       searchKey="description"
       bulkUpdate

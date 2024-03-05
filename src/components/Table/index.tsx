@@ -16,6 +16,7 @@ import BulkUpdate from "./actions/BulkUpdate";
 import AutoCategorizeTransactions from "./actions/AutoCategorizeTransactions";
 import useHorizontalScroll from "@component/utils/use-horiontal-scroll";
 import TableBody from "./TableBody";
+import TableHeader from "./TableHeader";
 
 interface TableProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -26,7 +27,6 @@ interface TableProps<T extends FieldValues> {
   defaultSortOrder?: "asc" | "desc";
   defaultFilter?: Partial<Record<keyof T, any>>;
   add?: boolean;
-  update?: boolean;
   checkbox?: boolean;
   search?: boolean;
   searchKey?: keyof T;
@@ -42,7 +42,6 @@ const Table = <T extends FieldValues>({
   defaultSortOrder = "asc",
   defaultFilter = {},
   add = false,
-  update = false,
   checkbox = true,
   search = false,
   searchKey = "name",
@@ -316,55 +315,16 @@ const Table = <T extends FieldValues>({
 
         <div className="overflow-x-auto" ref={scrollRef}>
           <table className="table table-compact table-zebra w-full">
-            <thead>
-              <tr>
-                {checkbox && (
-                  <th>
-                    <CheckboxInput
-                      id={`checkbox-all`}
-                      checked={isAllRowsChecked}
-                      indeterminate={isSomeRowsChecked}
-                      onChange={handleGeneralCheckboxChange}
-                      label=""
-                    />
-                  </th>
-                )}
-                {columnsToRender.map((column, index) => (
-                  <th
-                    key={index}
-                    className={clsx(
-                      "text-left",
-                      column.sort ? "cursor-pointer" : ""
-                    )}
-                    onClick={
-                      column.sort ? () => handleHeaderClick(column) : undefined
-                    }
-                  >
-                    <div className="inline-flex items-center w-full space-x-2">
-                      <span
-                        className={clsx(
-                          column.sort && sortBy === column.key
-                            ? "underline"
-                            : ""
-                        )}
-                      >
-                        {column.label}
-                      </span>
-                      {column.sort && sortBy === column.key && (
-                        <span>{sortOrder === "asc" ? "↑" : "↓"}</span>
-                      )}
-                    </div>
-                  </th>
-                ))}
-                {/* {update && (
-                  <th className={clsx("text-left w-32 sticky-column")}>
-                    <div className="inline-flex items-center w-full space-x-2">
-                      Actions
-                    </div>
-                  </th>
-                )} */}
-              </tr>
-            </thead>
+            <TableHeader
+              columnsToRender={columnsToRender}
+              checkbox={checkbox}
+              isAllRowsChecked={isAllRowsChecked}
+              isSomeRowsChecked={isSomeRowsChecked}
+              handleGeneralCheckboxChange={handleGeneralCheckboxChange}
+              handleHeaderClick={handleHeaderClick}
+              sortBy={sortBy}
+              sortOrder={sortOrder}
+            />
             <TableBody
               loading={loading}
               perPage={perPage}

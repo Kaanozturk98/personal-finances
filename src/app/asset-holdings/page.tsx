@@ -88,7 +88,7 @@ const AssetHoldingsPage: React.FC = () => {
       formatData={formatData}
       defaultSortBy={"createdAt"}
       add
-      update
+      bulkUpdate
       checkbox={false}
     />
   );

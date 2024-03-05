@@ -34,7 +34,7 @@ const CategoriesPage: React.FC = () => {
       formatData={formatData}
       defaultSortBy={"name"}
       add
-      update
+      bulkUpdate
       checkbox={false}
     />
   );
