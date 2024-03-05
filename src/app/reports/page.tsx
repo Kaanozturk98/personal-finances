@@ -6,8 +6,8 @@ import Table from "@component/components/Table";
 import Card from "@component/components/Card";
 import { numberWithCommas } from "@component/utils";
 import { TransactionWithCategory } from "../transactions/page";
-import BarChart from "@component/components/BarGraph";
-import PieChart from "@component/components/PieChart";
+import BarChart from "@component/components/Charts/BarChart";
+import PieChart from "@component/components/Charts/PieChart";
 
 const columns: IColumnObject<TransactionWithCategory>[] = [
   {

@@ -1,6 +1,6 @@
 "use client";
 import Card from "@component/components/Card";
-import StackedBarChart from "@component/components/StackedBarChart";
+import StackedBarChart from "@component/components/Charts/StackedBarChart";
 import { AnyObject } from "@component/types";
 import { getColorForLabel } from "@component/utils";
 import { Category } from "@prisma/client";
