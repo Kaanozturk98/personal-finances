@@ -7,11 +7,11 @@ import {
   DeepPartial,
   FormProvider,
 } from "react-hook-form";
-import TextInput from "./TextInput";
-import NumberInput from "./NumberInput";
-import SelectInput from "./SelectInput";
-import DateInput from "./DateInput";
-import AutocompleteInput from "./AutocompleteInput";
+import TextInput from "./Inputs/TextInput";
+import NumberInput from "./Inputs/NumberInput";
+import SelectInput from "./Inputs/SelectInput";
+import DateInput from "./Inputs/DateInput";
+import AutocompleteInput from "./Inputs/AutocompleteInput";
 import useToast from "./Toast";
 
 interface FormProps<T extends FieldValues> {

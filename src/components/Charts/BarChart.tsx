@@ -26,7 +26,7 @@ interface BarGraphProps {
   label: string;
 }
 
-const BarGraph: React.FC<BarGraphProps> = ({ data, labels, label }) => {
+const BarChart: React.FC<BarGraphProps> = ({ data, labels, label }) => {
   const chartData: ChartData<"bar", number[], string> = {
     labels: labels,
     datasets: [
@@ -81,4 +81,4 @@ const BarGraph: React.FC<BarGraphProps> = ({ data, labels, label }) => {
   );
 };
 
-export default BarGraph;
+export default BarChart;

@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { RectangleGroupIcon } from "@heroicons/react/24/outline";
 import { IColumnObject } from "@component/types";
 import useToast from "../../Toast";
-import SelectInput from "../../SelectInput";
-import DateInput from "../../DateInput";
-import AutocompleteInput from "../../AutocompleteInput";
-import NumberInput from "../../NumberInput";
-import TextInput from "../../TextInput";
+import SelectInput from "../../Inputs/SelectInput";
+import DateInput from "../../Inputs/DateInput";
+import AutocompleteInput from "../../Inputs/AutocompleteInput";
+import NumberInput from "../../Inputs/NumberInput";
+import TextInput from "../../Inputs/TextInput";
 import { FieldValues, FormProvider, useForm } from "react-hook-form";
 import clsx from "clsx";
 

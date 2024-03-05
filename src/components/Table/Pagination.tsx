@@ -1,5 +1,5 @@
 import React from "react";
-import SelectInput from "../SelectInput";
+import SelectInput from "../Inputs/SelectInput";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 interface PaginationProps {

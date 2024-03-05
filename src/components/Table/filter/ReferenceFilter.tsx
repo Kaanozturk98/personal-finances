@@ -1,5 +1,5 @@
-import AutocompleteInput from "@component/components/AutocompleteInput";
-import SelectInput from "@component/components/SelectInput";
+import AutocompleteInput from "@component/components/Inputs/AutocompleteInput";
+import SelectInput from "@component/components/Inputs/SelectInput";
 import { IColumnObject } from "@component/types";
 import React, { useEffect, useState } from "react";
 

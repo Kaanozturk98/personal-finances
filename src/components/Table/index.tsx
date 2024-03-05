@@ -2,22 +2,20 @@
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import Pagination from "./Pagination";
-import SkeletonRow from "./SkeletonRows";
-import TruncatedText from "./TruncatedText";
 import clsx from "clsx";
 import FilterButton from "./filter/FilterButton";
-/* import useDeepCompareEffect from "use-deep-compare-effect"; */
-import { DeepPartial, FieldValues } from "react-hook-form";
+import { FieldValues } from "react-hook-form";
 import { IColumnObject } from "@component/types";
 import Form from "../Form";
 import Modal from "../Modal";
 import { capitalizeFirstLetter } from "@component/utils";
 import { PlusIcon, SquaresPlusIcon } from "@heroicons/react/24/outline";
-import CheckboxInput from "../CheckboxInput";
+import CheckboxInput from "../Inputs/CheckboxInput";
 import MergeTransactions from "./actions/MergeTransactions";
 import BulkUpdate from "./actions/BulkUpdate";
 import AutoCategorizeTransactions from "./actions/AutoCategorizeTransactions";
 import useHorizontalScroll from "@component/utils/use-horiontal-scroll";
+import TableBody from "./TableBody";
 
 interface TableProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -86,10 +84,10 @@ const Table = <T extends FieldValues>({
     setCheckedRows((prevCheckedRows) => {
       const updatedCheckedRows = { ...prevCheckedRows };
       if (value) {
-        const rowData = data.find((row) => row.id === id);
+        const rowData = data.find((row) => row.id.toString() === id);
         if (rowData) {
           updatedCheckedRows[id] = rowData;
-        }
+        } else console.log("no data found");
       } else {
         delete updatedCheckedRows[id];
       }
@@ -149,15 +147,6 @@ const Table = <T extends FieldValues>({
     // Navigate to the updated search params without re-triggering a fetch in the useEffect
     router.push(`${pathname}?${toBeUpdatedSearchParams.toString()}`);
   };
-
-  /* useDeepCompareEffect(() => {
-    const initialSearchParams = new URLSearchParams();
-
-    if (defaultFilter && Object.keys(defaultFilter).length > 0) {
-      initialSearchParams.set("filter", JSON.stringify(defaultFilter));
-      router.push(`${pathname}?${initialSearchParams?.toString()}`);
-    }
-  }, [defaultFilter]); */
 
   useEffect(() => {
     setLoading(true);
@@ -376,80 +365,15 @@ const Table = <T extends FieldValues>({
                 )} */}
               </tr>
             </thead>
-            <tbody>
-              {loading ? (
-                // Render skeleton rows here...
-                Array(perPage)
-                  .fill(null)
-                  .map((_, index) => (
-                    <SkeletonRow
-                      key={index}
-                      columns={columnsToRender.length + (checkbox ? 1 : 0)}
-                    />
-                  ))
-              ) : formattedData.length > 0 ? (
-                formattedData.map((row, rowIndex) => {
-                  const defaultValues = {} as DeepPartial<T>;
-                  if (update) {
-                    columns.forEach((column, columnIndex) => {
-                      (defaultValues as any)[column.key as keyof T] =
-                        row[columnIndex];
-                    });
-                  }
-                  const objectId = data[rowIndex]["id"];
-                  return (
-                    <tr key={rowIndex} className="h-12">
-                      {checkbox && (
-                        <td className="w-10">
-                          <CheckboxInput
-                            id={`checkbox-${rowIndex}`}
-                            checked={!!checkedRows[objectId]}
-                            onChange={(value) =>
-                              handleCheckboxChange(objectId, value)
-                            }
-                            label=""
-                          />
-                        </td>
-                      )}
-                      {row.map((cell, cellIndex) => (
-                        <td key={cellIndex} className="py-2 px-3">
-                          <TruncatedText text={cell} />
-                        </td>
-                      ))}
-                      {/* {update && (
-                        <td className="py-2 px-3 sticky-column">
-                          <Modal
-                            title={`Update ${capitalizeFirstLetter(route)}`}
-                            trigger={
-                              <button className="px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md">
-                                <PencilSquareIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
-                                <span className="align-middle">Update</span>
-                              </button>
-                            }
-                          >
-                            <Form<T>
-                              route={`cud-${route}`}
-                              columns={columns}
-                              defaultValues={defaultValues}
-                              onSuccess={() => setFetchKey(fetchKey + 1)}
-                            />
-                          </Modal>
-                        </td>
-                      )} */}
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td
-                    colSpan={columnsToRender.length + (checkbox ? 1 : 0)}
-                    className="text-center py-4 text-base-content text-opacity-50"
-                  >
-                    Nothing to see here 🍃
-                  </td>
-                </tr>
-              )}
-            </tbody>
+            <TableBody
+              loading={loading}
+              perPage={perPage}
+              formattedData={formattedData}
+              columnsToRender={columnsToRender}
+              checkbox={checkbox}
+              checkedRows={checkedRows}
+              handleCheckboxChange={handleCheckboxChange}
+            />
           </table>
         </div>
       </div>

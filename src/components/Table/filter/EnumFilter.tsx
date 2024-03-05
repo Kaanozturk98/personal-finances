@@ -1,7 +1,7 @@
 // EnumFilter.tsx
 import React, { useState, useEffect } from "react";
 import { IColumnObject } from "@component/types";
-import SelectInput from "../../SelectInput";
+import SelectInput from "../../Inputs/SelectInput";
 
 interface EnumFilterProps<T> {
   column: IColumnObject<T>;

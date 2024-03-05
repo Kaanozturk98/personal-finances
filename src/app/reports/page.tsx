@@ -1,12 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { IColumnObject } from "@component/types";
-import DateInput from "@component/components/DateInput";
+import DateInput from "@component/components/Inputs/DateInput";
 import Table from "@component/components/Table";
 import Card from "@component/components/Card";
 import { numberWithCommas } from "@component/utils";
 import { TransactionWithCategory } from "../transactions/page";
-import BarGraph from "@component/components/BarGraph";
+import BarChart from "@component/components/BarGraph";
 import PieChart from "@component/components/PieChart";
 
 const columns: IColumnObject<TransactionWithCategory>[] = [
@@ -166,7 +166,7 @@ const ReportsPage = () => {
         </div>
         <div className="w-1/2 h-full overflow-hidden">
           <Card title="Column Graph">
-            <BarGraph data={data} labels={labels} label="Amount (TL)" />
+            <BarChart data={data} labels={labels} label="Amount (TL)" />
           </Card>
         </div>
       </div>
