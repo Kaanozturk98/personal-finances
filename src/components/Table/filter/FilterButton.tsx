@@ -43,7 +43,7 @@ const FilterButton = <T,>({
         router.push(`${path}?${searchString}`),
       1000
     ),
-    []
+    [router]
   );
 
   return (
