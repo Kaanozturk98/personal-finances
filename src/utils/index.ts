@@ -9,7 +9,6 @@ import {
 } from "@prisma/client";
 import { fingerprintCounter } from "./upload-enpara";
 import crypto from "crypto";
-import { MessageContentText } from "openai/resources/beta/threads/messages/messages";
 
 const prisma = new PrismaClient();
 
@@ -85,7 +84,10 @@ export async function getCategoryPredictions(
   categories: Category[]
 ): Promise<{ assignments: IAssignment[]; usage: IUsage }> {
   const openaiApiKey = process.env.OPENAI_API_KEY;
-  const openai = new OpenAI({ apiKey: openaiApiKey });
+  const openai = new OpenAI({
+    apiKey: openaiApiKey,
+    defaultHeaders: { "OpenAI-Beta": "assistants=v2" },
+  });
 
   const chatGptUsage = await prisma.chatGptUsage.create({
     data: {
@@ -113,7 +115,6 @@ Categories:
 
   const run = await openai.beta.threads.createAndRun({
     assistant_id: "asst_cRX3uWtOxr1VBaCxFmvunPLf",
-    model: "gpt-4o",
     thread: {
       messages: [{ role: "user", content: prompt }],
     },
@@ -175,7 +176,7 @@ Categories:
     order: "desc",
   });
 
-  const data = (lastMessage.content as MessageContentText[])[0].text.value;
+  const data = (lastMessage.content as any[])[0].text.value;
 
   console.log("data", typeof data, data);
 

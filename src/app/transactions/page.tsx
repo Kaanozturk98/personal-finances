@@ -31,6 +31,7 @@ const columns: IColumnObject<TransactionWithCategory>[] = [
     form: true,
     fetchUrl: "categories",
     filter: true,
+    sort: true,
   },
   {
     key: "bank",
