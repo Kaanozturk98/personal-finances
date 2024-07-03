@@ -10,7 +10,6 @@ import {
 import { fingerprintCounter } from "./upload-enpara";
 import crypto from "crypto";
 import { MessageContentText } from "openai/resources/beta/threads/messages/messages";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const prisma = new PrismaClient();
 
@@ -114,6 +113,7 @@ Categories:
 
   const run = await openai.beta.threads.createAndRun({
     assistant_id: "asst_cRX3uWtOxr1VBaCxFmvunPLf",
+    model: "gpt-4o",
     thread: {
       messages: [{ role: "user", content: prompt }],
     },
