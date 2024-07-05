@@ -12,6 +12,11 @@ const UploadPage: React.FC = () => {
       />
       <FileUpload
         fileType=".xls, .xlsx"
+        endpoint="upload-yapi-kredi-debit"
+        label="Upload Yapı Kredi Debit"
+      />
+      <FileUpload
+        fileType=".xls, .xlsx"
         endpoint="upload-yapi-kredi-credit"
         label="Upload Yapı Kredi Credit"
       />
