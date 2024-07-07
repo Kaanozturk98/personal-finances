@@ -87,9 +87,10 @@ const AssetHoldingsPage: React.FC = () => {
       route="asset-holdings"
       formatData={formatData}
       defaultSortBy={"createdAt"}
+      defaultSortOrder="desc"
       add
       bulkUpdate
-      checkbox={false}
+      checkbox={true}
     />
   );
 };

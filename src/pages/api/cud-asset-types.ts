@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
+import { AssetType, PrismaClient } from "@prisma/client";
+import { formatPayload } from "@component/app/asset-types/utils";
 
 const prisma = new PrismaClient();
 
@@ -26,9 +27,12 @@ export default async function handler(
         res.status(400).json({ message: "Asset Type ID is required" });
         return;
       }
+
+      const formattedPayload = formatPayload(updatedData as Partial<AssetType>);
+
       const updatedAssetType = await prisma.assetType.update({
         where: { id },
-        data: updatedData,
+        data: formattedPayload,
       });
       res
         .status(200)

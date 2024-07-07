@@ -26,6 +26,7 @@ interface TableActionsProps<T extends FieldValues> {
   setCheckedRows: (rows: Record<string, T>) => void;
   tableState: TableState<T>;
   createStateParams: (state: TableState<T>) => URLSearchParams;
+  formatPayload?: (data: Partial<T>) => Partial<T>;
 }
 
 const TableActions = <T extends FieldValues>({
@@ -41,6 +42,7 @@ const TableActions = <T extends FieldValues>({
   setCheckedRows,
   tableState,
   createStateParams,
+  formatPayload,
 }: TableActionsProps<T>) => {
   const isNotAtleastTwoChecked = checkedRowsData.length < 2;
 
@@ -104,6 +106,7 @@ const TableActions = <T extends FieldValues>({
               setFetchKey(fetchKey + 1);
               setCheckedRows({});
             }}
+            formatPayload={formatPayload ?? undefined}
           />
         )}
         {route === "transactions" && (

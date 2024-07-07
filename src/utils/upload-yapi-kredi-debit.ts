@@ -1,7 +1,12 @@
 import { Bank, CardType, Currency } from "@prisma/client";
 import { TransactionCreate } from "@component/types";
 import { parseDate } from ".";
-import { parseAmount } from "./upload-enpara";
+
+export function parseAmount(amountString: string) {
+  if (amountString.startsWith("-")) amountString = amountString.slice(1);
+  const normalizedAmount = amountString.replace(/\,/g, "");
+  return parseFloat(normalizedAmount);
+}
 
 export function processExcelFile(rows: string[][]): TransactionCreate[] {
   // Define the transactions to filter out as a constant

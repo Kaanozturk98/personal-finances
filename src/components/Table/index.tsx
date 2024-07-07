@@ -1,5 +1,5 @@
 "use client";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import Pagination from "./Pagination";
 import { FieldValues } from "react-hook-form";
@@ -23,6 +23,7 @@ interface TableProps<T extends FieldValues> {
   search?: boolean;
   searchKey?: keyof T;
   bulkUpdate?: boolean;
+  formatPayload?: (data: Partial<T>) => Partial<T>;
 }
 
 export interface TableState<T extends FieldValues> {
@@ -47,8 +48,8 @@ const Table = <T extends FieldValues>({
   search = false,
   searchKey = "name",
   bulkUpdate = false,
+  formatPayload = (data: Partial<T>) => data,
 }: TableProps<T>): React.ReactElement => {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -275,6 +276,7 @@ const Table = <T extends FieldValues>({
           setCheckedRows={setCheckedRows}
           tableState={tableState}
           createStateParams={createStateParams}
+          formatPayload={formatPayload}
         />
 
         <div className="overflow-x-auto" ref={scrollRef}>

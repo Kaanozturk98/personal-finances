@@ -3,6 +3,7 @@ import Table from "@component/components/Table";
 import { IColumnObject } from "@component/types";
 import { AssetCategory, AssetType } from "@prisma/client";
 import React from "react";
+import { formatPayload } from "./utils";
 
 const columns: IColumnObject<AssetType>[] = [
   {
@@ -49,8 +50,8 @@ const columns: IColumnObject<AssetType>[] = [
     options: Object.values(AssetCategory),
   },
   {
-    key: "createdAt",
-    label: "Created At",
+    key: "updatedAt",
+    label: "Updated At",
     sort: true,
     type: "date",
     form: false,
@@ -85,7 +86,8 @@ const AssetTypesPage: React.FC = () => {
       defaultSortBy={"name"}
       add
       bulkUpdate
-      checkbox={false}
+      checkbox={true}
+      formatPayload={formatPayload}
     />
   );
 };

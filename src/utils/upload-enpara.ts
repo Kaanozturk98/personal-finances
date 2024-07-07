@@ -6,7 +6,6 @@ const dateMatchRegex = (cardType: CardType) =>
   cardType === CardType.DEBIT ? /^\d{2}\/\d{2}\/\d{2}/ : /^\d{2}\/\d{2}\/\d{4}/;
 
 export function parseAmount(amountString: string) {
-  if (amountString.startsWith("-")) amountString = amountString.slice(1);
   const normalizedAmount = amountString.replace(/\./g, "").replace(/,/g, ".");
   return parseFloat(normalizedAmount);
 }
