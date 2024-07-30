@@ -107,11 +107,9 @@ Transaction details:
     .join("\n")}
   
 Categories:
-  ${categories
-    .map((category) => `${category.id}. ${category.name}`)
-    .join("\n")}`;
+${categories.map((category) => `${category.id}. ${category.name}`).join("\n")}`;
 
-  console.log(prompt);
+  console.log("prompt", prompt);
 
   const run = await openai.beta.threads.createAndRun({
     assistant_id: "asst_cRX3uWtOxr1VBaCxFmvunPLf",
@@ -119,6 +117,8 @@ Categories:
       messages: [{ role: "user", content: prompt }],
     },
   });
+
+  console.log("run", run);
 
   let lastStatus = "";
   let completed = false;
@@ -133,6 +133,8 @@ Categories:
       run.thread_id,
       run.id
     );
+
+    console.log("processingRun", processingRun);
 
     if (
       processingRun.status !== lastStatus ||
@@ -176,16 +178,21 @@ Categories:
     order: "desc",
   });
 
-  const data = (lastMessage.content as any[])[0].text.value;
+  console.log("lastMessage", lastMessage);
+
+  const data: string = (lastMessage.content as any[])[0].text.value;
 
   console.log("data", typeof data, data);
 
   const assignments = data
+    .replaceAll("`", "")
     .trim()
     .split("\n")
     .map((assignment: string) => {
       const [unparcedTransactionId, unparcedCategoryId] =
         assignment.split("||"); // Updated the separator to '||'
+      console.log("unparcedTransactionId", unparcedTransactionId);
+      console.log("unparcedCategoryId", unparcedCategoryId);
       const transactionId = unparcedTransactionId.trim();
       const categoryId = unparcedCategoryId.trim();
 
