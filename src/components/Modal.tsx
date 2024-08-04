@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
+import { Button } from "./ui/button";
 
 interface ModalProps {
   title: string;
@@ -44,12 +45,12 @@ const Modal: React.FC<ModalProps> = ({
               className="w-full max-w-md bg-base-200 p-6 mx-4 md:mx-0 my-8 rounded-xl shadow-lg relative"
               onClick={(e) => e.stopPropagation()}
             >
-              <button
-                className="close-btn btn btn-circle btn-ghost absolute top-4 right-4"
+              <Button
+                className="absolute top-4 right-4"
                 onClick={() => setIsOpen(false)}
               >
                 ×
-              </button>
+              </Button>
               <h3 className="text-lg font-medium leading-6">{title}</h3>
               <div className="mt-4">{children}</div>
             </div>

@@ -1,8 +1,9 @@
-import clsx from "clsx";
 import React from "react";
 import { useFormContext, FieldValues, RegisterOptions } from "react-hook-form";
+import clsx from "clsx";
 import InputWrapper from "./InputWrapper";
 import { FieldError } from "react-hook-form/dist/types/errors";
+import { Input } from "../ui/input";
 
 interface NumberInputProps {
   id: string;
@@ -45,7 +46,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
 
   return (
     <InputWrapper id={id} label={label}>
-      <input
+      <Input
         {...(name && !isControlled && formContext
           ? formContext.register(name, rules)
           : {})}
@@ -53,7 +54,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
         name={name}
         type="number"
         className={clsx(
-          "input input-bordered w-full min-w-[200px]",
+          "w-full min-w-[200px] border rounded-md shadow-sm",
           additionalClassName
         )}
         value={
@@ -67,6 +68,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
         min={min}
         max={max}
         step={step}
+        aria-invalid={error ? "true" : "false"}
       />
       {error && <p className="text-red-600 mt-1">{error.message}</p>}
     </InputWrapper>

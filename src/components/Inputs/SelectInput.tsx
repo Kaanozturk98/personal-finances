@@ -1,9 +1,18 @@
-import clsx from "clsx";
 import React from "react";
 import { useFormContext, FieldValues, RegisterOptions } from "react-hook-form";
+import clsx from "clsx";
 import InputWrapper from "./InputWrapper";
 import { FieldError } from "react-hook-form/dist/types/errors";
 import { capitalizeFirstLetter } from "@component/utils";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 interface SelectInputProps {
   id: string;
@@ -40,9 +49,9 @@ const SelectInput: React.FC<SelectInputProps> = ({
 
   const combinedOptionValues = boolean ? ["true", "false"] : optionValues;
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (value: string) => {
     if (onChange) {
-      onChange(e.target.value);
+      onChange(value);
     }
   };
 
@@ -57,25 +66,29 @@ const SelectInput: React.FC<SelectInputProps> = ({
 
   return (
     <InputWrapper id={id} label={label}>
-      <select
+      <Select
+        onValueChange={isControlled ? handleChange : undefined}
+        value={isControlled ? value : undefined}
         {...(name && !isControlled && formContext
           ? formContext.register(name, rules)
           : {})}
-        id={id}
-        name={name}
-        className={clsx(
-          "select select-bordered w-full min-w-[200px]",
-          additionalClassName
-        )}
-        value={isControlled ? value : undefined}
-        onChange={isControlled ? handleChange : undefined}
       >
-        {options?.map((option, index) => (
-          <option key={index} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger
+          className={clsx("w-full min-w-[200px]", additionalClassName)}
+        >
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>{label}</SelectLabel>
+            {options.map((option, index) => (
+              <SelectItem key={index} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
       {error && <p className="text-red-600 mt-1">{error.message}</p>}
     </InputWrapper>
   );

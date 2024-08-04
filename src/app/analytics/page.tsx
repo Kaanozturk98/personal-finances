@@ -1,6 +1,7 @@
 "use client";
-import Card from "@component/components/Card";
 import StackedBarChart from "@component/components/Charts/StackedBarChart";
+import { Button } from "@component/components/ui/button";
+import { Card } from "@component/components/ui/card";
 import { AnyObject } from "@component/types";
 import { getColorForLabel } from "@component/utils";
 import { Category } from "@prisma/client";
@@ -51,9 +52,7 @@ const Analytics = () => {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-semibold">Monthly Expenses by Category</h1>
-      <button onClick={fetchData} className="btn btn-base">
-        Refresh Data
-      </button>
+      <Button onClick={fetchData}>Refresh Data</Button>
       {isLoading ? (
         <span>Loading...</span>
       ) : datasets.length > 0 && labels.length > 0 ? (

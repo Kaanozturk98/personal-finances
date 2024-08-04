@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { IColumnObject } from "@component/types";
 import DateInput from "@component/components/Inputs/DateInput";
 import Table from "@component/components/Table";
-import Card from "@component/components/Card";
+import { Card } from "@component/components/ui/card";
 import { numberWithCommas } from "@component/utils";
 import { TransactionWithCategory } from "../transactions/page";
 import BarChart from "@component/components/Charts/BarChart";

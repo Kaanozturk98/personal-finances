@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import React from "react";
 import {
   useFormContext,
@@ -6,8 +5,9 @@ import {
   FieldError,
   FieldValues,
 } from "react-hook-form";
-
+import clsx from "clsx";
 import InputWrapper from "./InputWrapper";
+import { Input } from "../ui/input";
 
 interface TextInputProps {
   id: string;
@@ -46,7 +46,7 @@ const TextInput: React.FC<TextInputProps> = ({
 
   return (
     <InputWrapper id={id} label={label}>
-      <input
+      <Input
         {...(name && !isControlled && formContext
           ? formContext.register(name, rules)
           : {})}
@@ -54,12 +54,13 @@ const TextInput: React.FC<TextInputProps> = ({
         name={name}
         type="text"
         className={clsx(
-          "input input-bordered w-full min-w-[200px]",
+          "w-full min-w-[200px] border rounded-md shadow-sm",
           additionalClassName
         )}
         placeholder={placeholder}
         value={isControlled ? value : undefined}
         onChange={isControlled ? handleChange : undefined}
+        aria-invalid={error ? "true" : "false"}
       />
       {error && <p className="text-red-600 mt-1">{error.message}</p>}
     </InputWrapper>

@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import React, { useEffect, useRef } from "react";
 import {
   useFormContext,
@@ -6,8 +5,8 @@ import {
   FieldError,
   FieldValues,
 } from "react-hook-form";
-
 import InputWrapper from "./InputWrapper";
+import { cn } from "@component/lib/utils";
 
 interface CheckboxInputProps {
   id: string;
@@ -43,6 +42,7 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
       onChange(e.target.checked);
     }
   };
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -53,18 +53,27 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
 
   return (
     <InputWrapper id={id} label={label}>
-      <input
-        {...(name && !isControlled && formContext
-          ? formContext.register(name, rules)
-          : {})}
-        ref={inputRef}
-        id={id}
-        name={name}
-        type="checkbox"
-        className={clsx("checkbox checkbox-sm", additionalClassName)}
-        checked={isControlled ? checked : undefined}
-        onChange={isControlled ? handleChange : undefined}
-      />
+      <div className="flex items-center">
+        <input
+          {...(name && !isControlled && formContext
+            ? formContext.register(name, rules)
+            : {})}
+          ref={inputRef}
+          id={id}
+          name={name}
+          type="checkbox"
+          className={cn(
+            "h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary",
+            additionalClassName
+          )}
+          checked={isControlled ? checked : undefined}
+          onChange={isControlled ? handleChange : undefined}
+          aria-invalid={error ? "true" : "false"}
+        />
+        <label htmlFor={id} className="ml-2 text-sm text-gray-700">
+          {label}
+        </label>
+      </div>
       {error && <p className="text-red-600 mt-1">{error.message}</p>}
     </InputWrapper>
   );

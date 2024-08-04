@@ -1,6 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@component/lib/utils";
 
 interface NavItem {
   name: string;
@@ -19,19 +21,27 @@ const navItems: NavItem[] = [
 ];
 
 const SideNavbar: React.FC = () => {
+  const currentPath = usePathname();
+
   return (
-    <nav className="h-full bg-base-300 text-primary-content flex flex-col p-4">
+    <nav className="h-full bg-background text-primary flex flex-col p-4">
       <div className="mt-4 mb-8 flex items-center justify-center">
         <img src="/line-graph.png" alt="Logo" className="h-16 w-auto" />
       </div>
       <ul className="space-y-4">
         {navItems.map((item, index) => (
           <li key={index}>
-            <Link
-              href={item.href}
-              className="block w-full text-left py-2 px-4 transition-colors duration-200 border-l-4 border-transparent hover:border-primary"
-            >
-              {item.name}
+            <Link href={item.href}>
+              <a
+                className={cn(
+                  "block w-full text-left py-2 px-4 transition-colors duration-200 border-l-4",
+                  currentPath === item.href
+                    ? "border-primary bg-primary text-white"
+                    : "border-transparent hover:border-primary"
+                )}
+              >
+                {item.name}
+              </a>
             </Link>
           </li>
         ))}

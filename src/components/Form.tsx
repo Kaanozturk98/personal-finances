@@ -1,5 +1,3 @@
-// Form.tsx
-import { IColumnObject } from "@component/types";
 import React from "react";
 import {
   useForm,
@@ -13,6 +11,8 @@ import SelectInput from "./Inputs/SelectInput";
 import DateInput from "./Inputs/DateInput";
 import AutocompleteInput from "./Inputs/AutocompleteInput";
 import useToast from "./Toast";
+import { Button } from "./ui/button";
+import { IColumnObject } from "@component/types";
 
 interface FormProps<T extends FieldValues> {
   route: string;
@@ -88,12 +88,12 @@ const Form = <T extends FieldValues>({
       .catch((error) => console.error(error));
   };
 
-  /* console.log("first", formMethods.watch());
-  console.log("formMethods", formMethods.getValues()); */
-
   return (
     <FormProvider {...formMethods}>
-      <form onSubmit={formMethods.handleSubmit(submitHandler)} className="form">
+      <form
+        onSubmit={formMethods.handleSubmit(submitHandler)}
+        className="space-y-4"
+      >
         {fields.map((field) => {
           const { key, label, type } = field;
 
@@ -159,9 +159,9 @@ const Form = <T extends FieldValues>({
             </div>
           );
         })}
-        <button type="submit" className="btn btn-primary">
+        <Button type="submit" className="w-full">
           Submit
-        </button>
+        </Button>
       </form>
     </FormProvider>
   );
