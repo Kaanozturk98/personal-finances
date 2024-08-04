@@ -1,7 +1,7 @@
-// DateFilter.tsx
 import React, { useState, useEffect } from "react";
 import { IColumnObject } from "@component/types";
 import DateInput from "../../Inputs/DateInput";
+import { cn } from "@component/lib/utils";
 
 interface DateFilterProps<T> {
   column: IColumnObject<T>;
@@ -38,18 +38,24 @@ const DateFilter = <T,>({
   };
 
   return (
-    <div className="flex space-x-2">
+    <div
+      className={cn(
+        "flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0"
+      )}
+    >
       <DateInput
         id={`from-${column.key as string}`}
         label="From"
         value={fromDate}
         onChange={(value: string) => handleDateChange("from", value)}
+        additionalClassName="w-full md:w-auto"
       />
       <DateInput
         id={`to-${column.key as string}`}
         label="To"
         value={toDate}
         onChange={(value: string) => handleDateChange("to", value)}
+        additionalClassName="w-full md:w-auto"
       />
     </div>
   );

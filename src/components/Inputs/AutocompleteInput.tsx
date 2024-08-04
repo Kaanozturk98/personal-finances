@@ -168,6 +168,7 @@ const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
+              <SelectItem value="none">Any</SelectItem>
               <SelectLabel>{label}</SelectLabel>
               {options.map((option) => (
                 <SelectItem key={option.value} value={option.value}>

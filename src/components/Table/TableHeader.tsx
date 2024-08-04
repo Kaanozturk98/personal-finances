@@ -1,8 +1,9 @@
-// TableHeader.tsx
 import React from "react";
-import clsx from "clsx";
 import { IColumnObject } from "@component/types";
 import CheckboxInput from "../Inputs/CheckboxInput";
+
+import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
+import { cn } from "@component/lib/utils";
 
 interface TableHeaderProps<T> {
   columnsToRender: IColumnObject<T>[];
@@ -26,36 +27,48 @@ const TableHeader = <T extends {}>({
   sortOrder,
 }: TableHeaderProps<T>) => {
   return (
-    <thead>
-      <tr>
+    <thead className="bg-gray-100 dark:bg-gray-800">
+      <tr className="h-12 border-b border-gray-200 dark:border-gray-700">
         {checkbox && (
-          <th>
+          <th className="w-10 px-3 py-2 text-left">
             <CheckboxInput
               id={`checkbox-all`}
               checked={isAllRowsChecked}
               indeterminate={isSomeRowsChecked}
               onChange={handleGeneralCheckboxChange}
               label=""
+              additionalClassName="text-primary focus:ring-primary focus:border-primary"
             />
           </th>
         )}
         {columnsToRender.map((column, index) => (
           <th
             key={index}
-            className={clsx("text-left", column.sort ? "cursor-pointer" : "")}
+            className={cn(
+              "px-3 py-2 text-left text-sm font-medium text-gray-700 dark:text-gray-300",
+              column.sort && "cursor-pointer select-none",
+              sortBy === column.key && "text-primary"
+            )}
             onClick={column.sort ? () => handleHeaderClick(column) : undefined}
+            aria-sort={
+              sortBy === column.key
+                ? sortOrder === "asc"
+                  ? "ascending"
+                  : "descending"
+                : "none"
+            }
+            role={column.sort ? "button" : "columnheader"}
+            tabIndex={column.sort ? 0 : undefined}
           >
-            <div className="inline-flex items-center w-full space-x-2">
-              <span
-                className={clsx(
-                  column.sort && sortBy === column.key ? "underline" : ""
-                )}
-              >
-                {column.label}
-              </span>
-              {column.sort && sortBy === column.key && (
-                <span>{sortOrder === "asc" ? "↑" : "↓"}</span>
-              )}
+            <div className="inline-flex items-center space-x-2">
+              <span>{column.label}</span>
+              {column.sort &&
+                sortBy === column.key &&
+                (sortOrder === "asc" ? (
+                  <ArrowUpIcon className="w-4 h-4" />
+                ) : (
+                  <ArrowDownIcon className="w-4 h-4" />
+                ))}
             </div>
           </th>
         ))}

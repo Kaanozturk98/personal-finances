@@ -55,6 +55,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
     }
   };
 
+  // Map options with a proper non-empty string for "clear" option
   const options = [
     ...(combinedOptionValues?.map((option) => ({
       label: capitalizeFirstLetter(option),
@@ -62,7 +63,8 @@ const SelectInput: React.FC<SelectInputProps> = ({
     })) || []),
   ];
 
-  if (clearOption) options.unshift({ label: "Select", value: "" });
+  // Change the "Select" option to a non-empty string like "none"
+  if (clearOption) options.unshift({ label: "Select", value: "none" });
 
   return (
     <InputWrapper id={id} label={label}>
@@ -76,6 +78,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
         <SelectTrigger
           className={clsx("w-full min-w-[200px]", additionalClassName)}
         >
+          {/* Use the placeholder prop for an initial "Select an option" state */}
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { RectangleGroupIcon } from "@heroicons/react/24/outline";
 import { IColumnObject } from "@component/types";
-import useToast from "../../Toast";
-import SelectInput from "../../Inputs/SelectInput";
-import DateInput from "../../Inputs/DateInput";
-import AutocompleteInput from "../../Inputs/AutocompleteInput";
-import NumberInput from "../../Inputs/NumberInput";
-import TextInput from "../../Inputs/TextInput";
+import useToast from "@component/components/Toast";
+import SelectInput from "@component/components/Inputs/SelectInput";
+import DateInput from "@component/components/Inputs/DateInput";
+import AutocompleteInput from "@component/components/Inputs/AutocompleteInput";
+import NumberInput from "@component/components/Inputs/NumberInput";
+import TextInput from "@component/components/Inputs/TextInput";
 import { FieldValues, FormProvider, useForm } from "react-hook-form";
-import clsx from "clsx";
+import { Button } from "@component/components/ui/button";
+import { cn } from "@component/lib/utils";
 
 interface BulkEditProps<T> {
   columns: IColumnObject<T>[];
@@ -35,7 +36,9 @@ const BulkEdit = <T,>({
 
   const onSubmit = async (updates: FieldValues) => {
     const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([, value]) => value)
+      Object.entries(updates).filter(
+        ([, value]) => value !== undefined && value !== null && value !== ""
+      )
     );
 
     const requests = checkedRowsData.map((row) => {
@@ -73,7 +76,7 @@ const BulkEdit = <T,>({
       if (responses.every((r) => r.ok)) {
         showToast("Update successful", "success");
         onSuccess && onSuccess();
-        onSuccess && setShowForm(false);
+        setShowForm(false); // Only hide the form when the update is successful
       } else {
         showToast("Update failed", "error");
       }
@@ -82,22 +85,23 @@ const BulkEdit = <T,>({
 
   return (
     <div className="relative inline-block">
-      <button
-        className={clsx(
-          "px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md h-10 transition-all duration-300",
-          "disabled:btn-disabled"
-        )}
-        disabled={checkedRowsData.length === 0}
+      <Button
         onClick={handleBulkEditClick}
+        disabled={checkedRowsData.length === 0}
+        variant="outline"
+        className={cn(
+          "flex items-center justify-center h-10",
+          "px-3 py-2 transition-all duration-300"
+        )}
       >
-        <RectangleGroupIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
-        <span className="align-middle">Update</span>
-      </button>
+        <RectangleGroupIcon className="w-5 h-5 mr-1.5" />
+        Update
+      </Button>
       {showForm && (
         <FormProvider {...formMethods}>
           <form
             onSubmit={formMethods.handleSubmit(onSubmit)}
-            className="absolute z-50 mt-2 p-4 bg-base-200 shadow-2xl rounded border border-content flex flex-col space-y-4"
+            className="absolute z-50 mt-2 p-4 bg-white dark:bg-gray-900 shadow-2xl rounded-md border border-gray-200 dark:border-gray-700 flex flex-col space-y-4"
           >
             {columns.map((column) => {
               if (!column.form) return null;
@@ -168,9 +172,9 @@ const BulkEdit = <T,>({
 
               return <div key={String(key)}>{inputComponent}</div>;
             })}
-            <button type="submit" className="btn btn-primary">
+            <Button type="submit" className="w-full">
               Submit
-            </button>
+            </Button>
           </form>
         </FormProvider>
       )}

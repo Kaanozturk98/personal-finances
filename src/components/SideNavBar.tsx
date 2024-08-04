@@ -31,17 +31,16 @@ const SideNavbar: React.FC = () => {
       <ul className="space-y-4">
         {navItems.map((item, index) => (
           <li key={index}>
-            <Link href={item.href}>
-              <a
-                className={cn(
-                  "block w-full text-left py-2 px-4 transition-colors duration-200 border-l-4",
-                  currentPath === item.href
-                    ? "border-primary bg-primary text-white"
-                    : "border-transparent hover:border-primary"
-                )}
-              >
-                {item.name}
-              </a>
+            <Link
+              href={item.href}
+              className={cn(
+                "block w-full text-left py-2 px-4 transition-colors duration-200 border-l-4",
+                currentPath === item.href
+                  ? "border-primary bg-primary text-white"
+                  : "border-transparent hover:border-primary"
+              )}
+            >
+              {item.name}
             </Link>
           </li>
         ))}

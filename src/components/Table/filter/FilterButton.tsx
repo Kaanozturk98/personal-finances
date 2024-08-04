@@ -11,6 +11,7 @@ import debounce from "lodash/debounce";
 import ReferenceFilter from "./ReferenceFilter";
 import { TableState } from "..";
 import { FieldValues } from "react-hook-form";
+import { cn } from "@component/lib/utils";
 
 interface FilterButtonProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -38,8 +39,6 @@ const FilterButton = <T extends FieldValues>({
     setShowFilter(!showFilter);
   };
 
-  // Inside your component
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedPush = useCallback(
     debounce(
       (path: string, searchString: string): void =>
@@ -52,17 +51,20 @@ const FilterButton = <T extends FieldValues>({
   return (
     <div className="relative inline-block">
       <button
-        className="px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md h-10"
+        className={cn(
+          "px-3 py-2 h-10 rounded-md transition-colors duration-300",
+          "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700",
+          "text-gray-900 dark:text-gray-100"
+        )}
         onClick={handleFilterButtonClick}
       >
         <FunnelIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
         <span className="align-middle">Filter</span>
       </button>
       {showFilter && (
-        <div className="absolute z-50 mt-2 p-4 bg-base-200 shadow-2xl rounded border border-content flex flex-col space-y-4">
-          {/* Map through columns and render different filter components */}
+        <div className="absolute z-50 mt-2 p-4 bg-white dark:bg-gray-900 shadow-2xl rounded-md border border-gray-200 dark:border-gray-700 flex flex-col space-y-4 w-64">
           {columns.map((column, index) => {
-            if (!column.filter) return;
+            if (!column.filter) return null; // Corrected to return null if no filter
             switch (column.type) {
               case "string":
                 if (search) {
@@ -83,9 +85,7 @@ const FilterButton = <T extends FieldValues>({
                     />
                   );
                 }
-
                 break;
-
               case "number":
                 return (
                   <NumberFilter
@@ -131,6 +131,8 @@ const FilterButton = <T extends FieldValues>({
                     value={filterState[column.key as keyof T]}
                   />
                 );
+              default:
+                return null;
             }
           })}
         </div>

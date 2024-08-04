@@ -3,6 +3,7 @@ import SelectInput from "../Inputs/SelectInput";
 import { usePathname } from "next/navigation";
 import { TableState } from ".";
 import { FieldValues } from "react-hook-form";
+import { Button } from "../ui/button";
 
 interface PaginationProps<T extends FieldValues> {
   totalPages: number;
@@ -60,26 +61,28 @@ const Pagination = <T extends FieldValues>({
   const rowsPerPageOptions = ["10", "20", "30", "50", "100", "200"];
 
   return (
-    <div className="flex justify-between mt-4">
+    <div className="flex justify-between items-center mt-4">
       <div></div>
-      <div className="btn-group flex items-center">
-        <button
-          className={`btn ${currentPage === 1 ? "btn-disabled" : "btn-base"}`}
+      <div className="flex items-center space-x-2">
+        <Button
+          variant="outline"
+          size="sm"
           onClick={handlePrevious}
+          disabled={currentPage === 1}
+          className="rounded-full"
         >
           «
-        </button>
-        <button className="btn btn-base pointer-events-none">
-          Page {currentPage}
-        </button>
-        <button
-          className={`btn ${
-            currentPage === totalPages ? "btn-disabled" : "btn-base"
-          }`}
+        </Button>
+        <span className="text-sm font-medium">Page {currentPage}</span>
+        <Button
+          variant="outline"
+          size="sm"
           onClick={handleNext}
+          disabled={currentPage === totalPages}
+          className="rounded-full"
         >
           »
-        </button>
+        </Button>
       </div>
       <div className="flex items-center">
         <SelectInput
@@ -87,8 +90,8 @@ const Pagination = <T extends FieldValues>({
           value={rowsPerPage.toString()}
           onChange={handleRowsPerPageChange}
           optionValues={rowsPerPageOptions}
-          label=""
-          additionalClassName="min-w-min"
+          label="Rows per page"
+          additionalClassName="min-w-[80px]"
           clearOption={false}
         />
       </div>

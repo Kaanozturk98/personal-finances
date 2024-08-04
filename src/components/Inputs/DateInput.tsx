@@ -7,7 +7,7 @@ import InputWrapper from "./InputWrapper";
 import { FieldError } from "react-hook-form/dist/types/errors";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@component/lib/utils";
-import { Button } from "react-day-picker";
+import { Button } from "../ui/button";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 
@@ -79,6 +79,7 @@ const DateInput: React.FC<DateInputProps> = ({
             mode="single"
             selected={selectedDate}
             onSelect={handleDateChange}
+            className="rounded-md border"
             initialFocus
           />
         </PopoverContent>

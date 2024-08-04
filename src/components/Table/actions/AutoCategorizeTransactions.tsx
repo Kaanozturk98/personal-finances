@@ -1,7 +1,8 @@
 import React from "react";
 import useToast from "@component/components/Toast";
 import { TagIcon } from "@heroicons/react/24/outline";
-import clsx from "clsx";
+import { Button } from "@component/components/ui/button";
+import { cn } from "@component/lib/utils";
 
 interface AutoCategorizeTransactionsProps<T> {
   checkedRowsData: T[];
@@ -19,34 +20,42 @@ const AutoCategorizeTransactions = <T,>({
   };
 
   const handleClick = async () => {
-    await fetch(`/api/auto-categorize-transactions`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    })
-      .then((response) => response.json())
-      .then(({ message }) => {
-        onSuccess && onSuccess();
-        showToast(message, "success");
-      })
-      .catch((error) => console.error(error));
+    try {
+      const response = await fetch(`/api/auto-categorize-transactions`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast(data.message, "success");
+        if (onSuccess) onSuccess();
+      } else {
+        showToast(data.message || "Failed to auto-categorize", "error");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      showToast("An error occurred during categorization", "error");
+    }
   };
 
   return (
-    <button
-      className={clsx(
-        "px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md h-10 transition-all duration-300",
-        "disabled:btn-disabled"
-      )}
-      disabled={checkedRowsData.length < 1}
-      type="button"
+    <Button
       onClick={handleClick}
+      disabled={checkedRowsData.length < 1}
+      variant="default"
+      className={cn(
+        "flex items-center justify-center h-10",
+        "transition-all duration-300"
+      )}
     >
-      <TagIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
-      <span className="align-middle">Auto Categorize</span>
-    </button>
+      <TagIcon className="w-5 h-5 mr-1.5" />
+      Auto Categorize
+    </Button>
   );
 };
 

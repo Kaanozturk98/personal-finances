@@ -1,14 +1,16 @@
 "use client";
+
 import { usePathname, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import Pagination from "./Pagination";
 import { FieldValues } from "react-hook-form";
 import { IColumnObject } from "@component/types";
-import useHorizontalScroll from "@component/utils/use-horiontal-scroll";
+
 import TableBody from "./TableBody";
 import TableHeader from "./TableHeader";
 import TableActions from "./TableActions";
 import { usePushStateListener } from "@component/hooks/usePushStateListener";
+import useHorizontalScroll from "@component/utils/use-horiontal-scroll";
 
 interface TableProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -59,7 +61,7 @@ const Table = <T extends FieldValues>({
   const [checkedRows, setCheckedRows] = useState<Record<string, T>>({});
   const [fetchKey, setFetchKey] = useState<number>(0);
 
-  const [tableState, setTableState] = useState({
+  const [tableState, setTableState] = useState<TableState<T>>({
     currentPage: Number(searchParams?.get("page")) || 1,
     perPage: Number(searchParams?.get("limit")) || defaultItemsPerPage,
     sortBy: (searchParams?.get("sortBy") as keyof T) || String(defaultSortBy),
@@ -261,7 +263,7 @@ const Table = <T extends FieldValues>({
   const columnsToRender = columns.filter((column) => !column.hidden);
 
   return (
-    <div>
+    <div className="p-4 bg-white dark:bg-gray-900 rounded-lg shadow-md">
       <div className="flex-col space-y-4">
         <TableActions<T>
           columns={columns}
@@ -280,7 +282,7 @@ const Table = <T extends FieldValues>({
         />
 
         <div className="overflow-x-auto" ref={scrollRef}>
-          <table className="table table-compact table-zebra w-full">
+          <table className="w-full border-collapse">
             <TableHeader
               columnsToRender={columnsToRender}
               checkbox={checkbox}

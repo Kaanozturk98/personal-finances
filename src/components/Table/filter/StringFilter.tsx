@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { IColumnObject } from "@component/types";
-import TextInput from "../../Inputs/TextInput";
+import TextInput from "@component/components/Inputs/TextInput";
 
 interface StringFilterProps<T> {
   column: IColumnObject<T>;
@@ -25,13 +25,16 @@ const StringFilter = <T,>({
   };
 
   return (
-    <TextInput
-      id={`filter-${column.key as string}`}
-      label={column.label} // Pass the label
-      placeholder={`Search by ${column.label}`}
-      value={selectedValue}
-      onChange={handleInputChange}
-    />
+    <div className="space-y-2">
+      <TextInput
+        id={`filter-${String(column.key)}`}
+        label={column.label}
+        placeholder={`Search by ${column.label}`}
+        value={selectedValue}
+        onChange={handleInputChange}
+        additionalClassName="w-full"
+      />
+    </div>
   );
 };
 

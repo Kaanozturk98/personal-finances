@@ -1,7 +1,6 @@
-import AutocompleteInput from "@component/components/Inputs/AutocompleteInput";
-import SelectInput from "@component/components/Inputs/SelectInput";
-import { IColumnObject } from "@component/types";
 import React, { useEffect, useState } from "react";
+import AutocompleteInput from "@component/components/Inputs/AutocompleteInput"; // Ensure you are using the correct input component
+import { IColumnObject } from "@component/types";
 
 interface ReferenceFilterProps<T> {
   column: IColumnObject<T>;
@@ -26,13 +25,16 @@ const ReferenceFilter = <T,>({
   };
 
   return (
-    <AutocompleteInput
-      id={`reference-filter-${column.key as string}`}
-      label={column.label}
-      value={selectedValue}
-      onChange={handleChange}
-      fetchUrl={column.fetchUrl as string}
-    />
+    <div className="space-y-2">
+      <AutocompleteInput
+        id={`reference-filter-${String(column.key)}`}
+        label={column.label}
+        value={selectedValue}
+        onChange={handleChange}
+        fetchUrl={column.fetchUrl as string}
+        additionalClassName="w-full"
+      />
+    </div>
   );
 };
 

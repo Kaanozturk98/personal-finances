@@ -1,17 +1,18 @@
-// TableActions.tsx
 import React from "react";
 import { FieldValues } from "react-hook-form";
 import { IColumnObject } from "@component/types";
 import FilterButton from "./filter/FilterButton";
 import Modal from "../Modal";
 import { PlusIcon, SquaresPlusIcon } from "@heroicons/react/24/outline";
-import clsx from "clsx";
+
 import { capitalizeFirstLetter } from "@component/utils";
 import Form from "../Form";
 import AutoCategorizeTransactions from "./actions/AutoCategorizeTransactions";
 import BulkUpdate from "./actions/BulkUpdate";
 import MergeTransactions from "./actions/MergeTransactions";
 import { TableState } from ".";
+import { cn } from "@component/lib/utils";
+import { Button } from "../ui/button";
 
 interface TableActionsProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -73,20 +74,17 @@ const TableActions = <T extends FieldValues>({
         <Modal
           title="Selected Transactions"
           trigger={
-            <button
-              className={clsx(
-                "px-3 py-2 text-base-content rounded-md h-10 transition-all duration-300 shadow-sm",
+            <Button
+              variant="ghost"
+              className={cn(
+                "px-3 py-2 h-10 transition-all duration-300 shadow-sm",
                 "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-base-100 focus:ring-accent",
-                "disabled:btn-disabled",
-                checkedRowsData.length === 0
-                  ? "hidden"
-                  : "bg-transparent hover:bg-base-200"
+                checkedRowsData.length === 0 && "hidden"
               )}
               disabled={checkedRowsData.length === 0}
-              type="button"
             >
               {checkedRowsData.length} selected
-            </button>
+            </Button>
           }
           disabled={checkedRowsData.length === 0}
         >
@@ -123,16 +121,14 @@ const TableActions = <T extends FieldValues>({
             title={`Merge ${capitalizeFirstLetter(route)}`}
             disabled={mergeBtnDisabled}
             trigger={
-              <button
-                className={clsx(
-                  "px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md h-10 transition-all duration-300",
-                  "disabled:btn-disabled"
-                )}
+              <Button
+                variant="outline"
+                className="flex items-center px-3 py-2 h-10 transition-all duration-300"
                 disabled={mergeBtnDisabled}
               >
-                <SquaresPlusIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
-                <span className="align-middle">Merge</span>
-              </button>
+                <SquaresPlusIcon className="w-5 h-5 mr-1.5" />
+                Merge
+              </Button>
             }
           >
             <MergeTransactions
@@ -145,10 +141,13 @@ const TableActions = <T extends FieldValues>({
           <Modal
             title={`Add ${capitalizeFirstLetter(route)}`}
             trigger={
-              <button className="px-3 py-2 bg-base-300 hover:bg-base-200 text-base-content rounded-md h-10">
-                <PlusIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
-                <span className="align-middle">Add</span>
-              </button>
+              <Button
+                variant="outline"
+                className="flex items-center px-3 py-2 h-10 transition-all duration-300"
+              >
+                <PlusIcon className="w-5 h-5 mr-1.5" />
+                Add
+              </Button>
             }
           >
             <Form<T> route={`cud-${route}`} columns={columns} />
