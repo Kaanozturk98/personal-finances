@@ -65,7 +65,6 @@ const Pagination = <T extends FieldValues>({
       <div></div>
       <div className="flex items-center space-x-2">
         <Button
-          variant="outline"
           size="sm"
           onClick={handlePrevious}
           disabled={currentPage === 1}
@@ -75,7 +74,6 @@ const Pagination = <T extends FieldValues>({
         </Button>
         <span className="text-sm font-medium">Page {currentPage}</span>
         <Button
-          variant="outline"
           size="sm"
           onClick={handleNext}
           disabled={currentPage === totalPages}

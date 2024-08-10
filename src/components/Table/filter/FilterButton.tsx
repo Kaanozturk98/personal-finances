@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { FunnelIcon } from "@heroicons/react/24/outline";
 import StringFilter from "./StringFilter";
 import NumberFilter from "./NumberFilter";
@@ -6,13 +6,17 @@ import BooleanFilter from "./BooleanFilter";
 import EnumFilter from "./EnumFilter";
 import { IColumnObject } from "@/types";
 import DateFilter from "./DateFilter";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import debounce from "lodash/debounce";
 import ReferenceFilter from "./ReferenceFilter";
 import { TableState } from "..";
 import { FieldValues } from "react-hook-form";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface FilterButtonProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -30,14 +34,7 @@ const FilterButton = <T extends FieldValues>({
   createStateParams,
 }: FilterButtonProps<T>) => {
   const { filter: filterState, searchText } = tableState;
-  const router = useRouter();
   const pathname = usePathname();
-
-  const [showFilter, setShowFilter] = useState(false);
-
-  const handleFilterButtonClick = () => {
-    setShowFilter(!showFilter);
-  };
 
   const debouncedPush = useCallback(
     debounce(
@@ -45,92 +42,92 @@ const FilterButton = <T extends FieldValues>({
         window.history.pushState({}, "", path + "?" + searchString),
       1000
     ),
-    [router]
+    []
   );
 
   return (
-    <div className="relative inline-block">
-      <Button onClick={handleFilterButtonClick}>
-        <FunnelIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
-        <span className="align-middle">Filter</span>
-      </Button>
-      {showFilter && (
-        <div className="absolute z-50 mt-2 p-4 bg-white dark:bg-gray-900 shadow-2xl rounded-md border border-gray-200 dark:border-gray-700 flex flex-col space-y-4 w-64">
-          {columns.map((column, index) => {
-            if (!column.filter) return null; // Corrected to return null if no filter
-            switch (column.type) {
-              case "string":
-                if (search) {
-                  return (
-                    <StringFilter
-                      key={index}
-                      column={column}
-                      handleSearchChange={(text: string) => {
-                        const toBeUpdatedSearchParams =
-                          createStateParams(tableState);
-                        toBeUpdatedSearchParams.set("searchText", text);
-                        debouncedPush(
-                          pathname as string,
-                          toBeUpdatedSearchParams.toString()
-                        );
-                      }}
-                      value={searchText}
-                    />
-                  );
-                }
-                break;
-              case "number":
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button>
+          <FunnelIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
+          <span className="align-middle">Filter</span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-64 p-4 z-50 bg-white dark:bg-gray-900 shadow-2xl rounded-md border border-gray-200 dark:border-gray-700 flex flex-col space-y-4">
+        {columns.map((column, index) => {
+          if (!column.filter) return null;
+          switch (column.type) {
+            case "string":
+              if (search) {
                 return (
-                  <NumberFilter
+                  <StringFilter
                     key={index}
                     column={column}
-                    onFilterChange={onFilterChange}
-                    value={filterState[column.key as keyof T]}
+                    handleSearchChange={(text: string) => {
+                      const toBeUpdatedSearchParams =
+                        createStateParams(tableState);
+                      toBeUpdatedSearchParams.set("searchText", text);
+                      debouncedPush(
+                        pathname as string,
+                        toBeUpdatedSearchParams.toString()
+                      );
+                    }}
+                    value={searchText}
                   />
                 );
-              case "boolean":
-                return (
-                  <BooleanFilter
-                    key={index}
-                    column={column}
-                    onFilterChange={onFilterChange}
-                    value={filterState[column.key as keyof T]}
-                  />
-                );
-              case "enum":
-                return (
-                  <EnumFilter
-                    key={index}
-                    column={column}
-                    onFilterChange={onFilterChange}
-                    value={filterState[column.key as keyof T]}
-                  />
-                );
-              case "date":
-                return (
-                  <DateFilter
-                    key={index}
-                    column={column}
-                    onFilterChange={onFilterChange}
-                    value={filterState[column.key as keyof T]}
-                  />
-                );
-              case "reference":
-                return (
-                  <ReferenceFilter
-                    key={index}
-                    column={column}
-                    onFilterChange={onFilterChange}
-                    value={filterState[column.key as keyof T]}
-                  />
-                );
-              default:
-                return null;
-            }
-          })}
-        </div>
-      )}
-    </div>
+              }
+              break;
+            case "number":
+              return (
+                <NumberFilter
+                  key={index}
+                  column={column}
+                  onFilterChange={onFilterChange}
+                  value={filterState[column.key as keyof T]}
+                />
+              );
+            case "boolean":
+              return (
+                <BooleanFilter
+                  key={index}
+                  column={column}
+                  onFilterChange={onFilterChange}
+                  value={filterState[column.key as keyof T]}
+                />
+              );
+            case "enum":
+              return (
+                <EnumFilter
+                  key={index}
+                  column={column}
+                  onFilterChange={onFilterChange}
+                  value={filterState[column.key as keyof T]}
+                />
+              );
+            case "date":
+              return (
+                <DateFilter
+                  key={index}
+                  column={column}
+                  onFilterChange={onFilterChange}
+                  value={filterState[column.key as keyof T]}
+                />
+              );
+            case "reference":
+              return (
+                <ReferenceFilter
+                  key={index}
+                  column={column}
+                  onFilterChange={onFilterChange}
+                  value={filterState[column.key as keyof T]}
+                />
+              );
+            default:
+              return null;
+          }
+        })}
+      </PopoverContent>
+    </Popover>
   );
 };
 
