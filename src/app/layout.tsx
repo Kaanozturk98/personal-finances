@@ -65,8 +65,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
           disableTransitionOnChange
         >
           <div className="grow">
@@ -89,7 +88,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
 
               <ResizablePanel
                 order={2}
-                className={"flex w-full grow flex-col gap-4 p-4"}
+                className={"flex w-full grow flex-col gap-4 p-8"}
                 defaultSize={isCollapsed ? 100 : 88}
               >
                 {children}

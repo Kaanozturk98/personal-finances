@@ -61,7 +61,7 @@ const Pagination = <T extends FieldValues>({
   const rowsPerPageOptions = ["10", "20", "30", "50", "100", "200"];
 
   return (
-    <div className="flex justify-between items-center mt-4">
+    <div className="flex justify-between items-center">
       <div></div>
       <div className="flex items-center space-x-2">
         <Button

@@ -9,6 +9,11 @@ import NumberInput from "@/components/Inputs/NumberInput";
 import TextInput from "@/components/Inputs/TextInput";
 import { FieldValues, FormProvider, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 interface BulkEditProps<T> {
@@ -26,13 +31,8 @@ const BulkEdit = <T,>({
   formatPayload,
   onSuccess,
 }: BulkEditProps<T>) => {
-  const [showForm, setShowForm] = useState(false);
   const formMethods = useForm();
   const showToast = useToast();
-
-  const handleBulkEditClick = () => {
-    setShowForm(!showForm);
-  };
 
   const onSubmit = async (updates: FieldValues) => {
     const filteredUpdates = Object.fromEntries(
@@ -76,7 +76,6 @@ const BulkEdit = <T,>({
       if (responses.every((r) => r.ok)) {
         showToast("Update successful", "success");
         onSuccess && onSuccess();
-        setShowForm(false); // Only hide the form when the update is successful
       } else {
         showToast("Update failed", "error");
       }
@@ -84,19 +83,18 @@ const BulkEdit = <T,>({
   };
 
   return (
-    <div className="relative inline-block">
-      <Button
-        onClick={handleBulkEditClick}
-        disabled={checkedRowsData.length === 0}
-      >
-        <RectangleGroupIcon className="w-5 h-5 mr-1.5" />
-        Update
-      </Button>
-      {showForm && (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button disabled={checkedRowsData.length === 0}>
+          <RectangleGroupIcon className="w-5 h-5 mr-1.5" />
+          Update
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="">
         <FormProvider {...formMethods}>
           <form
             onSubmit={formMethods.handleSubmit(onSubmit)}
-            className="absolute z-50 mt-2 p-4 shadow-2xl rounded-md border flex flex-col space-y-4"
+            className="flex flex-col space-y-4"
           >
             {columns.map((column) => {
               if (!column.form) return null;
@@ -167,13 +165,13 @@ const BulkEdit = <T,>({
 
               return <div key={String(key)}>{inputComponent}</div>;
             })}
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full mt-4">
               Submit
             </Button>
           </form>
         </FormProvider>
-      )}
-    </div>
+      </PopoverContent>
+    </Popover>
   );
 };
 

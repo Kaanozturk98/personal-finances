@@ -11,7 +11,7 @@ import TableHeader from "./TableHeader";
 import TableActions from "./TableActions";
 import { usePushStateListener } from "@/hooks/usePushStateListener";
 import useHorizontalScroll from "@/utils/use-horiontal-scroll";
-import { Card, CardContent } from "../ui/card";
+import { Card, CardContent, CardHeader } from "../ui/card";
 
 interface TableProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -264,55 +264,58 @@ const Table = <T extends FieldValues>({
   const columnsToRender = columns.filter((column) => !column.hidden);
 
   return (
-    <Card className="py-6">
-      <CardContent>
-        <TableActions<T>
-          columns={columns}
-          handleFilterChange={handleFilterChange}
-          checkedRowsData={checkedRowsData}
-          bulkUpdate={bulkUpdate}
-          add={add}
-          route={route}
-          searchKey={searchKey}
-          fetchKey={fetchKey}
-          setFetchKey={setFetchKey}
-          setCheckedRows={setCheckedRows}
-          tableState={tableState}
-          createStateParams={createStateParams}
-          formatPayload={formatPayload}
-        />
+    <>
+      <Card>
+        <CardHeader className="pb-0">
+          <TableActions<T>
+            columns={columns}
+            handleFilterChange={handleFilterChange}
+            checkedRowsData={checkedRowsData}
+            bulkUpdate={bulkUpdate}
+            add={add}
+            route={route}
+            searchKey={searchKey}
+            fetchKey={fetchKey}
+            setFetchKey={setFetchKey}
+            setCheckedRows={setCheckedRows}
+            tableState={tableState}
+            createStateParams={createStateParams}
+            formatPayload={formatPayload}
+          />
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto" ref={scrollRef}>
+            <table className="w-full">
+              <TableHeader
+                columnsToRender={columnsToRender}
+                checkbox={checkbox}
+                isAllRowsChecked={isAllRowsChecked}
+                isSomeRowsChecked={isSomeRowsChecked}
+                handleGeneralCheckboxChange={handleGeneralCheckboxChange}
+                handleHeaderClick={handleHeaderClick}
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+              />
+              <TableBody
+                loading={loading}
+                perPage={perPage}
+                formattedData={formattedData}
+                columnsToRender={columnsToRender}
+                checkbox={checkbox}
+                checkedRows={checkedRows}
+                handleCheckboxChange={handleCheckboxChange}
+              />
+            </table>
+          </div>
+        </CardContent>
+      </Card>
 
-        <div className="overflow-x-auto" ref={scrollRef}>
-          <table className="w-full">
-            <TableHeader
-              columnsToRender={columnsToRender}
-              checkbox={checkbox}
-              isAllRowsChecked={isAllRowsChecked}
-              isSomeRowsChecked={isSomeRowsChecked}
-              handleGeneralCheckboxChange={handleGeneralCheckboxChange}
-              handleHeaderClick={handleHeaderClick}
-              sortBy={sortBy}
-              sortOrder={sortOrder}
-            />
-            <TableBody
-              loading={loading}
-              perPage={perPage}
-              formattedData={formattedData}
-              columnsToRender={columnsToRender}
-              checkbox={checkbox}
-              checkedRows={checkedRows}
-              handleCheckboxChange={handleCheckboxChange}
-            />
-          </table>
-        </div>
-
-        <Pagination<T>
-          totalPages={totalPages}
-          tableState={tableState}
-          createStateParams={createStateParams}
-        />
-      </CardContent>
-    </Card>
+      <Pagination<T>
+        totalPages={totalPages}
+        tableState={tableState}
+        createStateParams={createStateParams}
+      />
+    </>
   );
 };
 

@@ -50,17 +50,15 @@ const Analytics = () => {
   }, [fetchData]);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 h-full">
       <h1 className="text-xl font-semibold">Monthly Expenses by Category</h1>
       <Button onClick={fetchData}>Refresh Data</Button>
       {isLoading ? (
         <span>Loading...</span>
       ) : datasets.length > 0 && labels.length > 0 ? (
-        <div className="h-[calc(100vh-216px)]">
-          <Card>
-            <StackedBarChart datasets={datasets} labels={labels} />
-          </Card>
-        </div>
+        <Card className="grow">
+          <StackedBarChart datasets={datasets} labels={labels} />
+        </Card>
       ) : (
         <span>No data available</span>
       )}

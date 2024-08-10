@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { IColumnObject } from "@/types";
 import DateInput from "@/components/Inputs/DateInput";
 import Table from "@/components/Table";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { numberWithCommas } from "@/utils";
 import { TransactionWithCategory } from "../transactions/page";
 import BarChart from "@/components/Charts/BarChart";
@@ -123,7 +123,7 @@ const ReportsPage = () => {
   };
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto">
       <h1 className="text-xl font-semibold mb-4">Reports</h1>
       <div className="flex space-x-4 mb-6">
         <div className="w-1/2">
@@ -145,16 +145,26 @@ const ReportsPage = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <Card title="Total Spent">
-          <p className="text-lg font-semibold">
-            {numberWithCommas(totalSpent)} TL
-          </p>
+        <Card>
+          <CardHeader>
+            <CardTitle>Total Spent</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-lg font-semibold">
+              {numberWithCommas(totalSpent)} TL
+            </p>
+          </CardContent>
         </Card>
 
-        <Card title="Total Income">
-          <p className="text-lg font-semibold">
-            {numberWithCommas(totalIncome)} TL
-          </p>
+        <Card>
+          <CardHeader>
+            <CardTitle>Total Income</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-lg font-semibold">
+              {numberWithCommas(totalIncome)} TL
+            </p>
+          </CardContent>
         </Card>
       </div>
 

@@ -53,7 +53,7 @@ const FilterButton = <T extends FieldValues>({
           <span className="align-middle">Filter</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-4 z-50 shadow-2xl rounded-md border flex flex-col space-y-4">
+      <PopoverContent className="p-4 shadow-2xl rounded-md border flex flex-col space-y-4 w-auto">
         {columns.map((column, index) => {
           if (!column.filter) return null;
           switch (column.type) {

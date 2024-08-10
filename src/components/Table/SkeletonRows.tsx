@@ -9,7 +9,7 @@ const SkeletonRow: React.FC<SkeletonRowProps> = ({ columns }) => {
   const skeletons = Array(columns).fill(null);
 
   return (
-    <tr className="h-[53px]">
+    <tr className="h-12">
       {skeletons.map((_, index) => (
         <td key={index} className="py-2 px-3">
           <div className="bg-muted h-4 w-full rounded-md animate-pulse"></div>

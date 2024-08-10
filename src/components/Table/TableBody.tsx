@@ -41,7 +41,7 @@ const TableBody = <T extends FieldValues>({
           return (
             <tr key={rowIndex} className="h-12  transition-colors">
               {checkbox && (
-                <td className="p-4">
+                <td className="p-2">
                   <CheckboxInput
                     id={`checkbox-${rowIndex}`}
                     checked={!!checkedRows[objectId]}
@@ -51,7 +51,7 @@ const TableBody = <T extends FieldValues>({
                 </td>
               )}
               {row.map((cell, cellIndex) => (
-                <td key={cellIndex} className="p-4">
+                <td key={cellIndex} className="p-2">
                   <TruncatedText text={cell} />
                 </td>
               ))}

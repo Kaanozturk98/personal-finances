@@ -30,7 +30,7 @@ const TableHeader = <T extends {}>({
     <thead>
       <tr>
         {checkbox && (
-          <th className="p-4">
+          <th className="p-2">
             <CheckboxInput
               id={`checkbox-all`}
               checked={isSomeRowsChecked ? "indeterminate" : isAllRowsChecked}

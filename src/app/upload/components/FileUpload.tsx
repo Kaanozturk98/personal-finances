@@ -50,17 +50,14 @@ const FileUpload: React.FC<FileUploadProps> = ({
   };
 
   return (
-    <div className="flex flex-row gap-x-4">
+    <div className="flex flex-row gap-x-4 items-center justify-center">
       <label className="flex w-full items-center justify-center rounded-md border-2 border-dashed border-neutral-600 py-4">
-        <input
-          type="file"
-          accept={fileType}
-          onChange={handleFileChange}
-          className="file-input"
-        />
+        <input type="file" accept={fileType} onChange={handleFileChange} />
       </label>
 
-      <Button onClick={handleUpload}>{label}</Button>
+      <Button onClick={handleUpload} className="w-64">
+        {label}
+      </Button>
     </div>
   );
 };
