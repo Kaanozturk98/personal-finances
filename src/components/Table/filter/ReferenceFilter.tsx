@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import AutocompleteInput from "@component/components/Inputs/AutocompleteInput"; // Ensure you are using the correct input component
-import { IColumnObject } from "@component/types";
+import AutocompleteInput from "@/components/Inputs/AutocompleteInput"; // Ensure you are using the correct input component
+import { IColumnObject } from "@/types";
 
 interface ReferenceFilterProps<T> {
   column: IColumnObject<T>;

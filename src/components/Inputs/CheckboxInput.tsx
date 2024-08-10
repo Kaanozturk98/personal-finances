@@ -6,7 +6,7 @@ import {
   FieldValues,
 } from "react-hook-form";
 import InputWrapper from "./InputWrapper";
-import { cn } from "@component/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface CheckboxInputProps {
   id: string;

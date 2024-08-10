@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 import XLSX from "xlsx";
-import { generateFingerprint } from "@component/utils";
-import { processExcelFile } from "@component/utils/upload-yapi-kredi-debit";
-import { TransactionCreate } from "@component/types";
+import { generateFingerprint } from "@/utils";
+import { processExcelFile } from "@/utils/upload-yapi-kredi-debit";
+import { TransactionCreate } from "@/types";
 
 const prisma = new PrismaClient();
 

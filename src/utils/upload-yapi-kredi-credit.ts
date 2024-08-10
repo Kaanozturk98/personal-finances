@@ -1,5 +1,5 @@
 import { Bank, CardType, Currency } from "@prisma/client";
-import { TransactionCreate } from "@component/types";
+import { TransactionCreate } from "@/types";
 import { parseDate, areDatesInSameMonth } from ".";
 import { parseAmount } from "./upload-enpara";
 

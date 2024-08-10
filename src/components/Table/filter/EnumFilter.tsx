@@ -7,9 +7,9 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@component/components/ui/select";
-import { IColumnObject } from "@component/types";
-import { cn } from "@component/lib/utils";
+} from "@/components/ui/select";
+import { IColumnObject } from "@/types";
+import { cn } from "@/lib/utils";
 
 interface EnumFilterProps<T> {
   column: IColumnObject<T>;

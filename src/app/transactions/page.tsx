@@ -1,7 +1,7 @@
 "use client";
-import Table from "@component/components/Table";
-import { IColumnObject } from "@component/types";
-import { numberWithCommas } from "@component/utils";
+import Table from "@/components/Table";
+import { IColumnObject } from "@/types";
+import { numberWithCommas } from "@/utils";
 import { Bank, CardType, Category, Transaction } from "@prisma/client";
 import React from "react";
 

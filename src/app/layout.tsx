@@ -12,7 +12,7 @@ import {
 } from "../components/ui/resizable";
 import SideNavbar from "../components/SideNavBar";
 import { ToastContainer } from "react-toastify";
-import { cn } from "@component/lib/utils";
+import { cn } from "@/lib/utils";
 
 const fontSans = FontSans({
   subsets: ["latin"],

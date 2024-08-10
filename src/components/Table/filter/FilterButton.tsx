@@ -4,14 +4,14 @@ import StringFilter from "./StringFilter";
 import NumberFilter from "./NumberFilter";
 import BooleanFilter from "./BooleanFilter";
 import EnumFilter from "./EnumFilter";
-import { IColumnObject } from "@component/types";
+import { IColumnObject } from "@/types";
 import DateFilter from "./DateFilter";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import debounce from "lodash/debounce";
 import ReferenceFilter from "./ReferenceFilter";
 import { TableState } from "..";
 import { FieldValues } from "react-hook-form";
-import { cn } from "@component/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface FilterButtonProps<T extends FieldValues> {
   columns: IColumnObject<T>[];

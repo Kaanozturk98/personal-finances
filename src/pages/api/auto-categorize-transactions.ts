@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient, Transaction } from "@prisma/client";
-import { getCategoryPredictions } from "@component/utils";
+import { getCategoryPredictions } from "@/utils";
 
 const prisma = new PrismaClient();
 

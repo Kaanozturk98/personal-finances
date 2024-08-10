@@ -1,5 +1,5 @@
 import { Bank, CardType, Currency } from "@prisma/client";
-import { TransactionCreate } from "@component/types";
+import { TransactionCreate } from "@/types";
 import { parseDate } from ".";
 
 export function parseAmount(amountString: string) {

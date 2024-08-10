@@ -3,7 +3,7 @@ import { useFormContext, FieldValues, RegisterOptions } from "react-hook-form";
 import clsx from "clsx";
 import InputWrapper from "./InputWrapper";
 import { FieldError } from "react-hook-form/dist/types/errors";
-import { capitalizeFirstLetter } from "@component/utils";
+import { capitalizeFirstLetter } from "@/utils";
 import {
   Select,
   SelectContent,

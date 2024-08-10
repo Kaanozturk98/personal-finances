@@ -1,4 +1,4 @@
-import { fixYkKkTransactionDates } from "@component/utils/scripts";
+import { fixYkKkTransactionDates } from "@/utils/scripts";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(

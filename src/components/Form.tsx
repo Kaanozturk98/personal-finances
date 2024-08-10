@@ -12,7 +12,7 @@ import DateInput from "./Inputs/DateInput";
 import AutocompleteInput from "./Inputs/AutocompleteInput";
 import useToast from "./Toast";
 import { Button } from "./ui/button";
-import { IColumnObject } from "@component/types";
+import { IColumnObject } from "@/types";
 
 interface FormProps<T extends FieldValues> {
   route: string;

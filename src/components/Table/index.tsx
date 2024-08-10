@@ -4,13 +4,13 @@ import { usePathname, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import Pagination from "./Pagination";
 import { FieldValues } from "react-hook-form";
-import { IColumnObject } from "@component/types";
+import { IColumnObject } from "@/types";
 
 import TableBody from "./TableBody";
 import TableHeader from "./TableHeader";
 import TableActions from "./TableActions";
-import { usePushStateListener } from "@component/hooks/usePushStateListener";
-import useHorizontalScroll from "@component/utils/use-horiontal-scroll";
+import { usePushStateListener } from "@/hooks/usePushStateListener";
+import useHorizontalScroll from "@/utils/use-horiontal-scroll";
 
 interface TableProps<T extends FieldValues> {
   columns: IColumnObject<T>[];

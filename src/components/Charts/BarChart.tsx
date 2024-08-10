@@ -9,7 +9,7 @@ import {
   LinearScale,
 } from "chart.js";
 import { ChartData, ChartOptions } from "chart.js";
-import { getColorForLabel } from "@component/utils";
+import { getColorForLabel } from "@/utils";
 
 // Register the necessary components
 Chart.register(

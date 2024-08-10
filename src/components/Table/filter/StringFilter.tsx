@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { IColumnObject } from "@component/types";
-import TextInput from "@component/components/Inputs/TextInput";
+import { IColumnObject } from "@/types";
+import TextInput from "@/components/Inputs/TextInput";
 
 interface StringFilterProps<T> {
   column: IColumnObject<T>;

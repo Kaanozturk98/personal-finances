@@ -1,17 +1,17 @@
 import React from "react";
 import { FieldValues } from "react-hook-form";
-import { IColumnObject } from "@component/types";
+import { IColumnObject } from "@/types";
 import FilterButton from "./filter/FilterButton";
 import Modal from "../Modal";
 import { PlusIcon, SquaresPlusIcon } from "@heroicons/react/24/outline";
 
-import { capitalizeFirstLetter } from "@component/utils";
+import { capitalizeFirstLetter } from "@/utils";
 import Form from "../Form";
 import AutoCategorizeTransactions from "./actions/AutoCategorizeTransactions";
 import BulkUpdate from "./actions/BulkUpdate";
 import MergeTransactions from "./actions/MergeTransactions";
 import { TableState } from ".";
-import { cn } from "@component/lib/utils";
+import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 
 interface TableActionsProps<T extends FieldValues> {

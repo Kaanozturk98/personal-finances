@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { IColumnObject } from "@component/types";
+import { IColumnObject } from "@/types";
 import DateInput from "../../Inputs/DateInput";
-import { cn } from "@component/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface DateFilterProps<T> {
   column: IColumnObject<T>;

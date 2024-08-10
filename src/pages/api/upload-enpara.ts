@@ -1,13 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 import pdfParse from "pdf-parse";
-import { TransactionCreate } from "@component/types";
+import { TransactionCreate } from "@/types";
 import {
   transformPdfText,
   extractTransactions,
   cleanPdfText,
-} from "@component/utils/upload-enpara";
-import { generateFingerprint } from "@component/utils";
+} from "@/utils/upload-enpara";
+import { generateFingerprint } from "@/utils";
 
 const prisma = new PrismaClient();
 

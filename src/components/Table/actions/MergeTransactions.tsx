@@ -1,7 +1,7 @@
 import React from "react";
-import Form from "@component/components/Form";
-import { TransactionWithCategory } from "@component/app/transactions/page";
-import { IColumnObject } from "@component/types";
+import Form from "@/components/Form";
+import { TransactionWithCategory } from "@/app/transactions/page";
+import { IColumnObject } from "@/types";
 import { CardType } from "@prisma/client";
 
 interface MergeTransactionsProps {

@@ -9,7 +9,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { getColorForLabel } from "@component/utils";
+import { getColorForLabel } from "@/utils";
 
 // Register required elements, controllers and plugins
 Chart.register(ArcElement, PieController, Tooltip, Legend);

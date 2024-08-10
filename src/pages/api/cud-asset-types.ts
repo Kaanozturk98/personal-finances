@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { AssetType, PrismaClient } from "@prisma/client";
-import { formatPayload } from "@component/app/asset-types/utils";
+import { formatPayload } from "@/app/asset-types/utils";
 
 const prisma = new PrismaClient();
 

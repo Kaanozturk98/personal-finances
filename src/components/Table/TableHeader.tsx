@@ -1,9 +1,9 @@
 import React from "react";
-import { IColumnObject } from "@component/types";
+import { IColumnObject } from "@/types";
 import CheckboxInput from "../Inputs/CheckboxInput";
 
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
-import { cn } from "@component/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface TableHeaderProps<T> {
   columnsToRender: IColumnObject<T>[];

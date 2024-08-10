@@ -1,9 +1,9 @@
 "use client";
-import StackedBarChart from "@component/components/Charts/StackedBarChart";
-import { Button } from "@component/components/ui/button";
-import { Card } from "@component/components/ui/card";
-import { AnyObject } from "@component/types";
-import { getColorForLabel } from "@component/utils";
+import StackedBarChart from "@/components/Charts/StackedBarChart";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { AnyObject } from "@/types";
+import { getColorForLabel } from "@/utils";
 import { Category } from "@prisma/client";
 import React, { useCallback, useEffect, useState } from "react";
 

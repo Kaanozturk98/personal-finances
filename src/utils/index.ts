@@ -1,4 +1,4 @@
-import { IAssignment, IUsage, TransactionCreate } from "@component/types";
+import { IAssignment, IUsage, TransactionCreate } from "@/types";
 import OpenAI from "openai";
 import {
   CardType,

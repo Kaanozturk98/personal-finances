@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
-import { generateFingerprint } from "@component/utils";
+import { generateFingerprint } from "@/utils";
 
 const prisma = new PrismaClient();
 

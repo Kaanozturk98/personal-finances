@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { RectangleGroupIcon } from "@heroicons/react/24/outline";
-import { IColumnObject } from "@component/types";
-import useToast from "@component/components/Toast";
-import SelectInput from "@component/components/Inputs/SelectInput";
-import DateInput from "@component/components/Inputs/DateInput";
-import AutocompleteInput from "@component/components/Inputs/AutocompleteInput";
-import NumberInput from "@component/components/Inputs/NumberInput";
-import TextInput from "@component/components/Inputs/TextInput";
+import { IColumnObject } from "@/types";
+import useToast from "@/components/Toast";
+import SelectInput from "@/components/Inputs/SelectInput";
+import DateInput from "@/components/Inputs/DateInput";
+import AutocompleteInput from "@/components/Inputs/AutocompleteInput";
+import NumberInput from "@/components/Inputs/NumberInput";
+import TextInput from "@/components/Inputs/TextInput";
 import { FieldValues, FormProvider, useForm } from "react-hook-form";
-import { Button } from "@component/components/ui/button";
-import { cn } from "@component/lib/utils";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface BulkEditProps<T> {
   columns: IColumnObject<T>[];

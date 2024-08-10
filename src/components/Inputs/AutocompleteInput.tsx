@@ -15,8 +15,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@component/components/ui/select";
-import { cn } from "@component/lib/utils";
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 interface AutocompleteSelectProps {
   id: string;

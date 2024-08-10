@@ -2,7 +2,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { AssetCategory, HoldingPlatform, PrismaClient } from "@prisma/client";
 import XLSX from "xlsx";
-import { mergeRows } from "@component/utils/upload-yapi-kredi-holdings";
+import { mergeRows } from "@/utils/upload-yapi-kredi-holdings";
 
 const prisma = new PrismaClient();
 

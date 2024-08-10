@@ -1,6 +1,6 @@
 "use client";
-import Table from "@component/components/Table";
-import { IColumnObject } from "@component/types";
+import Table from "@/components/Table";
+import { IColumnObject } from "@/types";
 import { AssetCategory, AssetType } from "@prisma/client";
 import React from "react";
 import { formatPayload } from "./utils";

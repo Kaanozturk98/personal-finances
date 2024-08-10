@@ -1,5 +1,5 @@
 "use client";
-import useToast from "@component/components/Toast";
+import useToast from "@/components/Toast";
 import { useState } from "react";
 
 interface FileUploadProps {

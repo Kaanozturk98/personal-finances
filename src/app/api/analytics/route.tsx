@@ -1,4 +1,4 @@
-import { getMonthRange } from "@component/utils";
+import { getMonthRange } from "@/utils";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 

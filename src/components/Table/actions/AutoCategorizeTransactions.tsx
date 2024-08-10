@@ -1,8 +1,8 @@
 import React from "react";
-import useToast from "@component/components/Toast";
+import useToast from "@/components/Toast";
 import { TagIcon } from "@heroicons/react/24/outline";
-import { Button } from "@component/components/ui/button";
-import { cn } from "@component/lib/utils";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface AutoCategorizeTransactionsProps<T> {
   checkedRowsData: T[];

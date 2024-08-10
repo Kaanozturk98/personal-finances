@@ -1,4 +1,4 @@
-import { cn } from "@component/lib/utils";
+import { cn } from "@/lib/utils";
 import React, { useEffect, useState, useRef } from "react";
 
 interface TruncatedTextProps {

@@ -1,4 +1,4 @@
-import { AnyArray, TransactionCreate } from "@component/types";
+import { AnyArray, TransactionCreate } from "@/types";
 import { Bank, CardType, Currency } from "@prisma/client";
 import { parseDate, areDatesInSameMonth } from ".";
 

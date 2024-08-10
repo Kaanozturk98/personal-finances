@@ -3,7 +3,7 @@ import { FieldValues } from "react-hook-form";
 import SkeletonRow from "./SkeletonRows";
 import TruncatedText from "./TruncatedText";
 import CheckboxInput from "../Inputs/CheckboxInput";
-import { IColumnObject } from "@component/types";
+import { IColumnObject } from "@/types";
 
 interface TableBodyProps<T extends FieldValues> {
   loading: boolean;

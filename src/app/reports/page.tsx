@@ -1,13 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { IColumnObject } from "@component/types";
-import DateInput from "@component/components/Inputs/DateInput";
-import Table from "@component/components/Table";
-import { Card } from "@component/components/ui/card";
-import { numberWithCommas } from "@component/utils";
+import { IColumnObject } from "@/types";
+import DateInput from "@/components/Inputs/DateInput";
+import Table from "@/components/Table";
+import { Card } from "@/components/ui/card";
+import { numberWithCommas } from "@/utils";
 import { TransactionWithCategory } from "../transactions/page";
-import BarChart from "@component/components/Charts/BarChart";
-import PieChart from "@component/components/Charts/PieChart";
+import BarChart from "@/components/Charts/BarChart";
+import PieChart from "@/components/Charts/PieChart";
 
 const columns: IColumnObject<TransactionWithCategory>[] = [
   {
