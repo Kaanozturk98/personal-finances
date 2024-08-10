@@ -2,7 +2,6 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@component/lib/utils";
 
 interface NavItem {
   name: string;
@@ -24,27 +23,27 @@ const SideNavbar: React.FC = () => {
   const currentPath = usePathname();
 
   return (
-    <nav className="h-full bg-background text-primary flex flex-col p-4">
-      <div className="mt-4 mb-8 flex items-center justify-center">
-        <img src="/line-graph.png" alt="Logo" className="h-16 w-auto" />
+    <nav className="h-full flex flex-col p-4 bg-neutral-800/[0.93]">
+      <div className="mt-4 mb-8 flex items-center justify-start">
+        <img src="/line-graph.png" alt="Logo" className="w-16 min-w-16" />
       </div>
-      <ul className="space-y-4">
+      <div className="flex h-full w-full grow flex-col items-start pb-4 pt-3 text-white gap-2">
         {navItems.map((item, index) => (
-          <li key={index}>
-            <Link
-              href={item.href}
-              className={cn(
-                "block w-full text-left py-2 px-4 transition-colors duration-200 border-l-4",
-                currentPath === item.href
-                  ? "border-primary bg-primary text-white"
-                  : "border-transparent hover:border-primary"
-              )}
-            >
-              {item.name}
-            </Link>
-          </li>
+          <Link
+            key={index}
+            href={item.href}
+            className="inline-flex h-9 transform items-center justify-center rounded-lg bg-transparent px-2.5 py-3
+          opacity-50
+          transition-all duration-200 hover:bg-[#FFFFFF14] focus-visible:outline-none
+          focus-visible:ring-2 focus-visible:ring-ring
+          focus-visible:ring-offset-2 active:scale-[95%]
+          disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-indigo-500 data-[state=on]:opacity-100"
+            data-state={item.href === currentPath ? "on" : "off"}
+          >
+            {item.name}
+          </Link>
         ))}
-      </ul>
+      </div>
     </nav>
   );
 };

@@ -5,9 +5,14 @@ import "react-toastify/dist/ReactToastify.css";
 import { Inter as FontSans } from "next/font/google";
 
 import { ReactNode, useEffect, useState } from "react";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "../components/ui/resizable";
 import SideNavbar from "../components/SideNavBar";
 import { ToastContainer } from "react-toastify";
-import clsx from "clsx";
+import { cn } from "@component/lib/utils";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -50,31 +55,41 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
   }, [isCollapsed, setIsCollapsed]);
 
   return (
-    <html lang="en" data-theme="dark" className="bg-gray-600">
+    <html lang="en" data-theme="dark">
       <body
-        className={clsx(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable,
-          "overflow-x-hidden"
+        className={cn(
+          "min-h-screen w-full font-sans overflow-x-hidden flex",
+          fontSans.variable
         )}
       >
-        <div className="flex min-h-screen">
-          {!isCollapsed && (
-            <div className="w-72 shadow-md hidden xl:block">
-              <SideNavbar />
-            </div>
-          )}
+        <div className="grow text-white">
+          <ResizablePanelGroup direction="horizontal">
+            {!isCollapsed && (
+              <>
+                <ResizablePanel
+                  className="grow"
+                  order={1}
+                  id="'side-navbar"
+                  defaultSize={isCollapsed ? 0 : 12}
+                  maxSize={isCollapsed ? 0 : 12}
+                >
+                  <SideNavbar />
+                </ResizablePanel>
 
-          <div
-            className={clsx("flex-1 p-8", {
-              "max-w-full": isCollapsed,
-              "max-w-[calc(100vw-288px)] xl:max-w-[calc(100vw-288px)]":
-                !isCollapsed,
-            })}
-          >
-            {children}
-          </div>
+                <ResizableHandle />
+              </>
+            )}
+
+            <ResizablePanel
+              order={2}
+              className={"flex w-full grow flex-col gap-4 bg-neutral-900"}
+              defaultSize={isCollapsed ? 100 : 88}
+            >
+              {children}
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </div>
+
         <ToastContainer />
       </body>
     </html>
