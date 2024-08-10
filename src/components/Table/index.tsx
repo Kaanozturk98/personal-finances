@@ -11,6 +11,7 @@ import TableHeader from "./TableHeader";
 import TableActions from "./TableActions";
 import { usePushStateListener } from "@/hooks/usePushStateListener";
 import useHorizontalScroll from "@/utils/use-horiontal-scroll";
+import { Card, CardContent } from "../ui/card";
 
 interface TableProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -263,8 +264,8 @@ const Table = <T extends FieldValues>({
   const columnsToRender = columns.filter((column) => !column.hidden);
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-900 rounded-lg shadow-md">
-      <div className="flex-col space-y-4">
+    <Card className="py-6">
+      <CardContent>
         <TableActions<T>
           columns={columns}
           handleFilterChange={handleFilterChange}
@@ -282,7 +283,7 @@ const Table = <T extends FieldValues>({
         />
 
         <div className="overflow-x-auto" ref={scrollRef}>
-          <table className="w-full border-collapse">
+          <table className="w-full">
             <TableHeader
               columnsToRender={columnsToRender}
               checkbox={checkbox}
@@ -304,14 +305,14 @@ const Table = <T extends FieldValues>({
             />
           </table>
         </div>
-      </div>
 
-      <Pagination<T>
-        totalPages={totalPages}
-        tableState={tableState}
-        createStateParams={createStateParams}
-      />
-    </div>
+        <Pagination<T>
+          totalPages={totalPages}
+          tableState={tableState}
+          createStateParams={createStateParams}
+        />
+      </CardContent>
+    </Card>
   );
 };
 

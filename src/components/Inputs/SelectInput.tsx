@@ -92,7 +92,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
           </SelectGroup>
         </SelectContent>
       </Select>
-      {error && <p className="text-red-600 mt-1">{error.message}</p>}
+      {error && <p className="text-destructive mt-1">{error.message}</p>}
     </InputWrapper>
   );
 };

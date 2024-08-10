@@ -27,7 +27,6 @@ const TableBody = <T extends FieldValues>({
   return (
     <tbody>
       {loading ? (
-        // Render skeleton rows when loading
         Array(perPage)
           .fill(null)
           .map((_, index) => (
@@ -37,30 +36,22 @@ const TableBody = <T extends FieldValues>({
             />
           ))
       ) : formattedData.length > 0 ? (
-        // Render data rows when not loading
         formattedData.map((row, rowIndex) => {
           const objectId = row[0];
           return (
-            <tr
-              key={rowIndex}
-              className="h-12 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            >
+            <tr key={rowIndex} className="h-12  transition-colors">
               {checkbox && (
-                <td className="w-10">
+                <td className="p-4">
                   <CheckboxInput
                     id={`checkbox-${rowIndex}`}
                     checked={!!checkedRows[objectId]}
                     onChange={(value) => handleCheckboxChange(objectId, value)}
                     label=""
-                    additionalClassName="text-primary focus:ring-primary focus:border-primary"
                   />
                 </td>
               )}
               {row.map((cell, cellIndex) => (
-                <td
-                  key={cellIndex}
-                  className="py-2 px-3 text-sm text-gray-800 dark:text-gray-200"
-                >
+                <td key={cellIndex} className="p-4">
                   <TruncatedText text={cell} />
                 </td>
               ))}
@@ -68,11 +59,10 @@ const TableBody = <T extends FieldValues>({
           );
         })
       ) : (
-        // Render message when no data is available
         <tr>
           <td
             colSpan={columnsToRender.length + (checkbox ? 1 : 0)}
-            className="text-center py-4 text-base-content text-opacity-50"
+            className="text-center py-4"
           >
             Nothing to see here 🍃
           </td>

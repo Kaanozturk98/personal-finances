@@ -57,7 +57,7 @@ const TableActions = <T extends FieldValues>({
   const mergeBtnDisabled = isNotAtleastTwoChecked || isParentTransactionChecked;
 
   return (
-    <div className="flex justify-between items-center mb-4 sticky top-0 z-20 pt-2 pb-1.5 backdrop-blur-lg before:absolute before:inset-0 before:bg-gradient-to-b before:from-gray-600 before:to-transparent before:z-[-1]">
+    <div className="flex justify-between items-center mb-4">
       <div className="flex space-x-4">
         {columns.some((column) => column.filter) && (
           <FilterButton<T>
@@ -141,9 +141,6 @@ const TableActions = <T extends FieldValues>({
             <Form<T> route={`cud-${route}`} columns={columns} />
           </Modal>
         )}
-        {
-          // if delete is enabled, add a delete selected button here
-        }
       </div>
     </div>
   );

@@ -84,7 +84,7 @@ const DateInput: React.FC<DateInputProps> = ({
           />
         </PopoverContent>
       </Popover>
-      {error && <p className="text-red-600 mt-1">{error.message}</p>}
+      {error && <p className="text-destructive mt-1">{error.message}</p>}
       <input
         type="hidden"
         id={id}

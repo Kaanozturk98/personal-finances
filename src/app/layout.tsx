@@ -10,6 +10,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "../components/ui/resizable";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import SideNavbar from "../components/SideNavBar";
 import { ToastContainer } from "react-toastify";
 import { cn } from "@/lib/utils";
@@ -55,42 +56,49 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
   }, [isCollapsed, setIsCollapsed]);
 
   return (
-    <html lang="en" data-theme="dark">
+    <html lang="en">
       <body
         className={cn(
           "min-h-screen w-full font-sans overflow-x-hidden flex",
           fontSans.variable
         )}
       >
-        <div className="grow text-white">
-          <ResizablePanelGroup direction="horizontal">
-            {!isCollapsed && (
-              <>
-                <ResizablePanel
-                  className="grow"
-                  order={1}
-                  id="'side-navbar"
-                  defaultSize={isCollapsed ? 0 : 12}
-                  maxSize={isCollapsed ? 0 : 12}
-                >
-                  <SideNavbar />
-                </ResizablePanel>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="grow">
+            <ResizablePanelGroup direction="horizontal">
+              {!isCollapsed && (
+                <>
+                  <ResizablePanel
+                    className="grow"
+                    order={1}
+                    id="'side-navbar"
+                    defaultSize={isCollapsed ? 0 : 12}
+                    maxSize={isCollapsed ? 0 : 12}
+                  >
+                    <SideNavbar />
+                  </ResizablePanel>
 
-                <ResizableHandle />
-              </>
-            )}
+                  <ResizableHandle />
+                </>
+              )}
 
-            <ResizablePanel
-              order={2}
-              className={"flex w-full grow flex-col gap-4 bg-neutral-900"}
-              defaultSize={isCollapsed ? 100 : 88}
-            >
-              {children}
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        </div>
+              <ResizablePanel
+                order={2}
+                className={"flex w-full grow flex-col gap-4 p-4"}
+                defaultSize={isCollapsed ? 100 : 88}
+              >
+                {children}
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </div>
 
-        <ToastContainer />
+          <ToastContainer />
+        </ThemeProvider>
       </body>
     </html>
   );

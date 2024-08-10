@@ -44,7 +44,7 @@ const BooleanFilter = <T,>({
       <Select value={selectedValue || ""} onValueChange={handleChange}>
         <SelectTrigger
           className={cn(
-            "w-full min-w-[200px] h-10 border border-gray-300 rounded-md shadow-sm",
+            "w-full min-w-[200px] h-10 border rounded-md shadow-sm",
             "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:border-primary"
           )}
         >

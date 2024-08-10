@@ -7,6 +7,7 @@ import {
 } from "react-hook-form";
 import InputWrapper from "./InputWrapper";
 import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface CheckboxInputProps {
   id: string;
@@ -14,9 +15,8 @@ interface CheckboxInputProps {
   rules?: RegisterOptions;
   additionalClassName?: string;
   label: string;
-  checked?: boolean;
+  checked?: boolean | "indeterminate";
   onChange?: (value: boolean) => void;
-  indeterminate?: boolean;
 }
 
 const CheckboxInput: React.FC<CheckboxInputProps> = ({
@@ -27,7 +27,6 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
   label,
   checked,
   onChange,
-  indeterminate = false,
 }) => {
   const formContext = useFormContext<FieldValues>();
 
@@ -37,44 +36,33 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
     formContext &&
     (formContext.formState.errors[name] as FieldError | undefined);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (value: boolean) => {
     if (onChange) {
-      onChange(e.target.checked);
+      onChange(value);
     }
   };
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.indeterminate = indeterminate;
-    }
-  }, [indeterminate]);
 
   return (
     <InputWrapper id={id} label={label}>
       <div className="flex items-center">
-        <input
+        <Checkbox
           {...(name && !isControlled && formContext
             ? formContext.register(name, rules)
             : {})}
-          ref={inputRef}
           id={id}
-          name={name}
-          type="checkbox"
-          className={cn(
-            "h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary",
-            additionalClassName
-          )}
           checked={isControlled ? checked : undefined}
-          onChange={isControlled ? handleChange : undefined}
+          onCheckedChange={isControlled ? handleChange : undefined}
+          className={cn("h-4 w-4", additionalClassName)}
           aria-invalid={error ? "true" : "false"}
         />
-        <label htmlFor={id} className="ml-2 text-sm text-gray-700">
+        <label
+          htmlFor={id}
+          className="ml-2 text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        >
           {label}
         </label>
       </div>
-      {error && <p className="text-red-600 mt-1">{error.message}</p>}
+      {error && <p className="text-destructive mt-1">{error.message}</p>}
     </InputWrapper>
   );
 };

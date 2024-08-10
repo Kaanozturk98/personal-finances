@@ -39,7 +39,7 @@ export default function Home() {
           <h2 className="text-2xl font-bold">Your Net Worth</h2>
           <p>Equivalent in USD: ${netWorth.totalValueUSD?.toFixed(2)}</p>
           <p>Equivalent in TRY: ₺{netWorth.totalValueTRY?.toFixed(2)}</p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm">
             Note: The values shown are the equivalent net worth in each
             currency, not a sum of different currencies.
           </p>

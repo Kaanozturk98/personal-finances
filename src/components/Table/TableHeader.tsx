@@ -27,17 +27,15 @@ const TableHeader = <T extends {}>({
   sortOrder,
 }: TableHeaderProps<T>) => {
   return (
-    <thead className="bg-gray-100 dark:bg-gray-800">
-      <tr className="h-12 border-b border-gray-200 dark:border-gray-700">
+    <thead>
+      <tr>
         {checkbox && (
-          <th className="w-10 px-3 py-2 text-left">
+          <th className="p-4">
             <CheckboxInput
               id={`checkbox-all`}
-              checked={isAllRowsChecked}
-              indeterminate={isSomeRowsChecked}
+              checked={isSomeRowsChecked ? "indeterminate" : isAllRowsChecked}
               onChange={handleGeneralCheckboxChange}
               label=""
-              additionalClassName="text-primary focus:ring-primary focus:border-primary"
             />
           </th>
         )}
@@ -45,22 +43,13 @@ const TableHeader = <T extends {}>({
           <th
             key={index}
             className={cn(
-              "px-3 py-2 text-left text-sm font-medium text-gray-700 dark:text-gray-300",
-              column.sort && "cursor-pointer select-none",
+              "px-4 py-2 text-left text-sm font-medium",
+              column.sort && "cursor-pointer",
               sortBy === column.key && "text-primary"
             )}
             onClick={column.sort ? () => handleHeaderClick(column) : undefined}
-            aria-sort={
-              sortBy === column.key
-                ? sortOrder === "asc"
-                  ? "ascending"
-                  : "descending"
-                : "none"
-            }
-            role={column.sort ? "button" : "columnheader"}
-            tabIndex={column.sort ? 0 : undefined}
           >
-            <div className="inline-flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
               <span>{column.label}</span>
               {column.sort &&
                 sortBy === column.key &&
@@ -72,7 +61,6 @@ const TableHeader = <T extends {}>({
             </div>
           </th>
         ))}
-        {/* Additional header cells for update actions, etc. */}
       </tr>
     </thead>
   );

@@ -96,7 +96,7 @@ const BulkEdit = <T,>({
         <FormProvider {...formMethods}>
           <form
             onSubmit={formMethods.handleSubmit(onSubmit)}
-            className="absolute z-50 mt-2 p-4 bg-white dark:bg-gray-900 shadow-2xl rounded-md border border-gray-200 dark:border-gray-700 flex flex-col space-y-4"
+            className="absolute z-50 mt-2 p-4 shadow-2xl rounded-md border flex flex-col space-y-4"
           >
             {columns.map((column) => {
               if (!column.form) return null;

@@ -1,15 +1,16 @@
-import { cn } from "@/lib/utils";
 import React, { useEffect, useState, useRef } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface TruncatedTextProps {
   text: string;
-  className?: string;
 }
 
-const TruncatedText: React.FC<TruncatedTextProps> = ({
-  text,
-  className = "",
-}) => {
+const TruncatedText: React.FC<TruncatedTextProps> = ({ text }) => {
   const [isTruncated, setIsTruncated] = useState(false);
   const textRef = useRef<HTMLSpanElement>(null);
 
@@ -18,23 +19,25 @@ const TruncatedText: React.FC<TruncatedTextProps> = ({
       const { scrollWidth, clientWidth } = textRef.current;
       setIsTruncated(scrollWidth > clientWidth);
     }
-  }, [text, textRef]);
+  }, [text]);
 
   return (
-    <div
-      className={cn("relative overflow-hidden", className)} // Used cn for conditional class names
-      {...(isTruncated && { "data-tooltip": text })} // Conditional tooltip data attribute
-    >
-      <span
-        ref={textRef}
-        className={cn(
-          "block truncate text-gray-900 dark:text-gray-100",
-          className
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="relative overflow-hidden">
+            <span className={`block truncate`} ref={textRef}>
+              {text}
+            </span>
+          </div>
+        </TooltipTrigger>
+        {isTruncated && (
+          <TooltipContent>
+            <span>{text}</span>
+          </TooltipContent>
         )}
-      >
-        {text}
-      </span>
-    </div>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 
