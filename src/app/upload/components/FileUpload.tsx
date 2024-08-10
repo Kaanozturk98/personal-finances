@@ -1,5 +1,6 @@
 "use client";
 import useToast from "@/components/Toast";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 interface FileUploadProps {
@@ -59,9 +60,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         />
       </label>
 
-      <button className="btn btn-base" onClick={handleUpload}>
-        {label}
-      </button>
+      <Button onClick={handleUpload}>{label}</Button>
     </div>
   );
 };

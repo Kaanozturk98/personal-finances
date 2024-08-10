@@ -12,6 +12,7 @@ import ReferenceFilter from "./ReferenceFilter";
 import { TableState } from "..";
 import { FieldValues } from "react-hook-form";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface FilterButtonProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -31,7 +32,6 @@ const FilterButton = <T extends FieldValues>({
   const { filter: filterState, searchText } = tableState;
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   const [showFilter, setShowFilter] = useState(false);
 
@@ -50,17 +50,10 @@ const FilterButton = <T extends FieldValues>({
 
   return (
     <div className="relative inline-block">
-      <button
-        className={cn(
-          "px-3 py-2 h-10 rounded-md transition-colors duration-300",
-          "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700",
-          "text-gray-900 dark:text-gray-100"
-        )}
-        onClick={handleFilterButtonClick}
-      >
+      <Button onClick={handleFilterButtonClick}>
         <FunnelIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
         <span className="align-middle">Filter</span>
-      </button>
+      </Button>
       {showFilter && (
         <div className="absolute z-50 mt-2 p-4 bg-white dark:bg-gray-900 shadow-2xl rounded-md border border-gray-200 dark:border-gray-700 flex flex-col space-y-4 w-64">
           {columns.map((column, index) => {

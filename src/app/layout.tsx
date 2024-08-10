@@ -1,5 +1,5 @@
 "use client";
-import "../styles/globals.css";
+import "../styles/global.css";
 import "../styles/custom.css";
 import "react-toastify/dist/ReactToastify.css";
 import { Inter as FontSans } from "next/font/google";
