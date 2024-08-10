@@ -1,15 +1,6 @@
-import React, { useState, useEffect } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import React, { useEffect, useState } from "react";
 import { IColumnObject } from "@/types";
-import { cn } from "@/lib/utils";
+import SelectInput from "@/components/Inputs/SelectInput";
 
 interface BooleanFilterProps<T> {
   column: IColumnObject<T>;
@@ -23,11 +14,11 @@ const BooleanFilter = <T,>({
   value,
 }: BooleanFilterProps<T>) => {
   const [selectedValue, setSelectedValue] = useState<string | undefined>(
-    value !== undefined ? value.toString() : ""
+    value !== undefined ? value.toString() : "none"
   );
 
   useEffect(() => {
-    setSelectedValue(value !== undefined ? value.toString() : "");
+    setSelectedValue(value !== undefined ? value.toString() : "none");
   }, [value]);
 
   const handleChange = (newValue: string) => {
@@ -41,24 +32,14 @@ const BooleanFilter = <T,>({
 
   return (
     <div className="space-y-2">
-      <Select value={selectedValue || ""} onValueChange={handleChange}>
-        <SelectTrigger
-          className={cn(
-            "w-full min-w-[200px] h-10 border rounded-md shadow-sm",
-            "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:border-primary"
-          )}
-        >
-          <SelectValue placeholder="Select" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>{column.label}</SelectLabel>
-            <SelectItem value="true">True</SelectItem>
-            <SelectItem value="false">False</SelectItem>
-            <SelectItem value="none">Any</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+      <SelectInput
+        id={String(column.key)}
+        label={column.label}
+        value={selectedValue}
+        onChange={handleChange}
+        boolean={true}
+        clearOption={true}
+      />
     </div>
   );
 };

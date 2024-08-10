@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { IColumnObject } from "@/types";
-import { cn } from "@/lib/utils";
+import SelectInput from "@/components/Inputs/SelectInput";
 
 interface EnumFilterProps<T> {
   column: IColumnObject<T>;
@@ -35,27 +26,14 @@ const EnumFilter = <T,>({
 
   return (
     <div className="space-y-2">
-      <Select value={selectedValue} onValueChange={handleChange}>
-        <SelectTrigger
-          className={cn(
-            "w-full min-w-[200px] h-10 border rounded-md shadow-sm",
-            "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:border-primary"
-          )}
-        >
-          <SelectValue placeholder="Select an option" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>{column.label}</SelectLabel>
-            <SelectItem value="none">Any</SelectItem>
-            {column.options!.map((option) => (
-              <SelectItem key={option} value={option}>
-                {option}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+      <SelectInput
+        id={String(column.key)}
+        label={column.label}
+        value={selectedValue}
+        onChange={handleChange}
+        optionValues={column.options}
+        clearOption={true}
+      />
     </div>
   );
 };
