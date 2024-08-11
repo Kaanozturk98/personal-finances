@@ -23,7 +23,7 @@ const SideNavbar: React.FC = () => {
   const currentPath = usePathname();
 
   return (
-    <nav className="h-full flex flex-col p-4">
+    <nav className="h-full flex flex-col p-4 bg-secondary/50">
       <div className="mt-4 mb-8 flex items-center justify-start">
         <img src="/line-graph.png" alt="Logo" className="w-16 min-w-16" />
       </div>
@@ -34,10 +34,10 @@ const SideNavbar: React.FC = () => {
             href={item.href}
             className="inline-flex h-9 transform items-center justify-center rounded-lg bg-transparent px-2.5 py-3
           opacity-50
-          transition-all duration-200 hover:bg-accent/75 focus-visible:outline-none
+          transition-all duration-200 hover:bg-secondary/75 focus-visible:outline-none
           focus-visible:ring-2 focus-visible:ring-ring
           focus-visible:ring-offset-2 active:scale-[95%]
-          disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:opacity-100"
+          disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-secondary data-[state=on]:opacity-100"
             data-state={item.href === currentPath ? "on" : "off"}
           >
             {item.name}

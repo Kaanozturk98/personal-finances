@@ -39,7 +39,10 @@ const TableBody = <T extends FieldValues>({
         formattedData.map((row, rowIndex) => {
           const objectId = row[0];
           return (
-            <tr key={rowIndex} className="h-12  transition-colors">
+            <tr
+              key={rowIndex}
+              className="h-12 transition-colors hover:bg-secondary/75"
+            >
               {checkbox && (
                 <td className="p-2">
                   <CheckboxInput

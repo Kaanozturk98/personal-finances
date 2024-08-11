@@ -4,6 +4,7 @@ import CheckboxInput from "../Inputs/CheckboxInput";
 
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
 
 interface TableHeaderProps<T> {
   columnsToRender: IColumnObject<T>[];
@@ -40,24 +41,25 @@ const TableHeader = <T extends {}>({
           </th>
         )}
         {columnsToRender.map((column, index) => (
-          <th
-            key={index}
-            className={cn(
-              "px-4 py-2 text-left text-sm font-medium",
-              column.sort && "cursor-pointer",
-              sortBy === column.key && "text-primary"
-            )}
-            onClick={column.sort ? () => handleHeaderClick(column) : undefined}
-          >
-            <div className="flex items-center space-x-2">
-              <span>{column.label}</span>
-              {column.sort &&
-                sortBy === column.key &&
-                (sortOrder === "asc" ? (
-                  <ArrowUpIcon className="w-4 h-4" />
-                ) : (
-                  <ArrowDownIcon className="w-4 h-4" />
-                ))}
+          <th key={index}>
+            <div className={cn("text-left text-sm font-medium")}>
+              {column.sort ? (
+                <Button
+                  variant={"ghost"}
+                  className="p-2"
+                  onClick={() => handleHeaderClick(column)}
+                >
+                  <span>{column.label}</span>
+                  {sortBy === column.key &&
+                    (sortOrder === "asc" ? (
+                      <ArrowUpIcon className="w-3 h-3 ml-2" />
+                    ) : (
+                      <ArrowDownIcon className="w-3 h-3 ml-2" />
+                    ))}
+                </Button>
+              ) : (
+                <span className="p-2">{column.label}</span>
+              )}
             </div>
           </th>
         ))}

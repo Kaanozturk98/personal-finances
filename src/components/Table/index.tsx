@@ -265,7 +265,7 @@ const Table = <T extends FieldValues>({
 
   return (
     <>
-      <Card>
+      <Card className="bg-secondary/50 text-secondary-foreground">
         <CardHeader className="pb-0">
           <TableActions<T>
             columns={columns}
