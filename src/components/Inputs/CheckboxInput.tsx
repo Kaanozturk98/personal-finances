@@ -14,7 +14,7 @@ interface CheckboxInputProps {
   name?: string;
   rules?: RegisterOptions;
   additionalClassName?: string;
-  label: string;
+  label?: string;
   checked?: boolean | "indeterminate";
   onChange?: (value: boolean) => void;
 }
@@ -24,7 +24,7 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
   name,
   rules,
   additionalClassName,
-  label,
+  label = "",
   checked,
   onChange,
 }) => {
@@ -44,7 +44,7 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
 
   return (
     <InputWrapper id={id} label={label}>
-      <div className="flex items-center">
+      <div className="flex items-center w-fit">
         <Checkbox
           {...(name && !isControlled && formContext
             ? formContext.register(name, rules)
@@ -55,12 +55,14 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
           className={cn("h-4 w-4", additionalClassName)}
           aria-invalid={error ? "true" : "false"}
         />
-        <label
-          htmlFor={id}
-          className="ml-2 text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-        >
-          {label}
-        </label>
+        {label && (
+          <label
+            htmlFor={id}
+            className="ml-2 text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            {label}
+          </label>
+        )}
       </div>
       {error && <p className="text-destructive mt-1">{error.message}</p>}
     </InputWrapper>

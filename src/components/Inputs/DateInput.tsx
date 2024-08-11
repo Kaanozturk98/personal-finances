@@ -15,7 +15,7 @@ interface DateInputProps {
   id: string;
   name?: string;
   rules?: RegisterOptions;
-  label: string;
+  label?: string;
   value?: string | undefined;
   additionalClassName?: string;
   onChange?: (value: string) => void;
@@ -25,7 +25,7 @@ const DateInput: React.FC<DateInputProps> = ({
   id,
   name,
   rules,
-  label,
+  label = "",
   value,
   additionalClassName,
   onChange,

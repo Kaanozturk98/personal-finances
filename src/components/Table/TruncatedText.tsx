@@ -25,8 +25,11 @@ const TruncatedText: React.FC<TruncatedTextProps> = ({ text }) => {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="relative overflow-hidden">
-            <span className={`block truncate`} ref={textRef}>
+          <div className="relative overflow-hidden max-w-lg">
+            <span
+              className={`block truncate text-xs max-w-md font-medium`}
+              ref={textRef}
+            >
               {text}
             </span>
           </div>

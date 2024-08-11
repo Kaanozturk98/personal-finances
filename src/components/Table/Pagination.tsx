@@ -4,17 +4,22 @@ import { usePathname } from "next/navigation";
 import { TableState } from ".";
 import { FieldValues } from "react-hook-form";
 import { Button } from "../ui/button";
+import Modal from "../Modal";
 
 interface PaginationProps<T extends FieldValues> {
   totalPages: number;
   tableState: TableState<T>;
   createStateParams: (state: TableState<T>) => URLSearchParams;
+  checkedRowsData: T[];
+  searchKey: keyof T;
 }
 
 const Pagination = <T extends FieldValues>({
   totalPages,
   tableState,
   createStateParams,
+  checkedRowsData,
+  searchKey,
 }: PaginationProps<T>) => {
   const { currentPage, perPage: rowsPerPage } = tableState;
 
@@ -62,36 +67,62 @@ const Pagination = <T extends FieldValues>({
 
   return (
     <div className="flex justify-between items-center">
-      <div></div>
-      <div className="flex items-center space-x-2">
-        <Button
-          size="sm"
-          onClick={handlePrevious}
-          disabled={currentPage === 1}
-          className="rounded-full"
-        >
-          «
-        </Button>
-        <span className="text-sm font-medium">Page {currentPage}</span>
-        <Button
-          size="sm"
-          onClick={handleNext}
-          disabled={currentPage === totalPages}
-          className="rounded-full"
-        >
-          »
-        </Button>
-      </div>
-      <div className="flex items-center">
+      <Modal
+        title="Selected Transactions"
+        trigger={
+          <Button
+            size="xs"
+            variant={checkedRowsData.length ? "outline" : "ghost"}
+            disabled={checkedRowsData.length === 0}
+            className="text-muted-foreground text-sm"
+          >
+            {checkedRowsData.length} row(s) selected
+          </Button>
+        }
+        disabled={checkedRowsData.length === 0}
+      >
+        <ul className="list-disc pl-5 space-y-1">
+          {checkedRowsData.map((row) => (
+            <li key={row.id}>{row[searchKey]}</li>
+          ))}
+        </ul>
+      </Modal>
+
+      <div className="flex items-center space-x-8 text-muted-foreground">
         <SelectInput
           id="rowsPerPage"
           value={rowsPerPage.toString()}
           onChange={handleRowsPerPageChange}
           optionValues={rowsPerPageOptions}
           label="Rows per page"
-          additionalClassName="min-w-[80px]"
+          labelPosition="left"
+          additionalClassName="min-w-[100px] h-8"
           clearOption={false}
         />
+
+        <div className="flex items-center space-x-1">
+          <span className="text-sm px-2">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <Button
+            size="xs"
+            variant={"outline"}
+            onClick={handlePrevious}
+            disabled={currentPage === 1}
+          >
+            «
+          </Button>
+
+          <Button
+            size="xs"
+            variant={"outline"}
+            onClick={handleNext}
+            disabled={currentPage === totalPages}
+          >
+            »
+          </Button>
+        </div>
       </div>
     </div>
   );

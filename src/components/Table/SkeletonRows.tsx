@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import React from "react";
 
 interface SkeletonRowProps {
@@ -9,7 +8,7 @@ const SkeletonRow: React.FC<SkeletonRowProps> = ({ columns }) => {
   const skeletons = Array(columns).fill(null);
 
   return (
-    <tr className="h-12">
+    <tr className="h-11 border-b">
       {skeletons.map((_, index) => (
         <td key={index} className="py-2 px-3">
           <div className="bg-muted h-4 w-full rounded-md animate-pulse"></div>

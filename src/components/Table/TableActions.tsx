@@ -21,7 +21,6 @@ interface TableActionsProps<T extends FieldValues> {
   bulkUpdate: boolean;
   add: boolean;
   route: string;
-  searchKey: keyof T;
   fetchKey: number;
   setFetchKey: (key: number) => void;
   setCheckedRows: (rows: Record<string, T>) => void;
@@ -37,7 +36,6 @@ const TableActions = <T extends FieldValues>({
   bulkUpdate,
   add,
   route,
-  searchKey,
   fetchKey,
   setFetchKey,
   setCheckedRows,
@@ -71,25 +69,6 @@ const TableActions = <T extends FieldValues>({
       </div>
 
       <div className="flex space-x-4 items-center">
-        <Modal
-          title="Selected Transactions"
-          trigger={
-            <Button
-              className={cn(checkedRowsData.length === 0 && "hidden")}
-              disabled={checkedRowsData.length === 0}
-            >
-              {checkedRowsData.length} selected
-            </Button>
-          }
-          disabled={checkedRowsData.length === 0}
-        >
-          <ul className="list-disc pl-5 space-y-1">
-            {checkedRowsData.map((row) => (
-              <li key={row.id}>{row[searchKey]}</li>
-            ))}
-          </ul>
-        </Modal>
-
         {bulkUpdate && (
           <BulkUpdate<T>
             columns={columns}

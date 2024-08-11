@@ -23,7 +23,8 @@ interface SelectInputProps {
   onChange?: (value: string) => void;
   optionValues?: string[];
   boolean?: boolean;
-  label: string;
+  label?: string;
+  labelPosition?: "top" | "left";
   clearOption?: boolean;
 }
 
@@ -36,7 +37,8 @@ const SelectInput: React.FC<SelectInputProps> = ({
   onChange,
   optionValues,
   boolean = false,
-  label,
+  label = "",
+  labelPosition = "top",
   clearOption = true,
 }) => {
   const formContext = useFormContext<FieldValues>();
@@ -67,7 +69,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
   if (clearOption) options.unshift({ label: "Select", value: "none" });
 
   return (
-    <InputWrapper id={id} label={label}>
+    <InputWrapper id={id} label={label} labelPosition={labelPosition}>
       <Select
         onValueChange={isControlled ? handleChange : undefined}
         value={isControlled ? value : undefined}

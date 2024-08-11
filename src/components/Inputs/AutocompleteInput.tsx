@@ -24,7 +24,7 @@ interface AutocompleteSelectProps {
   additionalClassName?: string;
   value?: string | undefined;
   onChange?: (value: string) => void;
-  label: string;
+  label?: string;
   fetchUrl: string;
 }
 
@@ -36,7 +36,7 @@ const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
   additionalClassName,
   value,
   onChange,
-  label,
+  label = "",
   fetchUrl,
 }) => {
   const [options, setOptions] = useState<OptionType[]>([]);

@@ -15,7 +15,7 @@ interface NumberInputProps {
   min?: number;
   max?: number;
   step?: number;
-  label: string;
+  label?: string;
 }
 
 const NumberInput: React.FC<NumberInputProps> = ({
@@ -28,7 +28,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
   min,
   max,
   step,
-  label,
+  label = "",
 }) => {
   const formContext = useFormContext<FieldValues>();
 

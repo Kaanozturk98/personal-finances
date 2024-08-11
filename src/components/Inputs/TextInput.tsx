@@ -15,7 +15,7 @@ interface TextInputProps {
   rules?: RegisterOptions;
   additionalClassName?: string;
   placeholder?: string;
-  label: string;
+  label?: string;
   value?: string;
   onChange?: (value: string) => void;
 }
@@ -26,7 +26,7 @@ const TextInput: React.FC<TextInputProps> = ({
   rules,
   additionalClassName,
   placeholder,
-  label,
+  label = "",
   value,
   onChange,
 }) => {

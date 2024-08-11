@@ -265,55 +265,52 @@ const Table = <T extends FieldValues>({
 
   return (
     <>
-      <Card className="bg-secondary/50 text-secondary-foreground">
-        <CardHeader className="pb-0">
-          <TableActions<T>
-            columns={columns}
-            handleFilterChange={handleFilterChange}
-            checkedRowsData={checkedRowsData}
-            bulkUpdate={bulkUpdate}
-            add={add}
-            route={route}
-            searchKey={searchKey}
-            fetchKey={fetchKey}
-            setFetchKey={setFetchKey}
-            setCheckedRows={setCheckedRows}
-            tableState={tableState}
-            createStateParams={createStateParams}
-            formatPayload={formatPayload}
-          />
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto" ref={scrollRef}>
-            <table className="w-full">
-              <TableHeader
-                columnsToRender={columnsToRender}
-                checkbox={checkbox}
-                isAllRowsChecked={isAllRowsChecked}
-                isSomeRowsChecked={isSomeRowsChecked}
-                handleGeneralCheckboxChange={handleGeneralCheckboxChange}
-                handleHeaderClick={handleHeaderClick}
-                sortBy={sortBy}
-                sortOrder={sortOrder}
-              />
-              <TableBody
-                loading={loading}
-                perPage={perPage}
-                formattedData={formattedData}
-                columnsToRender={columnsToRender}
-                checkbox={checkbox}
-                checkedRows={checkedRows}
-                handleCheckboxChange={handleCheckboxChange}
-              />
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+      <TableActions<T>
+        columns={columns}
+        handleFilterChange={handleFilterChange}
+        checkedRowsData={checkedRowsData}
+        bulkUpdate={bulkUpdate}
+        add={add}
+        route={route}
+        fetchKey={fetchKey}
+        setFetchKey={setFetchKey}
+        setCheckedRows={setCheckedRows}
+        tableState={tableState}
+        createStateParams={createStateParams}
+        formatPayload={formatPayload}
+      />
+      <div className="bg-secondary/50 text-secondary-foreground rounded-md border">
+        <div className="overflow-x-auto" ref={scrollRef}>
+          <table className="w-full">
+            <TableHeader
+              columnsToRender={columnsToRender}
+              checkbox={checkbox}
+              isAllRowsChecked={isAllRowsChecked}
+              isSomeRowsChecked={isSomeRowsChecked}
+              handleGeneralCheckboxChange={handleGeneralCheckboxChange}
+              handleHeaderClick={handleHeaderClick}
+              sortBy={sortBy}
+              sortOrder={sortOrder}
+            />
+            <TableBody
+              loading={loading}
+              perPage={perPage}
+              formattedData={formattedData}
+              columnsToRender={columnsToRender}
+              checkbox={checkbox}
+              checkedRows={checkedRows}
+              handleCheckboxChange={handleCheckboxChange}
+            />
+          </table>
+        </div>
+      </div>
 
       <Pagination<T>
         totalPages={totalPages}
         tableState={tableState}
         createStateParams={createStateParams}
+        checkedRowsData={checkedRowsData}
+        searchKey={searchKey}
       />
     </>
   );

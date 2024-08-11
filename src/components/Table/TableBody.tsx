@@ -25,7 +25,7 @@ const TableBody = <T extends FieldValues>({
   handleCheckboxChange,
 }: TableBodyProps<T>) => {
   return (
-    <tbody>
+    <tbody className="[&_tr:last-child]:border-0">
       {loading ? (
         Array(perPage)
           .fill(null)
@@ -41,15 +41,14 @@ const TableBody = <T extends FieldValues>({
           return (
             <tr
               key={rowIndex}
-              className="h-12 transition-colors hover:bg-secondary/75"
+              className="h-11 transition-colors hover:bg-secondary/75 border-b"
             >
               {checkbox && (
-                <td className="p-2">
+                <td className="p-2 pr-0">
                   <CheckboxInput
                     id={`checkbox-${rowIndex}`}
                     checked={!!checkedRows[objectId]}
                     onChange={(value) => handleCheckboxChange(objectId, value)}
-                    label=""
                   />
                 </td>
               )}

@@ -3,7 +3,6 @@ import { IColumnObject } from "@/types";
 import CheckboxInput from "../Inputs/CheckboxInput";
 
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
-import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 
 interface TableHeaderProps<T> {
@@ -28,28 +27,29 @@ const TableHeader = <T extends {}>({
   sortOrder,
 }: TableHeaderProps<T>) => {
   return (
-    <thead>
+    <thead className="[&_tr]:border-b">
       <tr>
         {checkbox && (
-          <th className="p-2">
+          <th className="pl-2 py-1">
             <CheckboxInput
               id={`checkbox-all`}
               checked={isSomeRowsChecked ? "indeterminate" : isAllRowsChecked}
               onChange={handleGeneralCheckboxChange}
-              label=""
             />
           </th>
         )}
         {columnsToRender.map((column, index) => (
-          <th key={index}>
-            <div className={cn("text-left text-sm font-medium")}>
+          <th key={index} className="px-2 py-1">
+            <div className={"text-left flex items-center"}>
               {column.sort ? (
                 <Button
                   variant={"ghost"}
-                  className="p-2"
+                  className="p-2 -ml-2"
                   onClick={() => handleHeaderClick(column)}
                 >
-                  <span>{column.label}</span>
+                  <span className={"text-xs font-medium text-muted-foreground"}>
+                    {column.label}
+                  </span>
                   {sortBy === column.key &&
                     (sortOrder === "asc" ? (
                       <ArrowUpIcon className="w-3 h-3 ml-2" />
@@ -58,7 +58,11 @@ const TableHeader = <T extends {}>({
                     ))}
                 </Button>
               ) : (
-                <span className="p-2">{column.label}</span>
+                <span
+                  className={"text-xs font-medium p-2 text-muted-foreground"}
+                >
+                  {column.label}
+                </span>
               )}
             </div>
           </th>
