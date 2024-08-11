@@ -15,9 +15,14 @@ export async function GET(request: Request) {
   const filterObj = filter ? JSON.parse(filter) : {};
 
   const categories = await prisma.category.findMany({
-    orderBy: {
-      [sortBy]: sortOrder,
-    },
+    orderBy: [
+      {
+        [sortBy]: sortOrder,
+      },
+      {
+        id: "desc",
+      },
+    ],
     where: {
       ...filterObj,
     },

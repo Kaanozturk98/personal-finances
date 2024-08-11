@@ -39,9 +39,14 @@ export async function GET(request: Request) {
       category: true,
       subTransactions: true,
     },
-    orderBy: {
-      [sortBy]: sortOrder,
-    },
+    orderBy: [
+      {
+        [sortBy]: sortOrder,
+      },
+      {
+        id: "desc",
+      },
+    ],
     where: {
       ...filterObj,
       date: dateFilter,

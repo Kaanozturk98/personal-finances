@@ -127,7 +127,7 @@ const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
               value={field.value || ""}
               onValueChange={(selectedValue) => {
                 handleChange(selectedValue);
-                field.onChange(selectedValue);
+                field.onChange(parseInt(selectedValue));
               }}
               disabled={loading}
             >

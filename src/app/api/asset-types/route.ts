@@ -15,9 +15,14 @@ export async function GET(request: Request) {
   const filterObj = filter ? JSON.parse(filter) : {};
 
   const assetTypes = await prisma.assetType.findMany({
-    orderBy: {
-      [sortBy]: sortOrder,
-    },
+    orderBy: [
+      {
+        [sortBy]: sortOrder,
+      },
+      {
+        id: "desc",
+      },
+    ],
     where: {
       ...filterObj,
     },

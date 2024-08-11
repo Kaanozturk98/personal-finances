@@ -18,9 +18,14 @@ export async function GET(request: Request) {
     include: {
       assetType: true, // Include related assetType data
     },
-    orderBy: {
-      [sortBy]: sortOrder,
-    },
+    orderBy: [
+      {
+        [sortBy]: sortOrder,
+      },
+      {
+        id: "desc",
+      },
+    ],
     where: {
       ...filterObj,
     },
