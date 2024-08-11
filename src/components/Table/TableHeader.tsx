@@ -30,7 +30,7 @@ const TableHeader = <T extends {}>({
     <thead className="[&_tr]:border-b">
       <tr>
         {checkbox && (
-          <th className="pl-2 py-1">
+          <th className="px-2 py-1">
             <CheckboxInput
               id={`checkbox-all`}
               checked={isSomeRowsChecked ? "indeterminate" : isAllRowsChecked}
@@ -59,7 +59,9 @@ const TableHeader = <T extends {}>({
                 </Button>
               ) : (
                 <span
-                  className={"text-xs font-medium p-2 text-muted-foreground"}
+                  className={
+                    "text-xs font-medium p-2 text-muted-foreground -ml-2"
+                  }
                 >
                   {column.label}
                 </span>

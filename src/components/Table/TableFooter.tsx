@@ -6,7 +6,7 @@ import { FieldValues } from "react-hook-form";
 import { Button } from "../ui/button";
 import Modal from "../Modal";
 
-interface PaginationProps<T extends FieldValues> {
+interface TableFooterProps<T extends FieldValues> {
   totalPages: number;
   tableState: TableState<T>;
   createStateParams: (state: TableState<T>) => URLSearchParams;
@@ -14,13 +14,13 @@ interface PaginationProps<T extends FieldValues> {
   searchKey: keyof T;
 }
 
-const Pagination = <T extends FieldValues>({
+const TableFooter = <T extends FieldValues>({
   totalPages,
   tableState,
   createStateParams,
   checkedRowsData,
   searchKey,
-}: PaginationProps<T>) => {
+}: TableFooterProps<T>) => {
   const { currentPage, perPage: rowsPerPage } = tableState;
 
   const pathname = usePathname();
@@ -72,7 +72,7 @@ const Pagination = <T extends FieldValues>({
         trigger={
           <Button
             size="xs"
-            variant={checkedRowsData.length ? "outline" : "ghost"}
+            variant={"ghost"}
             disabled={checkedRowsData.length === 0}
             className="text-muted-foreground text-sm"
           >
@@ -128,4 +128,4 @@ const Pagination = <T extends FieldValues>({
   );
 };
 
-export default Pagination;
+export default TableFooter;

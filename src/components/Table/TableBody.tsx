@@ -1,4 +1,3 @@
-import React from "react";
 import { FieldValues } from "react-hook-form";
 import SkeletonRow from "./SkeletonRows";
 import TruncatedText from "./TruncatedText";
@@ -6,6 +5,8 @@ import CheckboxInput from "../Inputs/CheckboxInput";
 import { IColumnObject } from "@/types";
 
 interface TableBodyProps<T extends FieldValues> {
+  columnWidths: number[];
+
   loading: boolean;
   perPage: number;
   formattedData: string[][];
@@ -16,6 +17,7 @@ interface TableBodyProps<T extends FieldValues> {
 }
 
 const TableBody = <T extends FieldValues>({
+  columnWidths,
   loading,
   perPage,
   formattedData,
@@ -33,6 +35,7 @@ const TableBody = <T extends FieldValues>({
             <SkeletonRow
               key={index}
               columns={columnsToRender.length + (checkbox ? 1 : 0)}
+              columnWidths={columnWidths}
             />
           ))
       ) : formattedData.length > 0 ? (
@@ -44,7 +47,7 @@ const TableBody = <T extends FieldValues>({
               className="h-11 transition-colors hover:bg-secondary/75 border-b"
             >
               {checkbox && (
-                <td className="p-2 pr-0">
+                <td className="p-2">
                   <CheckboxInput
                     id={`checkbox-${rowIndex}`}
                     checked={!!checkedRows[objectId]}

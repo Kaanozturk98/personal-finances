@@ -1,17 +1,17 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
-import Pagination from "./Pagination";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { IColumnObject } from "@/types";
 
-import TableBody from "./TableBody";
-import TableHeader from "./TableHeader";
 import TableActions from "./TableActions";
+import TableHeader from "./TableHeader";
+import TableBody from "./TableBody";
+import TableFooter from "./TableFooter";
+
 import { usePushStateListener } from "@/hooks/usePushStateListener";
 import useHorizontalScroll from "@/utils/use-horiontal-scroll";
-import { Card, CardContent, CardHeader } from "../ui/card";
 
 interface TableProps<T extends FieldValues> {
   columns: IColumnObject<T>[];
@@ -61,6 +61,8 @@ const Table = <T extends FieldValues>({
   const [loading, setLoading] = useState<boolean>(true);
   const [checkedRows, setCheckedRows] = useState<Record<string, T>>({});
   const [fetchKey, setFetchKey] = useState<number>(0);
+  const [columnWidths, setColumnWidths] = useState<number[]>([]);
+  const tableRef = useRef<HTMLTableElement>(null);
 
   const [tableState, setTableState] = useState<TableState<T>>({
     currentPage: Number(searchParams?.get("page")) || 1,
@@ -259,9 +261,20 @@ const Table = <T extends FieldValues>({
     );
   };
 
-  const formattedData = formatData(data);
+  const formattedData = useMemo(() => formatData(data), [data, formatData]);
 
   const columnsToRender = columns.filter((column) => !column.hidden);
+
+  // Set the column widths when the table is rendered
+  // This is used to set the width of the skeleton rows
+  useEffect(() => {
+    if (tableRef.current && formattedData.length > 0 && !loading) {
+      const widths = Array.from(
+        tableRef.current.querySelectorAll("tbody tr:first-child td")
+      ).map((td) => td.getBoundingClientRect().width);
+      setColumnWidths(widths);
+    }
+  }, [formattedData, loading]);
 
   return (
     <>
@@ -281,7 +294,7 @@ const Table = <T extends FieldValues>({
       />
       <div className="bg-secondary/50 text-secondary-foreground rounded-md border">
         <div className="overflow-x-auto" ref={scrollRef}>
-          <table className="w-full">
+          <table className="w-full" ref={tableRef}>
             <TableHeader
               columnsToRender={columnsToRender}
               checkbox={checkbox}
@@ -293,6 +306,7 @@ const Table = <T extends FieldValues>({
               sortOrder={sortOrder}
             />
             <TableBody
+              columnWidths={columnWidths}
               loading={loading}
               perPage={perPage}
               formattedData={formattedData}
@@ -305,7 +319,7 @@ const Table = <T extends FieldValues>({
         </div>
       </div>
 
-      <Pagination<T>
+      <TableFooter<T>
         totalPages={totalPages}
         tableState={tableState}
         createStateParams={createStateParams}
