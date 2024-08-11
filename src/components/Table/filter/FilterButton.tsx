@@ -48,7 +48,7 @@ const FilterButton = <T extends FieldValues>({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button>
+        <Button size={"sm"} variant={"outline"}>
           <FunnelIcon className="w-5 h-5 inline-block mr-1.5 align-middle" />
           <span className="align-middle">Filter</span>
         </Button>

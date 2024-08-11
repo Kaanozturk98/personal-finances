@@ -44,7 +44,12 @@ const AutoCategorizeTransactions = <T,>({
   };
 
   return (
-    <Button onClick={handleClick} disabled={checkedRowsData.length < 1}>
+    <Button
+      size={"sm"}
+      variant={"outline"}
+      onClick={handleClick}
+      disabled={checkedRowsData.length < 1}
+    >
       <TagIcon className="w-5 h-5 mr-1.5" />
       Auto Categorize
     </Button>

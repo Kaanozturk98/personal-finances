@@ -55,7 +55,7 @@ const TableActions = <T extends FieldValues>({
   const mergeBtnDisabled = isNotAtleastTwoChecked || isParentTransactionChecked;
 
   return (
-    <div className="flex justify-between items-center mb-4">
+    <div className="flex justify-between items-center">
       <div className="flex space-x-4">
         {columns.some((column) => column.filter) && (
           <FilterButton<T>
@@ -95,7 +95,11 @@ const TableActions = <T extends FieldValues>({
             title={`Merge ${capitalizeFirstLetter(route)}`}
             disabled={mergeBtnDisabled}
             trigger={
-              <Button disabled={mergeBtnDisabled}>
+              <Button
+                size={"sm"}
+                variant={"outline"}
+                disabled={mergeBtnDisabled}
+              >
                 <SquaresPlusIcon className="w-5 h-5 mr-1.5" />
                 Merge
               </Button>
@@ -111,7 +115,7 @@ const TableActions = <T extends FieldValues>({
           <Modal
             title={`Add ${capitalizeFirstLetter(route)}`}
             trigger={
-              <Button>
+              <Button size={"sm"} variant={"outline"}>
                 <PlusIcon className="w-5 h-5 mr-1.5" />
                 Add
               </Button>

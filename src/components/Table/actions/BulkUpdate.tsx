@@ -85,7 +85,11 @@ const BulkEdit = <T,>({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button disabled={checkedRowsData.length === 0}>
+        <Button
+          size={"sm"}
+          variant={"outline"}
+          disabled={checkedRowsData.length === 0}
+        >
           <RectangleGroupIcon className="w-5 h-5 mr-1.5" />
           Update
         </Button>
