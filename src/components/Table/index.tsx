@@ -3,6 +3,7 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FieldValues } from "react-hook-form";
+import SimpleBar from "simplebar-react";
 import { IColumnObject } from "@/types";
 
 import TableActions from "./TableActions";
@@ -277,7 +278,7 @@ const Table = <T extends FieldValues>({
   }, [formattedData, loading]);
 
   return (
-    <>
+    <div className="flex flex-col space-y-4 max-h-full w-full">
       <TableActions<T>
         columns={columns}
         handleFilterChange={handleFilterChange}
@@ -292,7 +293,7 @@ const Table = <T extends FieldValues>({
         createStateParams={createStateParams}
         formatPayload={formatPayload}
       />
-      <div className="bg-secondary/50 text-secondary-foreground rounded-md border">
+      <SimpleBar className="bg-secondary/50 text-secondary-foreground rounded-md border h-full overflow-y-auto">
         <div className="overflow-x-auto" ref={scrollRef}>
           <table className="w-full" ref={tableRef}>
             <TableHeader
@@ -317,7 +318,7 @@ const Table = <T extends FieldValues>({
             />
           </table>
         </div>
-      </div>
+      </SimpleBar>
 
       <TableFooter<T>
         totalPages={totalPages}
@@ -326,7 +327,7 @@ const Table = <T extends FieldValues>({
         checkedRowsData={checkedRowsData}
         searchKey={searchKey}
       />
-    </>
+    </div>
   );
 };
 

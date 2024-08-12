@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import "../styles/custom.css";
 import "react-toastify/dist/ReactToastify.css";
+import "simplebar-react/dist/simplebar.min.css";
 import { Inter as FontSans } from "next/font/google";
 
 import { ReactNode, useEffect, useState } from "react";
@@ -88,7 +89,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
 
               <ResizablePanel
                 order={2}
-                className={"flex w-full grow flex-col gap-4 p-8"}
+                className={"flex w-full grow flex-col gap-4 p-8 h-screen"}
                 defaultSize={isCollapsed ? 100 : 88}
               >
                 {children}
