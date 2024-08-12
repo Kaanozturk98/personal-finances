@@ -155,13 +155,23 @@ const ReportsPage = () => {
 
       <div className="flex flex-row space-x-4 mb-6">
         <div className="w-1/2 h-full overflow-hidden">
-          <Card title="Pie Chart">
-            <PieChart data={data} labels={labels} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Pie Chart</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PieChart data={data} labels={labels} />
+            </CardContent>
           </Card>
         </div>
         <div className="w-1/2 h-full overflow-hidden">
-          <Card title="Column Graph">
-            <BarChart data={data} labels={labels} label="Amount (TL)" />
+          <Card>
+            <CardHeader>
+              <CardTitle>Column Graph</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <BarChart data={data} labels={labels} label="Amount (TL)" />
+            </CardContent>
           </Card>
         </div>
       </div>
