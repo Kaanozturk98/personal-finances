@@ -1,13 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { IColumnObject } from "@/types";
-import DateInput from "@/components/Inputs/DateInput";
+import DateRangeInput from "@/components/Inputs/DateRangeInput";
 import Table from "@/components/Table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { numberWithCommas } from "@/utils";
 import { TransactionWithCategory } from "../transactions/page";
 import BarChart from "@/components/Charts/BarChart";
 import PieChart from "@/components/Charts/PieChart";
+import { DateRange } from "react-day-picker";
+import { addDays } from "date-fns";
 
 const columns: IColumnObject<TransactionWithCategory>[] = [
   {
@@ -68,38 +70,31 @@ const formatData = (data: TransactionWithCategory[]): string[][] => {
       formattedDate,
       transaction.installments.toString(),
       transaction.isRepayment ? "Yes" : "No",
-
       `${numberWithCommas(transaction.amount)} TL`,
     ];
   });
 };
 
 const ReportsPage = () => {
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: addDays(new Date(), -30),
+    to: new Date(),
+  });
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalIncome, setTotalIncome] = useState(0);
   const [labels, setLabels] = useState([]);
   const [data, setData] = useState([]);
 
-  const handleDateChange = (type: "from" | "to", value: string) => {
-    if (type === "from") {
-      setFromDate(value);
-    } else {
-      setToDate(value);
-    }
-  };
-
-  // Update the useEffect hook to fetch the total income as well
   useEffect(() => {
     const searchParams = new URLSearchParams();
-    if (fromDate) searchParams.set("fromDate", fromDate);
-    if (toDate) searchParams.set("toDate", toDate);
+    if (dateRange?.from)
+      searchParams.set("fromDate", dateRange.from.toISOString().split("T")[0]);
+    if (dateRange?.to)
+      searchParams.set("toDate", dateRange.to.toISOString().split("T")[0]);
 
     fetch(`/api/reports?${searchParams.toString()}`)
       .then((response) => response.json())
       .then(({ totalSpent, totalIncome, categoryData }) => {
-        // Update fetched data to include totalIncome
         setTotalSpent(totalSpent);
         setTotalIncome(totalIncome);
 
@@ -113,35 +108,25 @@ const ReportsPage = () => {
         setLabels(labels);
         setData(data);
       });
-  }, [fromDate, toDate]);
+  }, [dateRange]);
 
   const defaultFilter = {
     date: {
-      from: fromDate,
-      to: toDate,
+      from: dateRange?.from ? dateRange.from.toISOString().split("T")[0] : "",
+      to: dateRange?.to ? dateRange.to.toISOString().split("T")[0] : "",
     },
   };
 
   return (
     <div className="container mx-auto">
       <h1 className="text-xl font-semibold mb-4">Reports</h1>
-      <div className="flex space-x-4 mb-6">
-        <div className="w-1/2">
-          <DateInput
-            id="from-date"
-            label="From"
-            value={fromDate}
-            onChange={(value: string) => handleDateChange("from", value)}
-          />
-        </div>
-        <div className="w-1/2">
-          <DateInput
-            id="to-date"
-            label="To"
-            value={toDate}
-            onChange={(value: string) => handleDateChange("to", value)}
-          />
-        </div>
+      <div className="mb-6">
+        <DateRangeInput
+          id="date-range"
+          label="Date Range"
+          value={dateRange}
+          onChange={setDateRange}
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-6">

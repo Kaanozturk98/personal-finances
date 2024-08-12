@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { IColumnObject } from "@/types";
-import DateInput from "../../Inputs/DateInput";
+import DateRangeInput from "@/components/Inputs/DateRangeInput";
 import { cn } from "@/lib/utils";
+import { addDays } from "date-fns";
+import { DateRange } from "react-day-picker";
 
 interface DateFilterProps<T> {
   column: IColumnObject<T>;
@@ -14,24 +16,34 @@ const DateFilter = <T,>({
   onFilterChange,
   value,
 }: DateFilterProps<T>) => {
-  const [fromDate, setFromDate] = useState(value?.from || "");
-  const [toDate, setToDate] = useState(value?.to || "");
+  const today = useMemo(() => new Date(), []);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(
+    value
+      ? {
+          from: value.from ? new Date(value.from) : addDays(today, -30),
+          to: value.to ? new Date(value.to) : today,
+        }
+      : {
+          from: addDays(today, -30),
+          to: today,
+        }
+  );
 
   useEffect(() => {
-    setFromDate(value?.from || "");
-    setToDate(value?.to || "");
-  }, [value]);
-
-  const handleDateChange = (type: "from" | "to", value: string) => {
-    if (type === "from") {
-      setFromDate(value);
-    } else {
-      setToDate(value);
+    if (value) {
+      setDateRange({
+        from: value.from ? new Date(value.from) : addDays(today, -30),
+        to: value.to ? new Date(value.to) : today,
+      });
     }
+  }, [today, value]);
+
+  const handleDateChange = (range: DateRange | undefined) => {
+    setDateRange(range);
 
     const updatedValue = {
-      from: type === "from" ? value : fromDate,
-      to: type === "to" ? value : toDate,
+      from: range?.from ? range.from.toISOString().split("T")[0] : "",
+      to: range?.to ? range.to.toISOString().split("T")[0] : "",
     };
 
     onFilterChange(column.key as keyof T, updatedValue);
@@ -43,18 +55,11 @@ const DateFilter = <T,>({
         "flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0"
       )}
     >
-      <DateInput
-        id={`from-${column.key as string}`}
-        label="From"
-        value={fromDate}
-        onChange={(value: string) => handleDateChange("from", value)}
-        additionalClassName="w-full md:w-auto"
-      />
-      <DateInput
-        id={`to-${column.key as string}`}
-        label="To"
-        value={toDate}
-        onChange={(value: string) => handleDateChange("to", value)}
+      <DateRangeInput
+        id={`date-range-${column.key as string}`}
+        label="Date Range"
+        value={dateRange}
+        onChange={handleDateChange}
         additionalClassName="w-full md:w-auto"
       />
     </div>

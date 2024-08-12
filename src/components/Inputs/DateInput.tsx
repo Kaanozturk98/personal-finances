@@ -38,17 +38,28 @@ const DateInput: React.FC<DateInputProps> = ({
     formContext &&
     (formContext.formState.errors[name] as FieldError | undefined);
 
+  const createLocalDate = (date: Date) => {
+    const localDate = new Date(date);
+    localDate.setMinutes(
+      localDate.getMinutes() - localDate.getTimezoneOffset()
+    );
+    return localDate;
+  };
+
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    value ? new Date(value) : undefined
+    value ? createLocalDate(new Date(value)) : undefined
   );
 
   useEffect(() => {
     if (isControlled && value) {
-      setSelectedDate(new Date(value));
+      setSelectedDate(createLocalDate(new Date(value)));
     }
   }, [value, isControlled]);
 
   const handleDateChange = (date: Date | undefined) => {
+    if (date) {
+      date = createLocalDate(date);
+    }
     setSelectedDate(date);
     if (onChange && date) {
       onChange(date.toISOString().split("T")[0]); // Convert to YYYY-MM-DD
@@ -60,6 +71,7 @@ const DateInput: React.FC<DateInputProps> = ({
       <Popover>
         <PopoverTrigger asChild>
           <Button
+            variant={"outline"}
             className={cn(
               "w-full min-w-[200px] justify-start text-left font-normal",
               !selectedDate && "text-muted-foreground",

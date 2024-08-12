@@ -94,7 +94,7 @@ const BulkEdit = <T,>({
           Update
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="">
+      <PopoverContent align="end">
         <FormProvider {...formMethods}>
           <form
             onSubmit={formMethods.handleSubmit(onSubmit)}
