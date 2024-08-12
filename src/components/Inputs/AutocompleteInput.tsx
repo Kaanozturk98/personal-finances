@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   useFormContext,
   FieldValues,
@@ -7,16 +7,22 @@ import {
 } from "react-hook-form";
 import InputWrapper from "./InputWrapper";
 import { Category } from "@prisma/client";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
+import { Button } from "@/components/ui/button";
 
 interface AutocompleteSelectProps {
   id: string;
@@ -41,6 +47,10 @@ const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
 }) => {
   const [options, setOptions] = useState<OptionType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [open, setOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [popoverWidth, setPopoverWidth] = useState<string | number>("auto");
+
   const formContext = useFormContext<FieldValues>();
   const isControlled = value !== undefined && onChange !== undefined;
   const error =
@@ -116,67 +126,91 @@ const AutocompleteInput: React.FC<AutocompleteSelectProps> = ({
     (option) => option.value === value || option.label === value
   );
 
+  useEffect(() => {
+    const button = buttonRef.current;
+
+    const handleResize = () => {
+      if (button) setPopoverWidth(button.offsetWidth);
+    };
+
+    if (button) handleResize();
+
+    const resizeObserver = new ResizeObserver(() => handleResize());
+
+    if (button) resizeObserver.observe(button);
+
+    return () => {
+      if (button) resizeObserver.unobserve(button);
+    };
+  }, []);
+
+  const renderCombobox = (
+    fieldValue: string,
+    handleSelect: (value: string) => void
+  ) => (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className={cn("w-full justify-between", additionalClassName)}
+          ref={buttonRef}
+        >
+          {fieldValue
+            ? options.find((option) => option.value === fieldValue)?.label
+            : loading
+            ? "Loading options..."
+            : "Select an option"}
+          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="p-0" style={{ width: popoverWidth }}>
+        <Command>
+          <CommandInput placeholder="Search..." className="h-9" />
+          <CommandList>
+            <CommandEmpty>No options found.</CommandEmpty>
+            <CommandGroup>
+              {options.map((option) => (
+                <CommandItem
+                  key={option.value}
+                  value={option.value}
+                  onSelect={() => {
+                    handleSelect(option.value);
+                    setOpen(false);
+                  }}
+                >
+                  {option.label}
+                  <CheckIcon
+                    className={cn(
+                      "ml-auto h-4 w-4",
+                      fieldValue === option.value ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+
   return (
     <InputWrapper id={id} label={label}>
       {name && !isControlled && formContext ? (
         <Controller
           control={formContext.control}
           name={name as string}
-          render={({ field }) => (
-            <Select
-              value={field.value || ""}
-              onValueChange={(selectedValue) => {
-                handleChange(selectedValue);
-                field.onChange(parseInt(selectedValue));
-              }}
-              disabled={loading}
-            >
-              <SelectTrigger
-                className={cn("w-full min-w-[200px]", additionalClassName)}
-              >
-                <SelectValue
-                  placeholder={
-                    loading ? "Loading options..." : "Select an option"
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>{label}</SelectLabel>
-                  {options.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          )}
+          render={({ field }) =>
+            renderCombobox(field.value || "", (value) => {
+              handleChange(value);
+              field.onChange(value);
+            })
+          }
         />
       ) : (
-        <Select
-          value={selectedOption?.value || ""}
-          onValueChange={handleChange}
-          disabled={loading}
-        >
-          <SelectTrigger
-            className={cn("w-full min-w-[200px]", additionalClassName)}
-          >
-            <SelectValue
-              placeholder={loading ? "Loading options..." : "Select an option"}
-            />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>{label}</SelectLabel>
-              {options.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        renderCombobox(selectedOption?.value || "", handleChange)
       )}
       {error && <p className="text-destructive mt-1">{error.message}</p>}
     </InputWrapper>
