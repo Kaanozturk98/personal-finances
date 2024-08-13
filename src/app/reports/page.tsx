@@ -118,18 +118,17 @@ const ReportsPage = () => {
   };
 
   return (
-    <div className="container mx-auto">
-      <h1 className="text-xl font-semibold mb-4">Reports</h1>
-      <div className="mb-6">
-        <DateRangeInput
-          id="date-range"
-          label="Date Range"
-          value={dateRange}
-          onChange={setDateRange}
-        />
-      </div>
+    <div className="container mx-auto flex space-y-6 flex-col h-full">
+      <h1 className="text-xl font-semibold">Reports</h1>
 
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <DateRangeInput
+        id="date-range"
+        label="Date Range"
+        value={dateRange}
+        onChange={setDateRange}
+      />
+
+      <div className="grid grid-cols-2 gap-4 ">
         <Card>
           <CardHeader>
             <CardTitle>Total Spent</CardTitle>
@@ -153,7 +152,7 @@ const ReportsPage = () => {
         </Card>
       </div>
 
-      <div className="flex flex-row space-x-4 mb-6">
+      <div className="flex flex-row space-x-4">
         <div className="w-1/2 h-full overflow-hidden">
           <Card>
             <CardHeader>
@@ -176,12 +175,17 @@ const ReportsPage = () => {
         </div>
       </div>
 
-      <Table
-        columns={columns}
-        route="transactions"
-        formatData={formatData}
-        defaultFilter={defaultFilter}
-      />
+      {/* Not sure how the 'flex flex-col2 on the middle div fixes this...*/}
+      <div className="flex flex-col min-h-0">
+        <div className="overflow-hidden flex flex-col">
+          <Table
+            columns={columns}
+            route="transactions"
+            formatData={formatData}
+            defaultFilter={defaultFilter}
+          />
+        </div>
+      </div>
     </div>
   );
 };
